@@ -83,7 +83,7 @@ export class ServicoReconhecimento {
         where id = $1::int`,[id])
     }
 
-    async updateAprovar(id:number): Promise<void>{         //não tem bory
+    async aprovar(id:number): Promise<void>{         //não tem bory
         const localizaId = await this.client.query(`select * from coin_reconhecimento
         where id = $1::int and status = 'pendente' or status = 'reprovado'`,[id])
 

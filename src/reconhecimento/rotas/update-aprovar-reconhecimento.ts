@@ -5,7 +5,7 @@ export const updateReconhecimentoAprovar = (site:Express, client)=>{
     site.put('/reconhecimento-aprovar/:id', async (req, res)=>{
         try{
             const servico = new ServicoReconhecimento(client)
-            await servico.updateAprovar(Number(req.params.id))
+            await servico.aprovar(Number(req.params.id))
             res.send()
         }catch(erro){
             console.error(erro)
