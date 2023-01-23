@@ -109,5 +109,11 @@ export class ServicoReconhecimento {
         await this.client.query(`update coin_reconhecimento set
         status = 'reprovado'
         where id = $1::int`,[id])
+
+
+
+        await this.servicoCarteiraMoedaDoada.creditar(localizaId.qtd_moedas_doadas, localizaId.id_de_usuario)
+
+        await this.servicoCarteiraMoedaRecebida.debitar(localizaId.qtd_moedas_doadas, localizaId.id_para_usuario)
     }
 }

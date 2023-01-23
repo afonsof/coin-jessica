@@ -9,6 +9,7 @@ interface GetCarteiraMoedasDoadas {
 
 
 export class ServicoCarteiraMoedasDoadas{
+    
     client: IDatabase<any>
 
     constructor(client: IDatabase<any>){
@@ -55,5 +56,21 @@ export class ServicoCarteiraMoedasDoadas{
         where id_funcionario = $2::int`,[saldoAtual - valorParaDebitar, idUsuario])
     }
 
+    async creditar(valorParaCreditar: number, idUsuario: number): Promise<void> {
+        const localizaIDDeUsuario: any[] = await this.client.query(`select saldo from coin_carteira_moedas_doadas
+         where id_funcionario = $1::int`, [idUsuario])
+
+         console.log(localizaIDDeUsuario)
+
+        if(localizaIDDeUsuario.length === 0){
+            throw new Error('id de usuario, não encontrado')
+        }
+        const saldoAtual = localizaIDDeUsuario[0].saldo
+
+       
+        await this.client.query(`update coin_carteira_moedas_doadas set 
+        saldo = $1::int
+        where id_funcionario = $2::int`,[saldoAtual + valorParaCreditar, idUsuario])
+    }
     
 }
