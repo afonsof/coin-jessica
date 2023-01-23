@@ -7,7 +7,7 @@ export class CarteiraMoedasDoadas {
         this.saldo = saldo
 
         if(!idUsuario) {
-            throw new Error('É preciso o idUsuario')
+            throw new Error('O usuário precisa ter Id')
         }
        
     }
