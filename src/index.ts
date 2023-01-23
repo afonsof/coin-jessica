@@ -28,6 +28,7 @@ import { getCarteiraMoedasRecebidas } from './carteira-recebimento/rotas/get-car
 import { getCarteiraMoedasDoadas } from './carteira-doacao/rotas/get-carteira-moedas-doadas'
 import { updateReconhecimentoAprovar } from './reconhecimento/rotas/update-aprovar-reconhecimento'
 import { updateReconhecimentoReprovar } from './reconhecimento/rotas/update-reprovar-reconhecimento'
+import { getPedido } from './pedido/rotas/get-pedido'
 
 
 const pgp = pgPromise()
@@ -70,6 +71,7 @@ getCarteiraMoedasRecebidas(site, client)
 getCarteiraMoedasDoadas(site, client)
 updateReconhecimentoAprovar(site, client)
 updateReconhecimentoReprovar(site, client)
+getPedido(site,client)
 
 site.listen(port, () =>{
     console.log(`Example app listening on port ${port}`)
