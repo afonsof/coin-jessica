@@ -47,12 +47,18 @@ export class ServicoUsuario {
     }
 
     async update(id: number, nome:string, email:string, senha:string): Promise<void>{
+        const localizaId = await this.client.query(`select * from coin_usuario
+        where id = $1::int`,[id])
+        if(localizaId.length === 0) {
+            throw new Error('id de usuário não existe')
+        }
+        
         const usuario = new Usuario(id, nome, email, senha)
 
         await this.client.query(`update coin_usuario
             set nome = $2::text,
             email = $3::text,
-            senha = $4::text, 
+            senha = $4::text 
             where id = $1::int`,[usuario.id, usuario.nome,usuario.email,
             usuario.senha]
         )
@@ -60,7 +66,12 @@ export class ServicoUsuario {
     }
 
     async delete(id:number): Promise<void>{
-        
+        const localizaId = await this.client.query(`select * from coin_usuario
+        where id = $1::int`,[id])
+        if(localizaId.length === 0) {
+            throw new Error('id de usuário não existe')
+        }
+
         await this.client.query(`delete from coin_usuario where id = $1::int`,[id])
 
         
