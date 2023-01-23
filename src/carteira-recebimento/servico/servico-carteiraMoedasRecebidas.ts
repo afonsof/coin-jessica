@@ -8,6 +8,7 @@ interface GetCarteiraMoedasRecebidas {
 }
 
 export class ServicoCarteiraMoedasRecebidas {
+    
     client: IDatabase<any>
 
     constructor(client: IDatabase<any>){
@@ -49,4 +50,25 @@ export class ServicoCarteiraMoedasRecebidas {
         saldo = $1::int
         where id_funcionario = $2::int`,[saldoAtual + valorParaCreditar, idUsuario])
     }
+
+    async debitar(valorParaDebitar: number, idUsuario: number): Promise<void> {
+        const localizaIDDeUsuario: any[] = await this.client.query(`select saldo from coin_carteira_moedas_recebidas
+         where id_funcionario = $1::int`, [idUsuario])
+
+         console.log(localizaIDDeUsuario)
+
+        if(localizaIDDeUsuario.length === 0){
+            throw new Error('id de usuario, não encontrado')
+        }
+        const saldoAtual = localizaIDDeUsuario[0].saldo
+
+        if((saldoAtual-valorParaDebitar) < 0) {
+            throw new Error('Usuário n"ao tem saldo suficiente')
+        }
+
+        await this.client.query(`update coin_carteira_moedas_recebidas set 
+        saldo = $1::int
+        where id_funcionario = $2::int`,[saldoAtual - valorParaDebitar, idUsuario])
+    }
+
 }
