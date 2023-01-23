@@ -1,10 +1,10 @@
 import { Express } from 'express'
-import { ServicoUsuario } from '../servico/servico-usuario'
+import { ServicoProduto } from '../servico/servico-produto'
 
-export const deleteUsuario = (site: Express, client) =>{
-    site.delete('/usuario/:id', async (req, res)=>{
+export const deleteProduto = (site: Express, client) =>{
+    site.delete('/produto/:id', async (req, res)=>{
         try{
-            const servico = new ServicoUsuario(client)
+            const servico = new ServicoProduto(client)
             await servico.delete(Number(req.params.id))
             res.send()
         }catch(erro){

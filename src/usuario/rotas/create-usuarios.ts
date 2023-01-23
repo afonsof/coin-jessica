@@ -10,7 +10,7 @@ export const createUsuarios = (site: Express, client) =>{
         }catch(erro){
             console.error(erro)
             res.status(500)
-            res.send('deu erro')
+            res.send(erro.message)
         }
     })
 }
