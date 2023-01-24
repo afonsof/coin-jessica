@@ -134,19 +134,43 @@ export class ServicoPedido {
     }
 
     async aprovar(id:number): Promise<void>{
+
+        // ver se o id do pedido encontra-se pendente
         // ver se o saldo ẽ maior que o valor do o pedido
         // ver se tem o produto em estoque
         // debitar do saldo o valor do pedido
+        // fazer um update do id do pedido alterando o status para 'aprovado'
+
+        const localizaId = await this.client.query(`select * from coin_produto_pedido
+        where id_pedido = $1::int and status = 'pendente'`, [id])
+
+        if(localizaId.length === 0){
+            throw new Error('id pedido não encontrado para análise')
+        }
+
+        // const produtosPedido: any[] = this.client.query(`select * from coin_produto_pedido`)
+
+        // const usuario = this.servicoUsuario.get(pedido.idUsuario)
+
+        // const carteiraMoedasRecebidas = this.servicoCarteiraMoedasRecebidas.get(pedido.idUsuario)
+
+        // const produtos = this.servicoProduto.get()
 
 
-        const linhas = await this.client.query(`select cp.id, ccmr.saldo, p2.nome, p2.estoque, cpp.qtd, 
-        cpp.valor_unitario, cu.id as id_funcionario
-        from   coin_produto_pedido cpp
-        join coin_pedido cp on cp.id = cpp.id_pedido
-        join coin_usuario cu  on cp.id_funcionario  = cu.id
-        join coin_carteira_moedas_recebidas ccmr on cu.id = ccmr.id_funcionario 
-        join coin_produto p2 on p2.id = cp.id 
-        where cp.id = $1::int`,[id])
+        const linhas = await this.client.query(`select pedido.id,
+        produto.id,
+        recebidas.saldo,
+        produto.nome,
+        produto.estoque,
+        produto_pedido.qtd, 
+        produto_pedido.valor_unitario,
+        usuario.id as id_funcionario
+     from coin_produto_pedido produto_pedido
+     join coin_pedido pedido on produto_pedido.id_pedido = pedido.id
+     join coin_usuario usuario  on usuario.id = pedido.id_funcionario
+     join coin_carteira_moedas_recebidas recebidas on usuario.id = recebidas.id_funcionario 
+     join coin_produto produto on produto.id = produto_pedido.id_produto 
+     where pedido.id = $1::int`,[id])
 
 
         if(linhas.length ===0){
@@ -174,9 +198,18 @@ export class ServicoPedido {
             valorTotalPedido += produto.valorUnitario * produto.qtd
         })
 
+        console.log(valorTotalPedido)
+
+       
+
+
         if(pedido.saldoCarteira < valorTotalPedido) {
+            await this.reprovar(pedido.idPedido)
             throw new Error('Usuário não tem saldo suficiente para aprovar o pedido.')
         }
+
+
+        console.log(pedido.saldoCarteira)
 
         pedido.produtos.forEach(produto=> {
             if(produto.qtd > produto.estoque) {
@@ -184,10 +217,12 @@ export class ServicoPedido {
             }
         })
 
-        pedido.produtos.forEach(produto=>{
-            this.servicoProduto.atualizarEstoque(produto.idProduto, produto.qtd)
+        console.log(pedido.produtos)
 
-        })
+        await Promise.all(pedido.produtos.map(async produto=>{                    //nesse caso é um map da função atualiza estoque para percorrer todos os produtos
+            return this.servicoProduto.atualizarEstoque(produto.idProduto, produto.qtd)
+        }))
+        
 
         await this.servicoCarteiraMoedasRecebidas.debitar(valorTotalPedido, pedido.idUsuario)
 
@@ -202,14 +237,14 @@ export class ServicoPedido {
         where id_pedido = $1::int and status = 'pendente'`, [id])
 
         if(localizaId.length === 0){
-            throw new Error('id pedido não encontrado ou já aprovado')
+            throw new Error('id pedido não encontrado para análise')
         }
 
         await this.client.query(`update coin_produto_pedido set
         status = 'reprovado'
         where id_pedido = $1::int`,[id])
 
-        
+
     }
 
 
