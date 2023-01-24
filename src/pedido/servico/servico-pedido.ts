@@ -197,7 +197,20 @@ export class ServicoPedido {
 
     }
 
-    
+    async reprovar(id: number) : Promise<void>{
+        const localizaId = await this.client.query(`select * from coin_produto_pedido
+        where id_pedido = $1::int and status = 'pendente'`, [id])
+
+        if(localizaId.length === 0){
+            throw new Error('id pedido não encontrado ou já aprovado')
+        }
+
+        await this.client.query(`update coin_produto_pedido set
+        status = 'reprovado'
+        where id_pedido = $1::int`,[id])
+
+        
+    }
 
 
 
