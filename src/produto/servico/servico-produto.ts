@@ -60,4 +60,21 @@ export class ServicoProduto {
         await this.client.query(`delete from coin_produto where id = $1::int`,[id])
 
     }
+
+    async atualizarEstoque(id:number, qtdParaDebitar:number): Promise<void>{
+        const localizaId: any[] = await this.client.query(`select * from coin_produto
+        where id = $1::int`, [id])
+
+        if(localizaId.length === 0){
+            throw new Error('id de produto não encontrado')
+        }
+
+        const estoqueAtual = localizaId[0].estoque
+
+        await this.client.query(`update coin_produto set
+        estoque = $1::int
+        where id = $2::int`, [estoqueAtual - qtdParaDebitar, id])
+
+    }
+
 }

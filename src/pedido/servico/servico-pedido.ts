@@ -1,4 +1,8 @@
 import { IDatabase} from "pg-promise"
+import { CarteiraMoedasRecebidas } from "../../carteira-recebimento/dominio/carteiraMoedasRecebidas"
+import { ServicoCarteiraMoedasRecebidas } from "../../carteira-recebimento/servico/servico-carteiraMoedasRecebidas"
+import { Produto } from "../../produto/dominio/produto"
+import { ServicoProduto } from "../../produto/servico/servico-produto"
 import { Pedido } from "../dominio/pedido"
 
 
@@ -28,13 +32,36 @@ interface GetPedido {
     produtos: GetPedidoProduto[]
 }
 
+interface GetProdutoAprovar {
+
+    idProduto:number,
+    nome: string,
+    estoque: number,
+    qtd: number,
+    valorUnitario: number,
+}
+
+
+interface GetPedidoAprovar {
+    idPedido:number,
+    idUsuario: number,
+    saldoCarteira: number,
+    produtos: GetProdutoAprovar[]
+   
+
+}
+
 
 
 export class ServicoPedido {
     client: IDatabase<any>
+    servicoProduto: ServicoProduto
+    servicoCarteiraMoedasRecebidas: ServicoCarteiraMoedasRecebidas
 
     constructor(client: IDatabase<any>){
         this.client = client
+        this.servicoProduto = new ServicoProduto(client)
+        this.servicoCarteiraMoedasRecebidas = new ServicoCarteiraMoedasRecebidas(client)
     }
 
     async listar(): Promise<ListarPedido[]>{
@@ -73,7 +100,7 @@ export class ServicoPedido {
             throw new Error('pedido não encontrado')
         }
 
-        console.log(linhas[0])
+        
 
         const pedido: GetPedido = {
             id: id,
@@ -106,7 +133,71 @@ export class ServicoPedido {
         return pedido
     }
 
+    async aprovar(id:number): Promise<void>{
+        // ver se o saldo ẽ maior que o valor do o pedido
+        // ver se tem o produto em estoque
+        // debitar do saldo o valor do pedido
 
+
+        const linhas = await this.client.query(`select cp.id, ccmr.saldo, p2.nome, p2.estoque, cpp.qtd, 
+        cpp.valor_unitario, cu.id as id_funcionario
+        from   coin_produto_pedido cpp
+        join coin_pedido cp on cp.id = cpp.id_pedido
+        join coin_usuario cu  on cp.id_funcionario  = cu.id
+        join coin_carteira_moedas_recebidas ccmr on cu.id = ccmr.id_funcionario 
+        join coin_produto p2 on p2.id = cp.id 
+        where cp.id = $1::int`,[id])
+
+
+        if(linhas.length ===0){
+            throw new Error('id do pedido não encontrado ou já aprovado')
+        }
+
+        const pedido: GetPedidoAprovar = {
+            idPedido: id,
+            idUsuario: linhas[0].id_funcionario,
+            saldoCarteira: linhas[0].saldo,
+            produtos: linhas.map(linha=>{
+                return {
+                    idProduto: linha.id,
+                    nome: linha.nome,
+                    estoque: linha.estoque,
+                    qtd: linha.qtd,
+                    valorUnitario: linha.valor_unitario
+                    
+                }
+            })
+        }
+
+        let valorTotalPedido = 0
+        pedido.produtos.forEach(produto=> {
+            valorTotalPedido += produto.valorUnitario * produto.qtd
+        })
+
+        if(pedido.saldoCarteira < valorTotalPedido) {
+            throw new Error('Usuário não tem saldo suficiente para aprovar o pedido.')
+        }
+
+        pedido.produtos.forEach(produto=> {
+            if(produto.qtd > produto.estoque) {
+                throw new Error(`Foi requisitado ${produto.qtd} unidades do produto ${produto.nome}, mas só tem ${produto.estoque} em estoque`)
+            }
+        })
+
+        pedido.produtos.forEach(produto=>{
+            this.servicoProduto.atualizarEstoque(produto.idProduto, produto.qtd)
+
+        })
+
+        await this.servicoCarteiraMoedasRecebidas.debitar(valorTotalPedido, pedido.idUsuario)
+
+        await this.client.query(`update coin_produto_pedido set
+        status = 'aprovado'
+        where id_pedido = $1::int`, [id])
+
+    }
+
+    
 
 
 
