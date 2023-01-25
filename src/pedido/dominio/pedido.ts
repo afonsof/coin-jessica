@@ -1,12 +1,13 @@
 export class ProdutoDoPedido {
-
+    idProduto:number
     qtd: number
     valorUnitario: number 
     status: string
 
 
 
-    constructor(qtd:number, valorUnitario:number, status: string ){
+    constructor(idProduto:number, qtd:number, valorUnitario:number, status: string ){
+        this.idProduto = idProduto
         this.qtd = qtd
         this.valorUnitario = valorUnitario
         this.status = status

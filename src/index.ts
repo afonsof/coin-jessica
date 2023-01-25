@@ -29,8 +29,9 @@ import { getCarteiraMoedasDoadas } from './carteira-doacao/rotas/get-carteira-mo
 import { updateReconhecimentoAprovar } from './reconhecimento/rotas/update-aprovar-reconhecimento'
 import { updateReconhecimentoReprovar } from './reconhecimento/rotas/update-reprovar-reconhecimento'
 import { getPedido } from './pedido/rotas/get-pedido'
-import { updatePedidoAprovar } from './pedido/rotas/update-aprovar-pedido'
-import { updatePedidoReprovar } from './pedido/rotas/update-reprovar-pedido'
+import { createPedido } from './pedido/rotas/create-pedido'
+import { aprovarPedido } from './pedido/rotas/aprovar-pedido'
+import { reprovarPedido } from './pedido/rotas/reprovar-pedido'
 
 
 
@@ -75,9 +76,9 @@ getCarteiraMoedasDoadas(site, client)
 updateReconhecimentoAprovar(site, client)
 updateReconhecimentoReprovar(site, client)
 getPedido(site,client)
-updatePedidoAprovar(site,client)
-updatePedidoReprovar(site,client)
-
+aprovarPedido(site, client)
+reprovarPedido(site,client)
+createPedido(site, client)
 
 site.listen(port, () =>{
     console.log(`Example app listening on port ${port}`)
