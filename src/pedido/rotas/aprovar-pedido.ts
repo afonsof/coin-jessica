@@ -1,7 +1,7 @@
 import { Express} from 'express'
 import { ServicoPedido } from '../servico/servico-pedido'
 
-export const updatePedidoAprovar = (site:Express, client)=>{
+export const aprovarPedido = (site:Express, client)=>{
     site.put('/pedido-aprovar/:id', async (req, res)=>{
         try{
             const servico = new ServicoPedido(client)
