@@ -5,8 +5,7 @@ export const createPedido = (site:Express, client) =>{
     site.post('/pedido', async (req, res)=>{
         try{
             const servico = new ServicoPedido(client)
-            await servico.create(req.body.idUsuario,req.body.data,
-            req.body.idProduto,req.body.qtd)
+            await servico.create(req.body.idUsuario,req.body.produtos)
 
             res.send()
         }catch(erro){

@@ -24,7 +24,7 @@ export class ServicoProduto {
         const linhas = await this.client.query(`select * from coin_produto
         where id = $1::int`,[id])
 
-        if(linhas ===0){
+        if(linhas.length === 0){
             throw new Error ('id produto não encontrado')
         }
 
@@ -90,7 +90,8 @@ export class ServicoProduto {
 
         const estoqueAtual = localizaId[0].estoque
 
-        if(qtdPedido < estoqueAtual){
+
+        if(qtdPedido > estoqueAtual){
             throw new Error('quantidade pedida maior que estoque disponível')
         }
     }

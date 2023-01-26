@@ -51,21 +51,12 @@ interface GetPedidoAprovar {
 
 }
 
-interface GetPedidoProdutoCreate {
+interface ProdutosDoPedido {
     idProduto: number,
     qtd: number,
 
 }
 
-interface GetPedidoCreate {
-    idPedido?: number,
-    idUsuario: number,
-    data: Date,
-    status: string
-
-    produtos: GetPedidoProdutoCreate[]
-
-}
 
 
 
@@ -266,54 +257,44 @@ export class ServicoPedido {
     }
 
 
+    // O que precisa para criar um pedido?
+    // id usuario, ids dos produtos e quantidade dos produtos
+    // Funcao precisa retornar nada
+    async create(idUsuario: number, produtos: ProdutosDoPedido[]): Promise<void> {
 
+        // OK saber se o id do produto existe
+        // OK saber se a quantidade do produto tem disponivel em estoque
+        // criar um pedido com os dados fornecidos
 
-
-    async create(idUsuario: number, data: Date, status: string,
-        produtos: {
-            idProduto: number,
-            qtd: number,
-
-        }
-
-    ): Promise<void> {
-        const pedido = new GetPedidoCreate(
-            undefined,
-            idUsuario,
-            data,
-            status,
-            produtos: {
-            idProduto,
-            qtd,
-
-        }
-        )
-
-        const localizaId = await this.client.query(`select * from coin_produto
-            where id = $1::int`, [pedido.produtos.idProduto])
-
-        if (localizaId.length === 0) {
-            throw new Error('id de produto não encontrado')
-        }
-
-        const dataAtual = new Date()
-
-        Promise.all(pedido.produtos.map(async produto => {
-            return this.servicoProduto.conferirQtdEstoque(produto.idProduto, produto.qtd)
-
+        const produtosNoBanco = await Promise.all(produtos.map(async produto=>{
+            return this.servicoProduto.get(produto.idProduto)
         }))
 
-        await this.client.query(`insert into coin_pedido (data, idUsuario) values
-            ($1::date, $2::int)`, [dataAtual, pedido.idUsuario])
+        await Promise.all(produtos.map(async produto => {
+            return this.servicoProduto.conferirQtdEstoque(produto.idProduto, produto.qtd)
+        }))
 
-        await this.client.query(`insert into coin_produto_pedido (idProduto, qtd, status) values
-            ($1::int, $2::int, $3::text)`, [pedido.produto.idProduto, pedido.produto.qtd, 'pendente'])
+        const dataAtual = new Date()
+        
+        const res = await this.client.query(
+            `insert into coin_pedido (data, id_funcionario) values ($1::date, $2::int) RETURNING id`,
+            [dataAtual, idUsuario]
+        )
 
+        const idPedido = res[0].id
 
+        await Promise.all(produtos.map(async (produto, indice) => {
+            const produtoNoBanco = produtosNoBanco[indice]
+            await this.client.query(
+                `insert into coin_produto_pedido (id_pedido, id_produto, valor_unitario, qtd, status) values
+                ($1::int, $2::int, $3::int, $4::int, $5::text)`,
+                [idPedido, produto.idProduto, produtoNoBanco.valor, produto.qtd, 'pendente']
+            )
+        }))
     }
 
 
-
+    
 }
 
 
