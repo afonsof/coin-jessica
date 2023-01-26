@@ -1,11 +1,11 @@
 import { Express} from 'express'
 import { ServicoPedido } from '../servico/servico-pedido'
 
-export const updatePedidoReprovar = (site:Express, client)=>{
-    site.put('/pedido-reprovar/:id', async (req, res)=>{
+export const aprovarPedido = (site:Express, client)=>{
+    site.put('/pedido-aprovar/:id', async (req, res)=>{
         try{
             const servico = new ServicoPedido(client)
-            await servico.reprovar(Number(req.params.id))
+            await servico.aprovar(Number(req.params.id))
             res.send()
         }catch(erro){
             console.error(erro)

@@ -24,7 +24,7 @@ export class ServicoProduto {
         const linhas = await this.client.query(`select * from coin_produto
         where id = $1::int`,[id])
 
-        if(linhas ===0){
+        if(linhas.length === 0){
             throw new Error ('id produto não encontrado')
         }
 
@@ -61,7 +61,26 @@ export class ServicoProduto {
 
     }
 
+
     async atualizarEstoque(id:number, qtdParaDebitar:number): Promise<void>{
+
+        const localizaId: any[] = await this.client.query(`select * from coin_produto
+        where id = $1::int`, [id])
+
+        if(localizaId.length === 0){
+            throw new Error('id de produto não encontrado')
+        }
+        const estoqueAtual = localizaId[0].estoque
+
+        await this.client.query(`update coin_produto set
+        estoque = $1::int
+        where id = $2::int`, [estoqueAtual - qtdParaDebitar, id])
+
+    }
+
+
+    async conferirQtdEstoque( id:number, qtdPedido:number): Promise<void>{
+
         const localizaId: any[] = await this.client.query(`select * from coin_produto
         where id = $1::int`, [id])
 
@@ -71,10 +90,13 @@ export class ServicoProduto {
 
         const estoqueAtual = localizaId[0].estoque
 
-        await this.client.query(`update coin_produto set
-        estoque = $1::int
-        where id = $2::int`, [estoqueAtual - qtdParaDebitar, id])
 
+        if(qtdPedido > estoqueAtual){
+            throw new Error('quantidade pedida maior que estoque disponível')
+        }
     }
 
+ 
 }
+
+
