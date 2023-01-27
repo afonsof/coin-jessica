@@ -12,12 +12,7 @@ export class ProdutoDoPedido {
         this.valorUnitario = valorUnitario
         this.status = status
     }
-
-
-
 }
-
-
 
 export class Pedido {
     id?: number
@@ -25,12 +20,9 @@ export class Pedido {
     idUsuario: number
 
     produtos: ProdutoDoPedido[]
-   
 
-
-
-    constructor(id:number|undefined, data:Date, idUsuario: number ){
-        this.id = id
+    constructor(idPedido:number|undefined, data:Date, idUsuario: number ){
+        this.id = idPedido
         this.data = data
         this.idUsuario = idUsuario
 
