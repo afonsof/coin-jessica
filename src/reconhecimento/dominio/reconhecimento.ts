@@ -7,8 +7,8 @@ export class Reconhecimento {
     idDeUsuario: number
     idParaUsuario: number
 
-    constructor(id: number|undefined, descricao: string, data: Date, qtdMoedasDoadas: number, status: string|undefined, idDeUsuario: number, idParaUsuario: number){
-        this.id = id
+    constructor(idReconhecimento: number|undefined, descricao: string, data: Date, qtdMoedasDoadas: number, status: string|undefined, idDeUsuario: number, idParaUsuario: number){
+        this.id = idReconhecimento
         this.descricao = descricao
         this.data = data
         this.qtdMoedasDoadas = qtdMoedasDoadas
@@ -18,19 +18,15 @@ export class Reconhecimento {
 
         if(!descricao){
             throw new Error('Reconhecimento precisa ser preenchido com algum agradecimento')
-            
         }
         if(!qtdMoedasDoadas){
             throw new Error('A quantidade de moedas a serem doadas precisa ser declarada')
-            
         }
         if(!idParaUsuario){
             throw new Error('O usuario à receber o reconhecimento precisa ser declarado')
-            
         }
         if(qtdMoedasDoadas <= 0){
             throw new Error('moedas doadas devem ser maior que zero')
         }
-
     }
 }

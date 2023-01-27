@@ -5,9 +5,11 @@ export const createReconhecimento = (site:Express, client)=>{
     site.post('/reconhecimento', async (req,res)=>{
         try{
             const servico = new ServicoReconhecimento(client)
-            await servico.create(req.body.descricao, req.body.data, req.body.qtdMoedasDoadas, 
-            req.body.status, req.body.idDeUsuario, req.body.idParaUsuario)
-
+            await servico.create(req.body.descricao, req.body.data,
+                req.body.qtdMoedasDoadas, req.body.status, 
+                req.body.idDeUsuario, req.body.idParaUsuario
+            )
+            
             res.send()
         }catch(erro){
             console.error(erro)

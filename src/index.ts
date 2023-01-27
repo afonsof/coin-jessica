@@ -22,7 +22,6 @@ import { listarPedido } from './pedido/rotas/listar-pedidos'
 import { listarReconhecimentos } from './reconhecimento/rotas/listar-reconhecimento'
 import { getReconhecimento } from './reconhecimento/rotas/get-reconhecimento'
 import { createReconhecimento } from './reconhecimento/rotas/create-reconhecimento'
-import { updateReconhecimento } from './reconhecimento/rotas/update-reconhecimento'
 import { deleteReconhecimento } from './reconhecimento/rotas/delete-reconhecimento'
 import { getCarteiraMoedasRecebidas } from './carteira-recebimento/rotas/get-carteira-moedas-recebidas'
 import { getCarteiraMoedasDoadas } from './carteira-doacao/rotas/get-carteira-moedas-doadas'
@@ -69,7 +68,6 @@ listarPedido(site, client)
 listarReconhecimentos(site, client)
 getReconhecimento(site, client)
 createReconhecimento(site, client)
-updateReconhecimento(site, client)
 deleteReconhecimento(site, client)
 getCarteiraMoedasRecebidas(site, client)
 getCarteiraMoedasDoadas(site, client)

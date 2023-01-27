@@ -23,16 +23,18 @@ export class ServicoReconhecimento {
         const reconhecimentos: Reconhecimento[] = []
 
         linhas.forEach(linha=>{
-            reconhecimentos.push(new Reconhecimento(linha.id, linha.descricao, linha.data, 
-            linha.qtd_moedas_doadas, linha.status, linha.id_de_usuario, linha.id_para_usuario))
+            reconhecimentos.push(new Reconhecimento(
+                linha.id, linha.descricao, linha.data, 
+                linha.qtd_moedas_doadas, linha.status, 
+                linha.id_de_usuario, linha.id_para_usuario)
+            )
         })
-
         return reconhecimentos
     }
 
-    async get(id:number): Promise<Reconhecimento>{
+    async get(idReconhecimento:number): Promise<Reconhecimento>{
         const linhas = await this.client.query(`select * from coin_reconhecimento
-        where id = $1::int and status = 'aprovado'`,[id])
+        where id = $1::int and status = 'aprovado'`,[idReconhecimento])
 
         if(linhas.length ===0){
             throw new Error('id de Reconhecimento não encontrado ou pendente aprovação')
@@ -43,7 +45,6 @@ export class ServicoReconhecimento {
             linha.id, linha.descricao, linha.data, linha.qtd_moedas_doadas, 
             linha.status, linha.id_de_usuario, linha.id_para_usuario
         )
-
         return reconhecimento
     }
 
@@ -57,36 +58,33 @@ export class ServicoReconhecimento {
 
         let valorDoacao = reconhecimento.qtdMoedasDoadas 
 
-        await this.client.query(`insert into coin_reconhecimento (descricao,data, qtd_moedas_doadas, 
-        status, id_de_usuario, id_para_usuario) values 
-        ($1::text, $2::Date, $3::int, $4::text, $5::int, $6::int)`,[reconhecimento.descricao, 
-        reconhecimento.data, reconhecimento.qtdMoedasDoadas, 'pendente',reconhecimento.idDeUsuario, 
-        reconhecimento.idParaUsuario])
-
+        await this.client.query(`insert into coin_reconhecimento (descricao,data,
+            qtd_moedas_doadas, status, id_de_usuario, id_para_usuario) values 
+            ($1::text, $2::Date, $3::int, $4::text, $5::int, $6::int)`,
+            [reconhecimento.descricao, reconhecimento.data, reconhecimento.qtdMoedasDoadas,
+            'pendente',reconhecimento.idDeUsuario, reconhecimento.idParaUsuario]
+        )
+        
         await this.servicoCarteiraMoedaDoada.debitar(valorDoacao, idDeUsuario)
 
         await this.servicoCarteiraMoedaRecebida.creditar(valorDoacao, idParaUsuario)
-       
     }
-
-
     
-    async delete(id:number): Promise<void>{
+    async delete(idReconhecimento:number): Promise<void>{
         const localizaId = await this.client.query(`select * from coin_reconhecimento
-        where id = $1::int and status = 'pendente' or status = 'reprovado'`,[id])
+        where id = $1::int and status = 'pendente' or status = 'reprovado'`,[idReconhecimento])
 
         if(localizaId.length ===0){
             throw new Error('id de Reconhecimento não encontrado ou já aprovado')
         }
         
         await this.client.query(`delete from coin_reconhecimento
-        where id = $1::int`,[id])
+        where id = $1::int`,[idReconhecimento])
     }
 
-    async aprovar(id:number): Promise<void>{         //não tem bory
+    async aprovar(idReconhecimento:number): Promise<void>{         //não tem bory
         const localizaId = await this.client.query(`select * from coin_reconhecimento
-        where id = $1::int and status = 'pendente' or status = 'reprovado'`,[id])
-
+        where id = $1::int and status = 'pendente' or status = 'reprovado'`,[idReconhecimento])
 
         if(localizaId.length === 0){
             throw new Error('id de Reconhecimento não encontrado ou já aprovado')
@@ -94,13 +92,14 @@ export class ServicoReconhecimento {
 
         await this.client.query(`update coin_reconhecimento set
         status = 'aprovado'
-        where id = $1::int`,[id])
+        where id = $1::int`,[idReconhecimento])
     }
 
     async reprovar(id:number): Promise<void>{         //não tem bory
-        const localizaId = await this.client.query(`select * from coin_reconhecimento
-        where id = $1::int and status = 'pendente'`,[id])
-
+        const localizaId = await this.client.query(
+            `select * from coin_reconhecimento
+            where id = $1::int and status = 'pendente'`,[id]
+        )
 
         if(localizaId.length === 0){
             throw new Error('id de Reconhecimento não encontrado ou já reprovado')
@@ -109,8 +108,6 @@ export class ServicoReconhecimento {
         await this.client.query(`update coin_reconhecimento set
         status = 'reprovado'
         where id = $1::int`,[id])
-
-
 
         await this.servicoCarteiraMoedaDoada.creditar(localizaId.qtd_moedas_doadas, localizaId.id_de_usuario)
 
