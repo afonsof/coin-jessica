@@ -14,21 +14,23 @@ export class ServicoCarteiraMoedasRecebidas {
     constructor(client: IDatabase<any>){
         this.client = client
     }
-    async get(id:number): Promise<GetCarteiraMoedasRecebidas>{
+    async get(idUsuario:number): Promise<GetCarteiraMoedasRecebidas>{
         const linhas = await this.client.query(`select cu.nome , cmr.saldo as saldo_recebido
         from coin_usuario cu 
         join coin_carteira_moedas_recebidas cmr on cmr.id_funcionario = cu.id
-        where id_funcionario = $1::int`,[id])
+        where id_funcionario = $1::int`,[idUsuario])
 
         if(linhas.length ===0){
             throw new Error('usuario não encontrado')
         }
 
+        console.log('asa',linhas)
+
         const linha = linhas[0]
         const carteiraMoedasRecebidas = {
             nome:linha.nome, 
-            saldo:linha.saldo_doado,
-            idUsuario:id
+            saldo:linha.saldo_recebido,
+            idUsuario:idUsuario
         }        
 
         return carteiraMoedasRecebidas
@@ -39,7 +41,7 @@ export class ServicoCarteiraMoedasRecebidas {
         where id_funcionario = $1::int`, [idUsuario])
 
         if(localizaIDParaUsuario.length === 0){
-            throw new Error('id para usuario, não encontrado')
+            throw new Error('idUsuario para usuario, não encontrado')
         }
 
 
@@ -58,7 +60,7 @@ export class ServicoCarteiraMoedasRecebidas {
          console.log(localizaIDDeUsuario)
 
         if(localizaIDDeUsuario.length === 0){
-            throw new Error('id de usuario, não encontrado')
+            throw new Error('idUsuario de usuario, não encontrado')
         }
         const saldoAtual = localizaIDDeUsuario[0].saldo
 
@@ -70,5 +72,7 @@ export class ServicoCarteiraMoedasRecebidas {
         saldo = $1::int
         where id_funcionario = $2::int`,[saldoAtual - valorParaDebitar, idUsuario])
     }
+
+    
 
 }
