@@ -4,8 +4,8 @@ export class Usuario {
     email: string
     senha: string
 
-    constructor(id: number|undefined, nome: string, email: string, senha: string) {    //id vai ser ou um numero ou undefined
-        this.id = id
+    constructor(idUsuario: number|undefined, nome: string, email: string, senha: string) {    //id vai ser ou um numero ou undefined
+        this.id = idUsuario
         this.nome = nome
         this.email = email
         this.senha = senha
