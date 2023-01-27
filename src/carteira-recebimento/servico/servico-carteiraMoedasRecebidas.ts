@@ -1,5 +1,4 @@
 import { IDatabase } from "pg-promise";
-import { CarteiraMoedasRecebidas } from "../dominio/carteiraMoedasRecebidas";
 
 interface GetCarteiraMoedasRecebidas {
     nome: string
@@ -24,15 +23,12 @@ export class ServicoCarteiraMoedasRecebidas {
             throw new Error('usuario não encontrado')
         }
 
-        console.log('asa',linhas)
-
         const linha = linhas[0]
         const carteiraMoedasRecebidas = {
             nome:linha.nome, 
             saldo:linha.saldo_recebido,
             idUsuario:idUsuario
         }        
-
         return carteiraMoedasRecebidas
     }
 
@@ -44,9 +40,7 @@ export class ServicoCarteiraMoedasRecebidas {
             throw new Error('idUsuario para usuario, não encontrado')
         }
 
-
         const saldoAtual = localizaIDParaUsuario[0].saldo
-
 
         await this.client.query(`update coin_carteira_moedas_recebidas set 
         saldo = $1::int
@@ -56,8 +50,6 @@ export class ServicoCarteiraMoedasRecebidas {
     async debitar(valorParaDebitar: number, idUsuario: number): Promise<void> {
         const localizaIDDeUsuario: any[] = await this.client.query(`select saldo from coin_carteira_moedas_recebidas
          where id_funcionario = $1::int`, [idUsuario])
-
-         console.log(localizaIDDeUsuario)
 
         if(localizaIDDeUsuario.length === 0){
             throw new Error('idUsuario de usuario, não encontrado')
@@ -72,7 +64,4 @@ export class ServicoCarteiraMoedasRecebidas {
         saldo = $1::int
         where id_funcionario = $2::int`,[saldoAtual - valorParaDebitar, idUsuario])
     }
-
-    
-
 }
