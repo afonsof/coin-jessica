@@ -16,16 +16,15 @@ export class ServicoEmpresa {
         linhas.forEach(linha =>{
             empresas.push(new Empresa(linha.id, linha.nome, linha.responsavel))
         })
-
         return empresas
     }
 
-    async get(id:number): Promise<Empresa>{
+    async get(idEmpresa:number): Promise<Empresa>{
         const linhas = await this.client.query(`select * from coin_empresa
-        where id = $1::int`, [id])
+        where id = $1::int`, [idEmpresa])
 
         if(linhas.length === 0){
-            throw new Error('empresa não existe')
+            throw new Error('empresa não encontrada')
         }
 
         const linha = linhas[0]
@@ -34,8 +33,8 @@ export class ServicoEmpresa {
         return empresa
     }
 
-    async update(id:number, nome: string,  responsavel:string): Promise<void>{
-        const empresa = new Empresa(id,nome, responsavel)
+    async update(idEmpresa:number, nome: string,  responsavel:string): Promise<void>{
+        const empresa = new Empresa(idEmpresa,nome, responsavel)
 
         await this.client.query(`update  coin_empresa set
         nome = $2::text,
@@ -50,12 +49,10 @@ export class ServicoEmpresa {
             ($1::text, $2:: text)`,
             [empresa.nome, empresa.responsavel]
         )
-
     }
 
-    async delete(id:number): Promise<void>{
+    async delete(idEmpresa:number): Promise<void>{
         
-        await this.client.query(`delete from coin_empresa where id = $1::int`,[id])
-    }
-    
+        await this.client.query(`delete from coin_empresa where id = $1::int`,[idEmpresa])
+    } 
 }
