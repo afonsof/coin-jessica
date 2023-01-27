@@ -19,8 +19,6 @@ export class ServicoUsuario {
         return usuarios
     }
 
-
-
     async get(id:number): Promise<Usuario> {                                   //colocar td q precisa para a função funcionar
         const linhas = await this.client.query(`select * from coin_usuario
         where id = $1::int`,[id])
