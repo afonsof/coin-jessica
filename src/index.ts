@@ -25,8 +25,8 @@ import { createReconhecimento } from './reconhecimento/rotas/create-reconhecimen
 import { deleteReconhecimento } from './reconhecimento/rotas/delete-reconhecimento'
 import { getCarteiraMoedasRecebidas } from './carteira-recebida/rotas/get-carteira-moedas-recebidas'
 import { getCarteiraMoedasDoadas } from './carteira-doacao/rotas/get-carteira-moedas-doadas'
-import { updateReconhecimentoAprovar } from './reconhecimento/rotas/update-aprovar-reconhecimento'
-import { updateReconhecimentoReprovar } from './reconhecimento/rotas/update-reprovar-reconhecimento'
+import { aprovarReconhecimento } from './reconhecimento/rotas/aprovar-reconhecimento'
+import { reprovarReconhecimento } from './reconhecimento/rotas/reprovar-reconhecimento'
 import { getPedido } from './pedido/rotas/get-pedido'
 import { createPedido } from './pedido/rotas/create-pedido'
 import { aprovarPedido } from './pedido/rotas/aprovar-pedido'
@@ -71,8 +71,8 @@ createReconhecimento(site, client)
 deleteReconhecimento(site, client)
 getCarteiraMoedasRecebidas(site, client)
 getCarteiraMoedasDoadas(site, client)
-updateReconhecimentoAprovar(site, client)
-updateReconhecimentoReprovar(site, client)
+aprovarReconhecimento(site, client)
+reprovarReconhecimento(site, client)
 getPedido(site,client)
 aprovarPedido(site, client)
 reprovarPedido(site,client)
