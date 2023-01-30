@@ -23,10 +23,10 @@ export class Reconhecimento {
             throw new Error('A quantidade de moedas a serem doadas precisa ser declarada')
         }
         if(!idParaUsuario){
-            throw new Error('O usuario à receber o reconhecimento precisa ser declarado')
+            throw new Error('O usuário à receber o reconhecimento precisa ser declarado')
         }
         if(qtdMoedasDoadas <= 0){
-            throw new Error('moedas doadas devem ser maior que zero')
+            throw new Error('Moedas doadas devem ser maior que zero')
         }
     }
 }

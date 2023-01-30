@@ -20,7 +20,7 @@ export class ServicoCarteiraMoedasRecebidas {
         where id_usuario = $1::int`,[idUsuario])
 
         if(carteiraRecebidaUsuarioNoBD.length ===0){
-            throw new Error('usuario não encontrado')
+            throw new Error('Usuário não encontrado ou usuário sem carteira')
         }
 
         const carteiraRecebidalinha = carteiraRecebidaUsuarioNoBD[0]
@@ -38,7 +38,7 @@ export class ServicoCarteiraMoedasRecebidas {
         where id_usuario = $1::int`, [idUsuario])
 
         if(localizaIDParaUsuario.length === 0){
-            throw new Error('idUsuario para usuario, não encontrado')
+            throw new Error('Carteira de moedas recebidas não encontrada')
         }
 
         const saldoAtual = localizaIDParaUsuario[0].saldo
@@ -53,12 +53,12 @@ export class ServicoCarteiraMoedasRecebidas {
          where id_usuario = $1::int`, [idUsuario])
 
         if(localizaIDDeUsuario.length === 0){
-            throw new Error('idUsuario de usuario, não encontrado')
+            throw new Error('Carteira de moedas doadas não encontrada')
         }
         const saldoAtual = localizaIDDeUsuario[0].saldo
 
         if((saldoAtual-valorParaDebitar) < 0) {
-            throw new Error('Usuário n"ao tem saldo suficiente')
+            throw new Error('Usuário não tem saldo suficiente')
         }
 
         await this.client.query(`update coin_carteira_moedas_recebidas set 

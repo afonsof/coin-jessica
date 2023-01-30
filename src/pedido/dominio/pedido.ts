@@ -27,7 +27,7 @@ export class Pedido {
         this.idUsuario = idUsuario
 
         if(!idUsuario){
-            throw new Error('Pedido precisa de um usuario')
+            throw new Error('Pedido precisa de um usuário')
         }
     }
 }

@@ -4,7 +4,8 @@ export class Produto {
     valor: number
     estoque: number
 
-    constructor(idProduto: number|undefined, nome: string, valor: number, estoque: number) {    //id vai ser ou um numero ou undefined
+     //id vai ser ou um numero ou undefined
+    constructor(idProduto: number|undefined, nome: string, valor: number, estoque: number) {   
         this.id = idProduto
         this.nome = nome
         this.valor = valor

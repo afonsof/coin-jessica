@@ -12,7 +12,7 @@ export class ServicoReconhecimento {
 
     constructor(client: IDatabase<any>){
         this.client = client
-        this.servicoCarteiraMoedaDoada = new ServicoCarteiraMoedasDoadas(client) //vou usar na hora do debitar, tenho q criar em carteira doacao
+        this.servicoCarteiraMoedaDoada = new ServicoCarteiraMoedasDoadas(client)
         this.servicoCarteiraMoedaRecebida = new ServicoCarteiraMoedasRecebidas(client)
     }
 
@@ -43,8 +43,9 @@ export class ServicoReconhecimento {
         const reconhecimentoLinha = reconhecimentoAprovadoBD[0]
         
         const reconhecimento = new Reconhecimento(
-            reconhecimentoLinha.id, reconhecimentoLinha.descricao, reconhecimentoLinha.data, reconhecimentoLinha.qtd_moedas_doadas, 
-            reconhecimentoLinha.status, reconhecimentoLinha.id_de_usuario, reconhecimentoLinha.id_para_usuario
+            reconhecimentoLinha.id, reconhecimentoLinha.descricao, reconhecimentoLinha.data, 
+            reconhecimentoLinha.qtd_moedas_doadas, reconhecimentoLinha.status, 
+            reconhecimentoLinha.id_de_usuario, reconhecimentoLinha.id_para_usuario
         )
         return reconhecimento
     }
@@ -83,7 +84,8 @@ export class ServicoReconhecimento {
         where id = $1::int`,[idReconhecimento])
     }
 
-    async aprovar(idReconhecimento:number): Promise<void>{         //não tem bory
+      //não tem bory
+    async aprovar(idReconhecimento:number): Promise<void>{       
         const localizaId = await this.client.query(`select * from coin_reconhecimento
         where id = $1::int and status = 'pendente' or status = 'reprovado'`,[idReconhecimento])
 
@@ -96,7 +98,8 @@ export class ServicoReconhecimento {
         where id = $1::int`,[idReconhecimento])
     }
 
-    async reprovar(id:number): Promise<void>{         //não tem bory
+    //não tem bory
+    async reprovar(id:number): Promise<void>{         
         const localizaId = await this.client.query(
             `select * from coin_reconhecimento
             where id = $1::int and status = 'pendente'`,[id]

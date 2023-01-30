@@ -24,7 +24,7 @@ export class ServicoEmpresa {
         where id = $1::int`, [idEmpresa])
 
         if(empresasDoBD.length === 0){
-            throw new Error('empresa não encontrada')
+            throw new Error('Empresa não encontrada')
         }
 
         const empresaLinha = empresasDoBD[0]

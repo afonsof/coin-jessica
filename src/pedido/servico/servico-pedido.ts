@@ -67,7 +67,6 @@ export class ServicoPedido {
                 nomeUsuario: pedido.usuario
             })
         })
-
         return pedidos
     }
 
@@ -108,7 +107,6 @@ export class ServicoPedido {
         return pedido
     }
 
-
     async aprovar(idPedido: number): Promise<void> {
         // ok ver se o idPedido do pedido encontra-se pendente
         // ver se o saldo ẽ maior que o valor do o pedido
@@ -123,7 +121,7 @@ export class ServicoPedido {
         )
 
         if (produtosPendentesDoPedido.length === 0) {
-            throw new Error('Nao existem produtos no pedido que estao pendentes')
+            throw new Error('Não existem produtos no pedido que estao pendentes')
         }
 
         const pedidos = await this.client.query(
@@ -156,7 +154,8 @@ export class ServicoPedido {
 
         produtosDoPedido.forEach(produto => {
             if (produto.qtd > produto.estoque) {
-                throw new Error(`Foi requisitado ${produto.qtd} unidades do produto ${produto.nome}, mas só tem ${produto.estoque} em estoque`)
+                throw new Error(`Foi requisitado ${produto.qtd} unidades do produto ${produto.nome},
+                    mas só tem ${produto.estoque} em estoque`)
             }
         })
 
@@ -183,7 +182,7 @@ export class ServicoPedido {
         )
 
         if (localizaId.length === 0) {
-            throw new Error('idPedido pedido não encontrado para análise')
+            throw new Error('Id pedido não encontrado para análise')
         }
 
         await this.client.query(`update coin_produto_pedido set

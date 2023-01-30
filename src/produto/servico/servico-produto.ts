@@ -24,7 +24,7 @@ export class ServicoProduto {
         where id = $1::int`,[idProduto])
 
         if(produtoNoBD.length === 0){
-            throw new Error ('id produto não encontrado')
+            throw new Error ('Id produto não encontrado')
         }
 
         const produtoLinha = produtoNoBD[0]
@@ -72,7 +72,7 @@ export class ServicoProduto {
         )
 
         if(localizaId.length === 0){
-            throw new Error('id de produto não encontrado')
+            throw new Error('Id de produto não encontrado')
         }
         const estoqueAtual = localizaId[0].estoque
 
@@ -90,13 +90,13 @@ export class ServicoProduto {
         )
 
         if(localizaId.length === 0){
-            throw new Error('id de produto não encontrado')
+            throw new Error('Id de produto não encontrado')
         }
 
         const estoqueAtual = localizaId[0].estoque
 
         if(qtdPedido > estoqueAtual){
-            throw new Error('quantidade pedida maior que estoque disponível')
+            throw new Error('Quantidade pedida maior que estoque disponível')
         }
     }
 }

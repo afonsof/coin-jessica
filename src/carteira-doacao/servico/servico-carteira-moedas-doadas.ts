@@ -22,7 +22,7 @@ export class ServicoCarteiraMoedasDoadas{
         where id_usuario = $1::int`,[idUsuario])
 
         if(carteirasDoadasDeUsuarioBD.length ===0){
-            throw new Error('usuario sem carteira')
+            throw new Error('Usuário não encontrado ou usuário sem carteira')
         }
 
         const carteiraDoadaDeUsuariolinha = carteirasDoadasDeUsuarioBD[0]
@@ -42,13 +42,13 @@ export class ServicoCarteiraMoedasDoadas{
          where id_usuario = $1::int`, [idUsuario])
 
         if(localizaIDDeUsuario.length === 0){
-            throw new Error('id de usuario não encontrado')
+            throw new Error('Carteira de moedas doadas não encontrada')
         }
 
         const saldoAtual = localizaIDDeUsuario[0].saldo
 
         if((saldoAtual-valorParaDebitar) < 0) {
-            throw new Error('Usuário sem saldo suficiente')
+            throw new Error('Usuário não tem saldo suficiente')
         }
 
         await this.client.query(`update coin_carteira_moedas_doadas set 
@@ -61,7 +61,7 @@ export class ServicoCarteiraMoedasDoadas{
          where id_usuario = $1::int`, [idUsuario])
 
         if(localizaIDDeUsuario.length === 0){
-            throw new Error('id de usuario, não encontrado')
+            throw new Error('Carteira de moedas doadas não encontrada')
         }
 
         const saldoAtual = localizaIDDeUsuario[0].saldo
