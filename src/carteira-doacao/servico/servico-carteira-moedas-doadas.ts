@@ -16,20 +16,20 @@ export class ServicoCarteiraMoedasDoadas{
         this.client = client
     }
     async get(idUsuario:number): Promise<GetCarteiraMoedasDoadas>{
-        const carteirasDoacaoDeUsuarioBD = await this.client.query(`select cu.nome , cmd.saldo as saldo_doado
+        const carteirasDoadasDeUsuarioBD = await this.client.query(`select cu.nome , cmd.saldo as saldo_doado
         from coin_usuario cu 
         join coin_carteira_moedas_doadas cmd on cmd.id_usuario = cu.id
         where id_usuario = $1::int`,[idUsuario])
 
-        if(carteirasDoacaoDeUsuarioBD.length ===0){
+        if(carteirasDoadasDeUsuarioBD.length ===0){
             throw new Error('usuario sem carteira')
         }
 
-        const carteiraDoacaoDeUsuariolinha = carteirasDoacaoDeUsuarioBD[0]
+        const carteiraDoadaDeUsuariolinha = carteirasDoadasDeUsuarioBD[0]
 
         const carteiraMoedasDoadas = {
-            nome:carteiraDoacaoDeUsuariolinha.nome, 
-            saldo:carteiraDoacaoDeUsuariolinha.saldo_doado,
+            nome:carteiraDoadaDeUsuariolinha.nome, 
+            saldo:carteiraDoadaDeUsuariolinha.saldo_doado,
             idUsuario:idUsuario
         }
 

@@ -57,7 +57,7 @@ export class ServicoReconhecimento {
             undefined, descricao, data, qtdMoedasDoadas, status, idDeUsuario, idParaUsuario
         )
 
-        let valorDoacao = reconhecimento.qtdMoedasDoadas 
+        let valorDoado = reconhecimento.qtdMoedasDoadas 
 
         await this.client.query(`insert into coin_reconhecimento (descricao,data,
             qtd_moedas_doadas, status, id_de_usuario, id_para_usuario) values 
@@ -66,9 +66,9 @@ export class ServicoReconhecimento {
             'pendente',reconhecimento.idDeUsuario, reconhecimento.idParaUsuario]
         )
         
-        await this.servicoCarteiraMoedaDoada.debitar(valorDoacao, idDeUsuario)
+        await this.servicoCarteiraMoedaDoada.debitar(valorDoado, idDeUsuario)
 
-        await this.servicoCarteiraMoedaRecebida.creditar(valorDoacao, idParaUsuario)
+        await this.servicoCarteiraMoedaRecebida.creditar(valorDoado, idParaUsuario)
     }
     
     async delete(idReconhecimento:number): Promise<void>{
