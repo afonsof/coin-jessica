@@ -8,32 +8,33 @@ export class ServicoUsuario {
         this.client = client
     }
     async listar(): Promise<Usuario[]> {
-        const linhas = await this.client.query(`select * from coin_usuario`)
+        const usuariosNoBD = await this.client.query(`select * from coin_usuario`)
 
         const usuarios: Usuario[] = []
 
-        linhas.forEach(linha=> {
-            usuarios.push(new Usuario(linha.id, linha.nome, linha.email, linha.senha))
+        usuariosNoBD.forEach(usuario=> {
+            usuarios.push(new Usuario(usuario.id, usuario.nome, usuario.email, usuario.senha))
         })
         return usuarios
     }
     
     //colocar td q precisa para a função funcionar
     async get(idUsuario:number): Promise<Usuario> {                                   
-        const linhas = await this.client.query(`select * from coin_usuario
+        const usuariosNoBD = await this.client.query(`select * from coin_usuario
         where id = $1::int`,[idUsuario])
 
-        if(linhas.length === 0) {
-            throw new Error('usuário não existe')
+        if(usuariosNoBD.length === 0) {
+            throw new Error('Usuário não encontrado')
         }
 
-        const linha = linhas[0]
-        const usuario = new Usuario(linha.id, linha.nome, linha.email, linha.senha)
+        const usuario = usuariosNoBD[0]
 
-        return usuario  
+        return new Usuario(usuario.id, usuario.nome, usuario.email, usuario.senha)
+
     }
 
-    async create(nome:string, email:string, senha:string): Promise<void> {  // void pq a função n vai retornar nada, pq create n retorna
+    // void pq a função n vai retornar nada, pq create n retorna
+    async create(nome:string, email:string, senha:string): Promise<void> { 
         const usuario = new Usuario(undefined, nome, email, senha)
 
         await this.client.query(`insert into coin_usuario (nome, 
@@ -47,7 +48,7 @@ export class ServicoUsuario {
         where id = $1::int`,[idUsuario])
 
         if(localizaId.length === 0) {
-            throw new Error('id de usuário não existe')
+            throw new Error('Usuário não encontrado')
         }
         
         const usuario = new Usuario(idUsuario, nome, email, senha)
@@ -66,7 +67,7 @@ export class ServicoUsuario {
         where id = $1::int`,[idUsuario])
 
         if(localizaId.length === 0) {
-            throw new Error('id de usuário não existe')
+            throw new Error('Usuário não encontrado')
         }
 
         await this.client.query(`delete from coin_usuario 

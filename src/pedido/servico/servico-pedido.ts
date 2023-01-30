@@ -1,11 +1,11 @@
 import { IDatabase } from "pg-promise"
-import { ServicoCarteiraMoedasRecebidas } from "../../carteira-recebimento/servico/servico-carteiraMoedasRecebidas"
+import { ServicoCarteiraMoedasRecebidas } from "../../carteira-recebida/servico/servico-carteiraMoedasRecebidas"
 import { ServicoProduto } from "../../produto/servico/servico-produto"
 
 interface ListarPedido {
     idPedido: number
     data: Date
-    nomeFuncionario: string
+    nomeUsuario: string
 }
 
 interface GetPedidoProduto {
@@ -54,25 +54,24 @@ export class ServicoPedido {
     }
 
     async listar(): Promise<ListarPedido[]> {
-        const linhas = await this.client.query(`select cp.id, data, cu.nome as funcionario
+        const pedidosNoBD = await this.client.query(`select cp.id, data, cu.nome as usuario
         from coin_pedido cp
-        join coin_usuario cu on cu.id = cp.id_funcionario`)
+        join coin_usuario cu on cu.id = cp.id_usuario`)
 
         const pedidos: ListarPedido[] = []
 
-        linhas.forEach(linha => {
+        pedidosNoBD.forEach(pedido => {
             pedidos.push({
-                idPedido: linha.id,
-                data: linha.data,
-                nomeFuncionario: linha.funcionario
+                idPedido: pedido.id,
+                data: pedido.data,
+                nomeUsuario: pedido.usuario
             })
         })
-
         return pedidos
     }
 
     async get(idPedido: number): Promise<GetPedido> {
-        const linhas = await this.client.query(
+        const pedidoNoBD = await this.client.query(
             `select * from coin_pedido cp
             join coin_produto_pedido cpp on cpp.id_pedido = cp.id
             join coin_produto p on p.id = cpp.id_produto
@@ -80,7 +79,7 @@ export class ServicoPedido {
             [idPedido]
         )
 
-        if (linhas.length === 0) {
+        if (pedidoNoBD.length === 0) {
             throw new Error('pedido não encontrado')
         }
 
@@ -96,18 +95,17 @@ export class ServicoPedido {
         const pedido: GetPedido = {
             idPedido: idPedido,
             total: totalPedido,
-            produtos: linhas.map(linha => {
+            produtos: pedidoNoBD.map(pedido => {
                 return {
-                    nome: linha.nome,
-                    valor: linha.valor_unitario,
-                    qtd: linha.qtd,
-                    total: (linha.valor_unitario * linha.qtd) 
+                    nome: pedido.nome,
+                    valor: pedido.valor_unitario,
+                    qtd: pedido.qtd,
+                    total: (pedido.valor_unitario * pedido.qtd) 
                 }
             })
         }
         return pedido
     }
-
 
     async aprovar(idPedido: number): Promise<void> {
         // ok ver se o idPedido do pedido encontra-se pendente
@@ -123,7 +121,7 @@ export class ServicoPedido {
         )
 
         if (produtosPendentesDoPedido.length === 0) {
-            throw new Error('Nao existem produtos no pedido que estao pendentes')
+            throw new Error('Não existem produtos no pedido que estao pendentes')
         }
 
         const pedidos = await this.client.query(
@@ -133,15 +131,15 @@ export class ServicoPedido {
         )
         const pedido = pedidos[0]
 
-        const linhas = await this.client.query(
+        const somatorioValorPedido = await this.client.query(
             `select cast(sum(valor_unitario) as int) as total
              from coin_produto_pedido
              where id_pedido = $1::int`,
             [idPedido]
         )
-        const totalPedido = linhas[0].total
+        const totalPedido = somatorioValorPedido[0].total
 
-        const carteiraRecebida = await this.servicoCarteiraMoedasRecebidas.get(pedido.id_funcionario)
+        const carteiraRecebida = await this.servicoCarteiraMoedasRecebidas.get(pedido.id_usuario)
         if (carteiraRecebida.saldo < totalPedido) {
             await this.reprovar(idPedido)
             throw new Error(('Usuário não tem saldo suficiente para aprovar o pedido.'))
@@ -156,7 +154,8 @@ export class ServicoPedido {
 
         produtosDoPedido.forEach(produto => {
             if (produto.qtd > produto.estoque) {
-                throw new Error(`Foi requisitado ${produto.qtd} unidades do produto ${produto.nome}, mas só tem ${produto.estoque} em estoque`)
+                throw new Error(`Foi requisitado ${produto.qtd} unidades do produto ${produto.nome},
+                    mas só tem ${produto.estoque} em estoque`)
             }
         })
 
@@ -165,7 +164,7 @@ export class ServicoPedido {
             return this.servicoProduto.atualizarEstoque(produto.id_produto, produto.qtd)
         }))
 
-        await this.servicoCarteiraMoedasRecebidas.debitar(totalPedido, pedido.id_funcionario)
+        await this.servicoCarteiraMoedasRecebidas.debitar(totalPedido, pedido.id_usuario)
 
         await this.client.query(
             `update coin_produto_pedido set
@@ -183,7 +182,7 @@ export class ServicoPedido {
         )
 
         if (localizaId.length === 0) {
-            throw new Error('idPedido pedido não encontrado para análise')
+            throw new Error('Id pedido não encontrado para análise')
         }
 
         await this.client.query(`update coin_produto_pedido set
@@ -212,7 +211,7 @@ export class ServicoPedido {
         const dataAtual = new Date()
 
         const res = await this.client.query(
-            `insert into coin_pedido (data, id_funcionario) values ($1::date, $2::int) RETURNING id`,
+            `insert into coin_pedido (data, id_usuario) values ($1::date, $2::int) RETURNING id`,
             [dataAtual, idUsuario]
         )
 

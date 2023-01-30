@@ -9,29 +9,28 @@ export class ServicoProduto {
     }
 
     async listar(): Promise<Produto[]>{
-        const linhas = await this.client.query(`select * from coin_produto`)
+        const produtosNoBD = await this.client.query(`select * from coin_produto`)
 
         const produtos: Produto[] = []
 
-        linhas.forEach(linha =>{
-            produtos.push(new Produto(linha.id, linha.nome, linha.valor, linha.estoque))
+        produtosNoBD.forEach(produto =>{
+            produtos.push(new Produto(produto.id, produto.nome, produto.valor, produto.estoque))
         })
         return produtos
     }
 
     async get(idProduto: number): Promise<Produto>{
-        const linhas = await this.client.query(`select * from coin_produto
+        const produtosNoBD = await this.client.query(`select * from coin_produto
         where id = $1::int`,[idProduto])
 
-        if(linhas.length === 0){
-            throw new Error ('id produto não encontrado')
+        if(produtosNoBD.length === 0){
+            throw new Error ('Id produto não encontrado')
         }
 
-        const linha = linhas[0]
-        
-        const produto = new Produto(linha.id, linha.nome, linha.valor, linha.estoque)
+        const produto = produtosNoBD[0]
+         
+        return new Produto(produto.id, produto.nome, produto.valor, produto.estoque)
 
-        return produto
     }
 
 
@@ -43,7 +42,6 @@ export class ServicoProduto {
             values ($1::text, $2::int, $3::int)`, 
             [produto.nome, produto.valor, produto.estoque]
         )
-
 
     }
 
@@ -73,7 +71,7 @@ export class ServicoProduto {
         )
 
         if(localizaId.length === 0){
-            throw new Error('id de produto não encontrado')
+            throw new Error('Id de produto não encontrado')
         }
         const estoqueAtual = localizaId[0].estoque
 
@@ -91,13 +89,13 @@ export class ServicoProduto {
         )
 
         if(localizaId.length === 0){
-            throw new Error('id de produto não encontrado')
+            throw new Error('Id de produto não encontrado')
         }
 
         const estoqueAtual = localizaId[0].estoque
 
         if(qtdPedido > estoqueAtual){
-            throw new Error('quantidade pedida maior que estoque disponível')
+            throw new Error('Quantidade pedida maior que estoque disponível')
         }
     }
 }
