@@ -3,8 +3,8 @@ export class Empresa {
     nome: string
     responsavel: string
 
-    constructor(id: number|undefined, nome: string,responsavel: string) {    //id vai ser ou um numero ou undefined
-        this.id = id
+    constructor(idEmpresa: number|undefined, nome: string,responsavel: string) {    //id vai ser ou um numero ou undefined
+        this.id = idEmpresa
         this.nome = nome
         this.responsavel = responsavel
 

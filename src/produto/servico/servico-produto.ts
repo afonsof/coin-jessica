@@ -16,13 +16,12 @@ export class ServicoProduto {
         linhas.forEach(linha =>{
             produtos.push(new Produto(linha.id, linha.nome, linha.valor, linha.estoque))
         })
-
         return produtos
     }
 
-    async get(id: number): Promise<Produto>{
+    async get(idProduto: number): Promise<Produto>{
         const linhas = await this.client.query(`select * from coin_produto
-        where id = $1::int`,[id])
+        where id = $1::int`,[idProduto])
 
         if(linhas.length === 0){
             throw new Error ('id produto não encontrado')
@@ -39,33 +38,39 @@ export class ServicoProduto {
     async create(nome:string, valor:number, estoque:number): Promise<void>{
         const produto = new Produto(undefined, nome, valor,estoque)
         
-        await this.client.query(`insert into coin_produto (nome, valor, estoque)
-        values ($1::text, $2::int, $3::int)`, [produto.nome, produto.valor, produto.estoque])
+        await this.client.query(
+            `insert into coin_produto (nome, valor, estoque)
+            values ($1::text, $2::int, $3::int)`, 
+            [produto.nome, produto.valor, produto.estoque]
+        )
 
 
     }
 
-    async update(id:number, nome:string, valor:number, estoque:number): Promise<void>{
-        const produto = new Produto(id, nome, valor, estoque)
+    async update(idPedido:number, nome:string, valor:number, estoque:number): Promise<void>{
+        const produto = new Produto(idPedido, nome, valor, estoque)
 
-        await this.client.query(`update coin_produto set
-        nome = $2::text,
-        valor = $3::int,
-        estoque = $4::int
-        where id = $1::int`, [produto.id, produto.nome, produto.valor, produto.estoque])
+        await this.client.query(
+            `update coin_produto set
+            nome = $2::text,
+            valor = $3::int,
+            estoque = $4::int
+            where id = $1::int`, 
+            [produto.id, produto.nome, produto.valor, produto.estoque]
+        )
     }
 
-    async delete(id:number): Promise<void>{
+    async delete(idPedido:number): Promise<void>{
 
-        await this.client.query(`delete from coin_produto where id = $1::int`,[id])
-
+        await this.client.query(`delete from coin_produto where id = $1::int`,[idPedido])
     }
 
+    async atualizarEstoque(idPedido:number, qtdParaDebitar:number): Promise<void>{
 
-    async atualizarEstoque(id:number, qtdParaDebitar:number): Promise<void>{
-
-        const localizaId: any[] = await this.client.query(`select * from coin_produto
-        where id = $1::int`, [id])
+        const localizaId: any[] = await this.client.query(
+            `select * from coin_produto
+            where id = $1::int`, [idPedido]
+        )
 
         if(localizaId.length === 0){
             throw new Error('id de produto não encontrado')
@@ -74,15 +79,16 @@ export class ServicoProduto {
 
         await this.client.query(`update coin_produto set
         estoque = $1::int
-        where id = $2::int`, [estoqueAtual - qtdParaDebitar, id])
+        where id = $2::int`, [estoqueAtual - qtdParaDebitar, idPedido])
 
     }
 
+    async conferirQtdEstoque( idPedido:number, qtdPedido:number): Promise<void>{
 
-    async conferirQtdEstoque( id:number, qtdPedido:number): Promise<void>{
-
-        const localizaId: any[] = await this.client.query(`select * from coin_produto
-        where id = $1::int`, [id])
+        const localizaId: any[] = await this.client.query(
+            `select * from coin_produto
+            where id = $1::int`, [idPedido]
+        )
 
         if(localizaId.length === 0){
             throw new Error('id de produto não encontrado')
@@ -90,13 +96,10 @@ export class ServicoProduto {
 
         const estoqueAtual = localizaId[0].estoque
 
-
         if(qtdPedido > estoqueAtual){
             throw new Error('quantidade pedida maior que estoque disponível')
         }
     }
-
- 
 }
 
 
