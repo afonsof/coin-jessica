@@ -1,5 +1,5 @@
 import { IDatabase } from "pg-promise"
-import { ServicoCarteiraMoedasRecebidas } from "../../carteira-recebimento/servico/servico-carteiraMoedasRecebidas"
+import { ServicoCarteiraMoedasRecebidas } from "../../carteira-recebida/servico/servico-carteiraMoedasRecebidas"
 import { ServicoProduto } from "../../produto/servico/servico-produto"
 
 interface ListarPedido {

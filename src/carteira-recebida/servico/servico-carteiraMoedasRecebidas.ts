@@ -14,20 +14,20 @@ export class ServicoCarteiraMoedasRecebidas {
         this.client = client
     }
     async get(idUsuario:number): Promise<GetCarteiraMoedasRecebidas>{
-        const carteiraRecebimentoUsuarioNoBD = await this.client.query(`select cu.nome , cmr.saldo as saldo_recebido
+        const carteiraRecebidaUsuarioNoBD = await this.client.query(`select cu.nome , cmr.saldo as saldo_recebido
         from coin_usuario cu 
         join coin_carteira_moedas_recebidas cmr on cmr.id_usuario = cu.id
         where id_usuario = $1::int`,[idUsuario])
 
-        if(carteiraRecebimentoUsuarioNoBD.length ===0){
+        if(carteiraRecebidaUsuarioNoBD.length ===0){
             throw new Error('usuario não encontrado')
         }
 
-        const carteiraRecebimentolinha = carteiraRecebimentoUsuarioNoBD[0]
+        const carteiraRecebidalinha = carteiraRecebidaUsuarioNoBD[0]
 
         const carteiraMoedasRecebidas = {
-            nome:carteiraRecebimentolinha.nome, 
-            saldo:carteiraRecebimentolinha.saldo_recebido,
+            nome:carteiraRecebidalinha.nome, 
+            saldo:carteiraRecebidalinha.saldo_recebido,
             idUsuario:idUsuario
         }        
         return carteiraMoedasRecebidas

@@ -23,7 +23,7 @@ import { listarReconhecimentos } from './reconhecimento/rotas/listar-reconhecime
 import { getReconhecimento } from './reconhecimento/rotas/get-reconhecimento'
 import { createReconhecimento } from './reconhecimento/rotas/create-reconhecimento'
 import { deleteReconhecimento } from './reconhecimento/rotas/delete-reconhecimento'
-import { getCarteiraMoedasRecebidas } from './carteira-recebimento/rotas/get-carteira-moedas-recebidas'
+import { getCarteiraMoedasRecebidas } from './carteira-recebida/rotas/get-carteira-moedas-recebidas'
 import { getCarteiraMoedasDoadas } from './carteira-doacao/rotas/get-carteira-moedas-doadas'
 import { updateReconhecimentoAprovar } from './reconhecimento/rotas/update-aprovar-reconhecimento'
 import { updateReconhecimentoReprovar } from './reconhecimento/rotas/update-reprovar-reconhecimento'
