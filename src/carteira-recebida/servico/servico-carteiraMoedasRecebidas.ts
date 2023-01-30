@@ -53,7 +53,7 @@ export class ServicoCarteiraMoedasRecebidas {
          where id_usuario = $1::int`, [idUsuario])
 
         if(localizaIDDeUsuario.length === 0){
-            throw new Error('Carteira de moedas doadas não encontrada')
+            throw new Error('Carteira de moedas recebidas não encontrada')
         }
         const saldoAtual = localizaIDDeUsuario[0].saldo
 
