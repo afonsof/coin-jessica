@@ -25,11 +25,11 @@ export class ServicoCarteiraMoedasDoadas{
             throw new Error('Usuário não encontrado ou usuário sem carteira')
         }
 
-        const carteiraDoadaDeUsuariolinha = carteirasDoadasDeUsuarioBD[0]
+        const carteiraMoedaDoada = carteirasDoadasDeUsuarioBD[0]
 
         const carteiraMoedasDoadas = {
-            nome:carteiraDoadaDeUsuariolinha.nome, 
-            saldo:carteiraDoadaDeUsuariolinha.saldo_doado,
+            nome:carteiraMoedaDoada.nome, 
+            saldo:carteiraMoedaDoada.saldo_doado,
             idUsuario:idUsuario
         }
 

@@ -40,12 +40,12 @@ export class ServicoReconhecimento {
             throw new Error('id de Reconhecimento não encontrado ou pendente aprovação')
         }
 
-        const reconhecimentoLinha = reconhecimentoAprovadoBD[0]
+        const reconhecimentoAprovado = reconhecimentoAprovadoBD[0]
         
         const reconhecimento = new Reconhecimento(
-            reconhecimentoLinha.id, reconhecimentoLinha.descricao, reconhecimentoLinha.data, 
-            reconhecimentoLinha.qtd_moedas_doadas, reconhecimentoLinha.status, 
-            reconhecimentoLinha.id_de_usuario, reconhecimentoLinha.id_para_usuario
+            reconhecimentoAprovado.id, reconhecimentoAprovado.descricao, reconhecimentoAprovado.data, 
+            reconhecimentoAprovado.qtd_moedas_doadas, reconhecimentoAprovado.status, 
+            reconhecimentoAprovado.id_de_usuario, reconhecimentoAprovado.id_para_usuario
         )
         return reconhecimento
     }

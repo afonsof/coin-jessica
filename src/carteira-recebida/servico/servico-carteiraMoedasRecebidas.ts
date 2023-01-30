@@ -23,11 +23,11 @@ export class ServicoCarteiraMoedasRecebidas {
             throw new Error('Usuário não encontrado ou usuário sem carteira')
         }
 
-        const carteiraRecebidalinha = carteiraRecebidaUsuarioNoBD[0]
+        const carteiraMoedaRecebida = carteiraRecebidaUsuarioNoBD[0]
 
         const carteiraMoedasRecebidas = {
-            nome:carteiraRecebidalinha.nome, 
-            saldo:carteiraRecebidalinha.saldo_recebido,
+            nome:carteiraMoedaRecebida.nome, 
+            saldo:carteiraMoedaRecebida.saldo_recebido,
             idUsuario:idUsuario
         }        
         return carteiraMoedasRecebidas

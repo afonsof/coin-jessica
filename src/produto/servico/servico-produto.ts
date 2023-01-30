@@ -20,18 +20,17 @@ export class ServicoProduto {
     }
 
     async get(idProduto: number): Promise<Produto>{
-        const produtoNoBD = await this.client.query(`select * from coin_produto
+        const produtosNoBD = await this.client.query(`select * from coin_produto
         where id = $1::int`,[idProduto])
 
-        if(produtoNoBD.length === 0){
+        if(produtosNoBD.length === 0){
             throw new Error ('Id produto não encontrado')
         }
 
-        const produtoLinha = produtoNoBD[0]
+        const produto = produtosNoBD[0]
          
-        const produto = new Produto(produtoLinha.id, produtoLinha.nome, produtoLinha.valor, produtoLinha.estoque)
+        return new Produto(produto.id, produto.nome, produto.valor, produto.estoque)
 
-        return produto
     }
 
 

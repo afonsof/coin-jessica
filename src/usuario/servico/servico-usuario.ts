@@ -20,17 +20,17 @@ export class ServicoUsuario {
     
     //colocar td q precisa para a função funcionar
     async get(idUsuario:number): Promise<Usuario> {                                   
-        const usuarioNoBD = await this.client.query(`select * from coin_usuario
+        const usuariosNoBD = await this.client.query(`select * from coin_usuario
         where id = $1::int`,[idUsuario])
 
-        if(usuarioNoBD.length === 0) {
+        if(usuariosNoBD.length === 0) {
             throw new Error('Usuário não encontrado')
         }
 
-        const usuarioLinha = usuarioNoBD[0]
-        const usuario = new Usuario(usuarioLinha.id, usuarioLinha.nome, usuarioLinha.email, usuarioLinha.senha)
+        const usuario = usuariosNoBD[0]
 
-        return usuario  
+        return new Usuario(usuario.id, usuario.nome, usuario.email, usuario.senha)
+
     }
 
     // void pq a função n vai retornar nada, pq create n retorna

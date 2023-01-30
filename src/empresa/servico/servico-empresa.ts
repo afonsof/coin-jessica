@@ -27,8 +27,9 @@ export class ServicoEmpresa {
             throw new Error('Empresa não encontrada')
         }
 
-        const empresaLinha = empresasDoBD[0]
-        const empresa = new Empresa(empresaLinha.id, empresaLinha.nome,  empresaLinha.responsavel)
+        const empresaDoBD = empresasDoBD[0]
+
+        const empresa = new Empresa(empresaDoBD.id, empresaDoBD.nome,  empresaDoBD.responsavel)
 
         return empresa
     }
