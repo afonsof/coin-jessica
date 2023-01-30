@@ -8,27 +8,27 @@ export class ServicoUsuario {
         this.client = client
     }
     async listar(): Promise<Usuario[]> {
-        const linhas = await this.client.query(`select * from coin_usuario`)
+        const usuariosNoBD = await this.client.query(`select * from coin_usuario`)
 
         const usuarios: Usuario[] = []
 
-        linhas.forEach(linha=> {
-            usuarios.push(new Usuario(linha.id, linha.nome, linha.email, linha.senha))
+        usuariosNoBD.forEach(usuario=> {
+            usuarios.push(new Usuario(usuario.id, usuario.nome, usuario.email, usuario.senha))
         })
         return usuarios
     }
     
     //colocar td q precisa para a função funcionar
     async get(idUsuario:number): Promise<Usuario> {                                   
-        const linhas = await this.client.query(`select * from coin_usuario
+        const usuarioNoBD = await this.client.query(`select * from coin_usuario
         where id = $1::int`,[idUsuario])
 
-        if(linhas.length === 0) {
+        if(usuarioNoBD.length === 0) {
             throw new Error('usuário não existe')
         }
 
-        const linha = linhas[0]
-        const usuario = new Usuario(linha.id, linha.nome, linha.email, linha.senha)
+        const usuarioLinha = usuarioNoBD[0]
+        const usuario = new Usuario(usuarioLinha.id, usuarioLinha.nome, usuarioLinha.email, usuarioLinha.senha)
 
         return usuario  
     }

@@ -17,33 +17,34 @@ export class ServicoReconhecimento {
     }
 
     async listar(): Promise<Reconhecimento[]>{
-        const linhas = await this.client.query(`select * from coin_reconhecimento
+        const reconhecimentosAprovadoNoBD = await this.client.query(`select * from coin_reconhecimento
         where status = 'aprovado'`)
 
         const reconhecimentos: Reconhecimento[] = []
 
-        linhas.forEach(linha=>{
+        reconhecimentosAprovadoNoBD.forEach(reconhecimento=>{
             reconhecimentos.push(new Reconhecimento(
-                linha.id, linha.descricao, linha.data, 
-                linha.qtd_moedas_doadas, linha.status, 
-                linha.id_de_usuario, linha.id_para_usuario)
+                reconhecimento.id, reconhecimento.descricao, reconhecimento.data, 
+                reconhecimento.qtd_moedas_doadas, reconhecimento.status, 
+                reconhecimento.id_de_usuario, reconhecimento.id_para_usuario)
             )
         })
         return reconhecimentos
     }
 
     async get(idReconhecimento:number): Promise<Reconhecimento>{
-        const linhas = await this.client.query(`select * from coin_reconhecimento
+        const reconhecimentoAprovadoBD = await this.client.query(`select * from coin_reconhecimento
         where id = $1::int and status = 'aprovado'`,[idReconhecimento])
 
-        if(linhas.length ===0){
+        if(reconhecimentoAprovadoBD.length ===0){
             throw new Error('id de Reconhecimento não encontrado ou pendente aprovação')
         }
 
-        const linha = linhas[0]
+        const reconhecimentoLinha = reconhecimentoAprovadoBD[0]
+        
         const reconhecimento = new Reconhecimento(
-            linha.id, linha.descricao, linha.data, linha.qtd_moedas_doadas, 
-            linha.status, linha.id_de_usuario, linha.id_para_usuario
+            reconhecimentoLinha.id, reconhecimentoLinha.descricao, reconhecimentoLinha.data, reconhecimentoLinha.qtd_moedas_doadas, 
+            reconhecimentoLinha.status, reconhecimentoLinha.id_de_usuario, reconhecimentoLinha.id_para_usuario
         )
         return reconhecimento
     }
