@@ -9,27 +9,27 @@ export class ServicoProduto {
     }
 
     async listar(): Promise<Produto[]>{
-        const linhas = await this.client.query(`select * from coin_produto`)
+        const produtosNoBD = await this.client.query(`select * from coin_produto`)
 
         const produtos: Produto[] = []
 
-        linhas.forEach(linha =>{
-            produtos.push(new Produto(linha.id, linha.nome, linha.valor, linha.estoque))
+        produtosNoBD.forEach(produto =>{
+            produtos.push(new Produto(produto.id, produto.nome, produto.valor, produto.estoque))
         })
         return produtos
     }
 
     async get(idProduto: number): Promise<Produto>{
-        const linhas = await this.client.query(`select * from coin_produto
+        const produtoNoBD = await this.client.query(`select * from coin_produto
         where id = $1::int`,[idProduto])
 
-        if(linhas.length === 0){
+        if(produtoNoBD.length === 0){
             throw new Error ('id produto não encontrado')
         }
 
-        const linha = linhas[0]
-        
-        const produto = new Produto(linha.id, linha.nome, linha.valor, linha.estoque)
+        const produtoLinha = produtoNoBD[0]
+         
+        const produto = new Produto(produtoLinha.id, produtoLinha.nome, produtoLinha.valor, produtoLinha.estoque)
 
         return produto
     }
@@ -43,7 +43,6 @@ export class ServicoProduto {
             values ($1::text, $2::int, $3::int)`, 
             [produto.nome, produto.valor, produto.estoque]
         )
-
 
     }
 

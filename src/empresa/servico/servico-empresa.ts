@@ -9,26 +9,26 @@ export class ServicoEmpresa {
     }
 
     async listar(): Promise<Empresa[]>{
-        const linhas = await this.client.query(`select * from coin_empresa`)
+        const empresasDoBD = await this.client.query(`select * from coin_empresa`)
 
         const empresas: Empresa[] = []
 
-        linhas.forEach(linha =>{
-            empresas.push(new Empresa(linha.id, linha.nome, linha.responsavel))
+        empresasDoBD.forEach(empresa =>{
+            empresas.push(new Empresa(empresa.id, empresa.nome, empresa.responsavel))
         })
         return empresas
     }
 
     async get(idEmpresa:number): Promise<Empresa>{
-        const linhas = await this.client.query(`select * from coin_empresa
+        const empresasDoBD = await this.client.query(`select * from coin_empresa
         where id = $1::int`, [idEmpresa])
 
-        if(linhas.length === 0){
+        if(empresasDoBD.length === 0){
             throw new Error('empresa não encontrada')
         }
 
-        const linha = linhas[0]
-        const empresa = new Empresa(linha.id, linha.nome,  linha.responsavel)
+        const empresaLinha = empresasDoBD[0]
+        const empresa = new Empresa(empresaLinha.id, empresaLinha.nome,  empresaLinha.responsavel)
 
         return empresa
     }
