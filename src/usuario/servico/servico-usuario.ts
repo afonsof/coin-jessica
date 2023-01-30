@@ -15,13 +15,14 @@ export class ServicoUsuario {
         linhas.forEach(linha=> {
             usuarios.push(new Usuario(linha.id, linha.nome, linha.email, linha.senha))
         })
-
         return usuarios
     }
-
-    async get(id:number): Promise<Usuario> {                                   //colocar td q precisa para a função funcionar
+    
+    //colocar td q precisa para a função funcionar
+    async get(idUsuario:number): Promise<Usuario> {                                   
         const linhas = await this.client.query(`select * from coin_usuario
-        where id = $1::int`,[id])
+        where id = $1::int`,[idUsuario])
+
         if(linhas.length === 0) {
             throw new Error('usuário não existe')
         }
@@ -29,53 +30,47 @@ export class ServicoUsuario {
         const linha = linhas[0]
         const usuario = new Usuario(linha.id, linha.nome, linha.email, linha.senha)
 
-       
-        
         return usuario  
-        
     }
 
     async create(nome:string, email:string, senha:string): Promise<void> {  // void pq a função n vai retornar nada, pq create n retorna
         const usuario = new Usuario(undefined, nome, email, senha)
 
         await this.client.query(`insert into coin_usuario (nome, 
-        email, senha) values ($1::text, $2::text, $3::text)`,[usuario.nome, usuario.email, 
-        usuario.senha])
-        
+            email, senha) values ($1::text, $2::text, $3::text)`,
+            [usuario.nome, usuario.email, usuario.senha]
+        ) 
     }
 
-    async update(id: number, nome:string, email:string, senha:string): Promise<void>{
+    async update(idUsuario: number, nome:string, email:string, senha:string): Promise<void>{
         const localizaId = await this.client.query(`select * from coin_usuario
-        where id = $1::int`,[id])
+        where id = $1::int`,[idUsuario])
+
         if(localizaId.length === 0) {
             throw new Error('id de usuário não existe')
         }
         
-        const usuario = new Usuario(id, nome, email, senha)
+        const usuario = new Usuario(idUsuario, nome, email, senha)
 
         await this.client.query(`update coin_usuario
             set nome = $2::text,
             email = $3::text,
             senha = $4::text 
-            where id = $1::int`,[usuario.id, usuario.nome,usuario.email,
-            usuario.senha]
+            where id = $1::int`,
+            [usuario.id, usuario.nome,usuario.email, usuario.senha]
         )
-
     }
 
-    async delete(id:number): Promise<void>{
+    async delete(idUsuario:number): Promise<void>{
         const localizaId = await this.client.query(`select * from coin_usuario
-        where id = $1::int`,[id])
+        where id = $1::int`,[idUsuario])
+
         if(localizaId.length === 0) {
             throw new Error('id de usuário não existe')
         }
 
-        await this.client.query(`delete from coin_usuario where id = $1::int`,[id])
-
-        
+        await this.client.query(`delete from coin_usuario 
+        where id = $1::int`,[idUsuario])
     }
-
-
-
 }
 
