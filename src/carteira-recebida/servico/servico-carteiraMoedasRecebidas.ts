@@ -1,4 +1,5 @@
 import { IDatabase } from "pg-promise";
+import { ServicoUsuario } from "../../usuario/servico/servico-usuario";
 
 interface GetCarteiraMoedasRecebidas {
     nome: string
@@ -9,15 +10,20 @@ interface GetCarteiraMoedasRecebidas {
 export class ServicoCarteiraMoedasRecebidas {
     
     client: IDatabase<any>
+    servicoUsuario: ServicoUsuario  
 
     constructor(client: IDatabase<any>){
         this.client = client
+        this.servicoUsuario = new ServicoUsuario(client)
     }
     async get(idUsuario:number): Promise<GetCarteiraMoedasRecebidas>{
-        const carteiraRecebidaUsuarioNoBD = await this.client.query(`select cu.nome , cmr.saldo as saldo_recebido
-        from coin_usuario cu 
-        join coin_carteira_moedas_recebidas cmr on cmr.id_usuario = cu.id
-        where id_usuario = $1::int`,[idUsuario])
+
+        const usuario = await this.servicoUsuario.get(idUsuario)
+
+        const carteiraRecebidaUsuarioNoBD = await this.client.query(
+         `select * from coin_carteira_moedas_recebidas 
+         where id_usuario = $1::int`,[idUsuario]
+        )
 
         if(carteiraRecebidaUsuarioNoBD.length ===0){
             throw new Error('Usuário não encontrado ou usuário sem carteira')
@@ -26,8 +32,8 @@ export class ServicoCarteiraMoedasRecebidas {
         const carteiraMoedaRecebida = carteiraRecebidaUsuarioNoBD[0]
 
         const carteiraMoedasRecebidas = {
-            nome:carteiraMoedaRecebida.nome, 
-            saldo:carteiraMoedaRecebida.saldo_recebido,
+            nome:usuario.nome, 
+            saldo:carteiraMoedaRecebida.saldo,
             idUsuario:idUsuario
         }        
         return carteiraMoedasRecebidas
