@@ -45,8 +45,8 @@ export class ServicoProduto {
 
     }
 
-    async update(idPedido:number, nome:string, valor:number, estoque:number): Promise<void>{
-        const produto = new Produto(idPedido, nome, valor, estoque)
+    async update(idProduto:number, nome:string, valor:number, estoque:number): Promise<void>{
+        const produto = new Produto(idProduto, nome, valor, estoque)
 
         await this.client.query(
             `update coin_produto set
@@ -58,41 +58,41 @@ export class ServicoProduto {
         )
     }
 
-    async delete(idPedido:number): Promise<void>{
+    async delete(idProduto:number): Promise<void>{
 
-        await this.client.query(`delete from coin_produto where id = $1::int`,[idPedido])
+        await this.client.query(`delete from coin_produto where id = $1::int`,[idProduto])
     }
 
-    async atualizarEstoque(idPedido:number, qtdParaDebitar:number): Promise<void>{
+    async atualizarEstoque(idProduto:number, qtdParaDebitar:number): Promise<void>{
 
-        const localizaId: any[] = await this.client.query(
+        const produtos: any[] = await this.client.query(
             `select * from coin_produto
-            where id = $1::int`, [idPedido]
+            where id = $1::int`, [idProduto]
         )
 
-        if(localizaId.length === 0){
+        if(produtos.length === 0){
             throw new Error('Id de produto não encontrado')
         }
-        const estoqueAtual = localizaId[0].estoque
+        const estoqueAtual = produtos[0].estoque
 
         await this.client.query(`update coin_produto set
         estoque = $1::int
-        where id = $2::int`, [estoqueAtual - qtdParaDebitar, idPedido])
+        where id = $2::int`, [estoqueAtual - qtdParaDebitar, idProduto])
 
     }
 
-    async conferirQtdEstoque( idPedido:number, qtdPedido:number): Promise<void>{
+    async conferirQtdEstoque( idProduto:number, qtdPedido:number): Promise<void>{
 
-        const localizaId: any[] = await this.client.query(
+        const produtos: any[] = await this.client.query(
             `select * from coin_produto
-            where id = $1::int`, [idPedido]
+            where id = $1::int`, [idProduto]
         )
 
-        if(localizaId.length === 0){
+        if(produtos.length === 0){
             throw new Error('Id de produto não encontrado')
         }
 
-        const estoqueAtual = localizaId[0].estoque
+        const estoqueAtual = produtos[0].estoque
 
         if(qtdPedido > estoqueAtual){
             throw new Error('Quantidade pedida maior que estoque disponível')

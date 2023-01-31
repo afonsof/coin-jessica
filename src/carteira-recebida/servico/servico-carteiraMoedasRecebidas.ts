@@ -34,14 +34,14 @@ export class ServicoCarteiraMoedasRecebidas {
     }
 
     async creditar(valorParaCreditar: number, idUsuario: number): Promise<void>{
-        const localizaIDParaUsuario: any[] = await this.client.query(`select saldo from coin_carteira_moedas_recebidas
+        const saldosCarteirasRecebidas: any[] = await this.client.query(`select saldo from coin_carteira_moedas_recebidas
         where id_usuario = $1::int`, [idUsuario])
 
-        if(localizaIDParaUsuario.length === 0){
+        if(saldosCarteirasRecebidas.length === 0){
             throw new Error('Carteira de moedas recebidas não encontrada')
         }
 
-        const saldoAtual = localizaIDParaUsuario[0].saldo
+        const saldoAtual = saldosCarteirasRecebidas[0].saldo
 
         await this.client.query(`update coin_carteira_moedas_recebidas set 
         saldo = $1::int
@@ -49,13 +49,13 @@ export class ServicoCarteiraMoedasRecebidas {
     }
 
     async debitar(valorParaDebitar: number, idUsuario: number): Promise<void> {
-        const localizaIDDeUsuario: any[] = await this.client.query(`select saldo from coin_carteira_moedas_recebidas
+        const saldosCarteirasRecebidas: any[] = await this.client.query(`select saldo from coin_carteira_moedas_recebidas
          where id_usuario = $1::int`, [idUsuario])
 
-        if(localizaIDDeUsuario.length === 0){
+        if(saldosCarteirasRecebidas.length === 0){
             throw new Error('Carteira de moedas recebidas não encontrada')
         }
-        const saldoAtual = localizaIDDeUsuario[0].saldo
+        const saldoAtual = saldosCarteirasRecebidas[0].saldo
 
         if((saldoAtual-valorParaDebitar) < 0) {
             throw new Error('Usuário não tem saldo suficiente')

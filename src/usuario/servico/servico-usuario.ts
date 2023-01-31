@@ -44,10 +44,10 @@ export class ServicoUsuario {
     }
 
     async update(idUsuario: number, nome:string, email:string, senha:string): Promise<void>{
-        const localizaId = await this.client.query(`select * from coin_usuario
+        const usuarios = await this.client.query(`select * from coin_usuario
         where id = $1::int`,[idUsuario])
 
-        if(localizaId.length === 0) {
+        if(usuarios.length === 0) {
             throw new Error('Usuário não encontrado')
         }
         
@@ -63,10 +63,10 @@ export class ServicoUsuario {
     }
 
     async delete(idUsuario:number): Promise<void>{
-        const localizaId = await this.client.query(`select * from coin_usuario
+        const usuarios = await this.client.query(`select * from coin_usuario
         where id = $1::int`,[idUsuario])
 
-        if(localizaId.length === 0) {
+        if(usuarios.length === 0) {
             throw new Error('Usuário não encontrado')
         }
 
