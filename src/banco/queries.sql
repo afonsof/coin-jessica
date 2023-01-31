@@ -44,4 +44,4 @@ create table coin_carteira_moedas_recebidas(
 create table coin_carteira_moedas_doadas(
 	id_usuario int not null,
 	saldo int not null
-)
+);
