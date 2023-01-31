@@ -23,7 +23,7 @@ insert into coin_produto_pedido (id_pedido, id_produto, qtd, valor_unitario, sta
 insert into coin_reconhecimento (descricao, data, qtd_moedas_doadas, status, id_de_usuario, id_para_usuario) values
 	('Obrigada pela ajuda','2022-12-05', 10, 'aprovado',1,2),
 	('Obrigada pela ajuda','2023-01-05', 8, 'aprovado',1,3),
-	('Obrigada pela ajuda','2022-12-05', 15,null,2,1)
+	('Obrigada pela ajuda','2022-12-05', 15,null,2,1);
 
 insert into coin_carteira_moedas_recebidas(id_usuario, saldo) values
 	(1,200),
