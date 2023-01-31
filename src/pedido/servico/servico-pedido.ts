@@ -1,6 +1,9 @@
 import { IDatabase } from "pg-promise"
 import { ServicoCarteiraMoedasRecebidas } from "../../carteira-recebida/servico/servico-carteiraMoedasRecebidas"
 import { ServicoProduto } from "../../produto/servico/servico-produto"
+import { Usuario } from "../../usuario/dominio/usuario"
+import { ServicoUsuario } from "../../usuario/servico/servico-usuario"
+
 
 interface ListarPedido {
     idPedido: number
@@ -46,30 +49,33 @@ export class ServicoPedido {
     client: IDatabase<any>
     servicoProduto: ServicoProduto
     servicoCarteiraMoedasRecebidas: ServicoCarteiraMoedasRecebidas
+    servicoUsuario: ServicoUsuario
 
     constructor(client: IDatabase<any>) {
         this.client = client
         this.servicoProduto = new ServicoProduto(client)
         this.servicoCarteiraMoedasRecebidas = new ServicoCarteiraMoedasRecebidas(client)
+        this.servicoUsuario = new ServicoUsuario(client)
     }
 
     async listar(): Promise<ListarPedido[]> {
-        const pedidosNoBD = await this.client.query(`select cp.id, data, cu.nome as usuario
-        from coin_pedido cp
-        join coin_usuario cu on cu.id = cp.id_usuario`)
+        const pedidosNoBD = await this.client.query(`select * from coin_pedido cp`)
 
         const pedidos: ListarPedido[] = []
-
-        pedidosNoBD.forEach(pedido => {
+        
+        await Promise.all(pedidosNoBD.map(async pedido => {
+            const usuario = await this.servicoUsuario.get(pedido.id_usuario)
             pedidos.push({
                 idPedido: pedido.id,
                 data: pedido.data,
-                nomeUsuario: pedido.usuario
+                nomeUsuario: usuario.nome
             })
-        })
+        }))
+
         return pedidos
     }
 
+   
     async get(idPedido: number): Promise<GetPedido> {
         const pedidoNoBD = await this.client.query(
             `select * from coin_pedido cp
