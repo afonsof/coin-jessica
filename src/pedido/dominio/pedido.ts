@@ -11,6 +11,17 @@ export class ProdutoDoPedido {
         this.qtd = qtd
         this.valorUnitario = valorUnitario
         this.status = status
+
+        if(!idProduto){
+            throw new Error('Produto do pedido precisa de idProduto')
+        }
+        if(!qtd){
+            throw new Error('Produto do pedido precisa de quantidade do produto')
+        }
+        if(qtd <= 0){
+            throw new Error('Produto do pedido precisa que a quantidade do produto seja maio que zero')
+        }
+        
     }
 }
 
