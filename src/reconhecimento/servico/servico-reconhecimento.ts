@@ -73,10 +73,10 @@ export class ServicoReconhecimento {
     }
     
     async delete(idReconhecimento:number): Promise<void>{
-        const localizaId = await this.client.query(`select * from coin_reconhecimento
+        const reconhecimentosPendentesOuReprovados = await this.client.query(`select * from coin_reconhecimento
         where id = $1::int and status = 'pendente' or status = 'reprovado'`,[idReconhecimento])
 
-        if(localizaId.length ===0){
+        if(reconhecimentosPendentesOuReprovados.length ===0){
             throw new Error('id de Reconhecimento não encontrado ou já aprovado')
         }
         
@@ -86,10 +86,10 @@ export class ServicoReconhecimento {
 
   
     async aprovar(idReconhecimento:number): Promise<void>{       
-        const localizaId = await this.client.query(`select * from coin_reconhecimento
+        const ReconhecimentosPendentesOuReprovados = await this.client.query(`select * from coin_reconhecimento
         where id = $1::int and status = 'pendente' or status = 'reprovado'`,[idReconhecimento])
 
-        if(localizaId.length === 0){
+        if(ReconhecimentosPendentesOuReprovados.length === 0){
             throw new Error('id de Reconhecimento não encontrado ou já aprovado')
         }
 
@@ -100,12 +100,12 @@ export class ServicoReconhecimento {
 
 
     async reprovar(id:number): Promise<void>{         
-        const localizaId = await this.client.query(
+        const reconhecimentosPendentes = await this.client.query(
             `select * from coin_reconhecimento
             where id = $1::int and status = 'pendente'`,[id]
         )
 
-        if(localizaId.length === 0){
+        if(reconhecimentosPendentes.length === 0){
             throw new Error('id de Reconhecimento não encontrado ou já reprovado')
         }
 
@@ -113,8 +113,8 @@ export class ServicoReconhecimento {
         status = 'reprovado'
         where id = $1::int`,[id])
 
-        await this.servicoCarteiraMoedaDoada.creditar(localizaId.qtd_moedas_doadas, localizaId.id_de_usuario)
+        await this.servicoCarteiraMoedaDoada.creditar(reconhecimentosPendentes.qtd_moedas_doadas, reconhecimentosPendentes.id_de_usuario)
 
-        await this.servicoCarteiraMoedaRecebida.debitar(localizaId.qtd_moedas_doadas, localizaId.id_para_usuario)
+        await this.servicoCarteiraMoedaRecebida.debitar(reconhecimentosPendentes.qtd_moedas_doadas, reconhecimentosPendentes.id_para_usuario)
     }
 }

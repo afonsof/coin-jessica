@@ -175,13 +175,13 @@ export class ServicoPedido {
     }
 
     async reprovar(idPedido: number): Promise<void> {
-        const localizaId = await this.client.query(
+        const produtosDoPedidoPendente = await this.client.query(
             `select * from coin_produto_pedido
             where id_pedido = $1::int and status = 'pendente'`, 
             [idPedido]
         )
 
-        if (localizaId.length === 0) {
+        if (produtosDoPedidoPendente.length === 0) {
             throw new Error('Id pedido não encontrado para análise')
         }
 
