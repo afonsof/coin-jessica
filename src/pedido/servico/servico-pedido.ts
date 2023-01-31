@@ -4,6 +4,8 @@ import { ServicoProduto } from "../../produto/servico/servico-produto"
 import { Usuario } from "../../usuario/dominio/usuario"
 import { ServicoUsuario } from "../../usuario/servico/servico-usuario"
 
+import bluebird from 'bluebird'
+
 
 interface ListarPedido {
     idPedido: number
@@ -12,6 +14,7 @@ interface ListarPedido {
 }
 
 interface GetPedidoProduto {
+    id: number,
     nome: string,
     valor: number,
     qtd: number,
@@ -21,7 +24,7 @@ interface GetPedidoProduto {
 interface GetPedido {
     idPedido: number,
     total: number,
-
+    idUsuario: number,
     produtos: GetPedidoProduto[]
 }
 
@@ -75,42 +78,39 @@ export class ServicoPedido {
         return pedidos
     }
 
-   
     async get(idPedido: number): Promise<GetPedido> {
-        const pedidoNoBD = await this.client.query(
-            `select * from coin_pedido cp
-            join coin_produto_pedido cpp on cpp.id_pedido = cp.id
-            join coin_produto p on p.id = cpp.id_produto
-            where id_pedido = $1::int`, 
-            [idPedido]
-        )
+        const produtosDoPedido = await this.client.query(
+             `select * from coin_produto_pedido cpp where id_pedido = $1::int`, 
+             [idPedido]
+        )   
 
-        if (pedidoNoBD.length === 0) {
+        if (produtosDoPedido.length === 0) {
             throw new Error('pedido não encontrado')
         }
 
-        const somaPedido = (await this.client.query(
-            `select cast(sum(valor_unitario) as int) as total
-             from coin_produto_pedido
-             where id_pedido = $1::int`,
-            [idPedido]
-        ))
+        let totalPedido = 0
+        produtosDoPedido.forEach(produtoDoPedido => {
+            totalPedido = totalPedido + produtoDoPedido.valor_unitario + produtoDoPedido.qtd
+        })
 
-        const totalPedido = somaPedido[0].total
+        const pedidos = await this.client.query(`select * from coin_pedido where id = $1::int`, [idPedido])
+        const pedido = pedidos[0]
 
-        const pedido: GetPedido = {
+        return {
             idPedido: idPedido,
             total: totalPedido,
-            produtos: pedidoNoBD.map(pedido => {
+            idUsuario: pedido.id_usuario,
+            produtos: await bluebird.each(produtosDoPedido, async produtoDoPedido => {
+                const produto = await this.servicoProduto.get(produtoDoPedido.id_produto)
                 return {
-                    nome: pedido.nome,
-                    valor: pedido.valor_unitario,
-                    qtd: pedido.qtd,
-                    total: (pedido.valor_unitario * pedido.qtd) 
+                    id: produto.id,
+                    nome: produto.nome,
+                    valor: produtoDoPedido.valor_unitario,
+                    qtd: produtoDoPedido.qtd,
+                    total: (produtoDoPedido.valor_unitario * produtoDoPedido.qtd) 
                 }
             })
         }
-        return pedido
     }
 
     async aprovar(idPedido: number): Promise<void> {
@@ -130,47 +130,31 @@ export class ServicoPedido {
             throw new Error('Não existem produtos no pedido que estao pendentes')
         }
 
-        const pedidos = await this.client.query(
-            `select * from coin_pedido
-             where idPedido = $1::int`,
-            [idPedido]
-        )
-        const pedido = pedidos[0]
+        const pedido = await this.get(idPedido)
 
-        const somatorioValorPedido = await this.client.query(
-            `select cast(sum(valor_unitario) as int) as total
-             from coin_produto_pedido
-             where id_pedido = $1::int`,
-            [idPedido]
-        )
-        const totalPedido = somatorioValorPedido[0].total
-
-        const carteiraRecebida = await this.servicoCarteiraMoedasRecebidas.get(pedido.id_usuario)
-        if (carteiraRecebida.saldo < totalPedido) {
+        const carteiraRecebida = await this.servicoCarteiraMoedasRecebidas.get(pedido.idUsuario)
+        if (carteiraRecebida.saldo < pedido.total) {
             await this.reprovar(idPedido)
             throw new Error(('Usuário não tem saldo suficiente para aprovar o pedido.'))
         }
 
-        const produtosDoPedido: any[] = await this.client.query(
-            `select * from coin_produto_pedido produtoPedido
-            join coin_produto produto on produto.idPedido = produtopedido.id_produto 
-            where id_pedido  =  $1::int`, 
-            [idPedido]
-        )
-
-        produtosDoPedido.forEach(produto => {
-            if (produto.qtd > produto.estoque) {
-                throw new Error(`Foi requisitado ${produto.qtd} unidades do produto ${produto.nome},
-                    mas só tem ${produto.estoque} em estoque`)
+        await Promise.all(pedido.produtos.map(async produtoDoPedido => {
+            const produto = await this.servicoProduto.get(produtoDoPedido.id)
+            if (produtoDoPedido.qtd > produto.estoque) {
+                throw new Error(
+                    `Foi requisitado ${produtoDoPedido.qtd} unidades
+                     do produto ${produto.nome},
+                     mas só tem ${produto.estoque} em estoque`
+                )
             }
-        })
-
-        //nesse caso é um map da função atualiza estoque para percorrer todos os produtos
-        await Promise.all(produtosDoPedido.map(async produto => {
-            return this.servicoProduto.atualizarEstoque(produto.id_produto, produto.qtd)
         }))
 
-        await this.servicoCarteiraMoedasRecebidas.debitar(totalPedido, pedido.id_usuario)
+        //nesse caso é um map da função atualiza estoque para percorrer todos os produtos
+        await Promise.all(pedido.produtos.map(async produtoDoPedido => {
+            return this.servicoProduto.atualizarEstoque(produtoDoPedido.id, produtoDoPedido.qtd)
+        }))
+
+        await this.servicoCarteiraMoedasRecebidas.debitar(pedido.total, pedido.idUsuario)
 
         await this.client.query(
             `update coin_produto_pedido set
