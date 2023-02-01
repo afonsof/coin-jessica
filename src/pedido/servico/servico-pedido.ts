@@ -11,6 +11,7 @@ interface ListarPedido {
     idPedido: number
     data: Date
     nomeUsuario: string
+    status: string
 }
 
 interface GetPedidoProduto {
@@ -25,6 +26,7 @@ interface GetPedido {
     idPedido: number,
     total: number,
     idUsuario: number,
+    status: string,
     produtos: GetPedidoProduto[]
 }
 
@@ -71,7 +73,8 @@ export class ServicoPedido {
             pedidos.push({
                 idPedido: pedido.id,
                 data: pedido.data,
-                nomeUsuario: usuario.nome
+                nomeUsuario: usuario.nome,
+                status: pedido.status
             })
         }))
 
@@ -100,6 +103,7 @@ export class ServicoPedido {
             idPedido: idPedido,
             total: totalPedido,
             idUsuario: pedido.id_usuario,
+            status: pedido.status,
             produtos: await bluebird.each(produtosDoPedido, async produtoDoPedido => {
                 const produto = await this.servicoProduto.get(produtoDoPedido.id_produto)
                 return {
