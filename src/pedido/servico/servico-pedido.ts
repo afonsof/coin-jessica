@@ -121,8 +121,8 @@ export class ServicoPedido {
         // fazer um update do id do pedido alterando o status para 'aprovado'
 
         const produtosPendentesDoPedido = await this.client.query(
-            `select * from coin_produto_pedido
-             where id_pedido = $1::int and status = 'pendente'`,
+            `select * from coin_pedido
+             where id = $1::int and status = 'pendente'`,
             [idPedido]
         )
 
@@ -157,17 +157,17 @@ export class ServicoPedido {
         await this.servicoCarteiraMoedasRecebidas.debitar(pedido.total, pedido.idUsuario)
 
         await this.client.query(
-            `update coin_produto_pedido set
+            `update coin_pedido set
             status = 'aprovado'
-            where id_pedido = $1::int`, 
+            where id = $1::int`, 
             [idPedido]
         )
     }
 
     async reprovar(idPedido: number): Promise<void> {
         const produtosDoPedidoPendente = await this.client.query(
-            `select * from coin_produto_pedido
-            where id_pedido = $1::int and status = 'pendente'`, 
+            `select * from coin_pedido
+            where id = $1::int and status = 'pendente'`, 
             [idPedido]
         )
 
@@ -175,9 +175,9 @@ export class ServicoPedido {
             throw new Error('Id pedido não encontrado para análise')
         }
 
-        await this.client.query(`update coin_produto_pedido set
+        await this.client.query(`update coin_pedido set
         status = 'reprovado'
-        where id_pedido = $1::int`, [idPedido])
+        where id = $1::int`, [idPedido])
     }
 
 
@@ -201,8 +201,8 @@ export class ServicoPedido {
         const dataAtual = new Date()
 
         const res = await this.client.query(
-            `insert into coin_pedido (data, id_usuario) values ($1::date, $2::int) RETURNING id`,
-            [dataAtual, idUsuario]
+            `insert into coin_pedido (data, id_usuario, status) values ($1::date, $2::int, $3::text) RETURNING id`,
+            [dataAtual, idUsuario, 'pendente']
         )
 
         const idPedido = res[0].id
@@ -210,9 +210,9 @@ export class ServicoPedido {
         await Promise.all(produtos.map(async (produto, indice) => {
             const produtoNoBanco = produtosNoBanco[indice]
             await this.client.query(
-                `insert into coin_produto_pedido (id_pedido, id_produto, valor_unitario, qtd, status) values
-                ($1::int, $2::int, $3::int, $4::int, $5::text)`,
-                [idPedido, produto.idProduto, produtoNoBanco.valor, produto.qtd, 'pendente']
+                `insert into coin_produto_pedido (id_pedido, id_produto, valor_unitario, qtd) values
+                ($1::int, $2::int, $3::int, $4::int)`,
+                [idPedido, produto.idProduto, produtoNoBanco.valor, produto.qtd]
             )
         }))
     }
