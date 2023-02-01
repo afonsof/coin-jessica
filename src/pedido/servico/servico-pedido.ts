@@ -83,7 +83,7 @@ export class ServicoPedido {
 
     async get(idPedido: number): Promise<GetPedido> {
         const produtosDoPedido = await this.client.query(
-             `select * from coin_produto_pedido cpp where id_pedido = $1::int`, 
+             `select * from coin_produto_pedido where id_pedido = $1::int`, 
              [idPedido]
         )   
 
@@ -93,7 +93,7 @@ export class ServicoPedido {
 
         let totalPedido = 0
         produtosDoPedido.forEach(produtoDoPedido => {
-            totalPedido = totalPedido + produtoDoPedido.valor_unitario + produtoDoPedido.qtd
+            totalPedido = totalPedido + produtoDoPedido.valor_unitario * produtoDoPedido.qtd
         })
 
         const pedidos = await this.client.query(`select * from coin_pedido where id = $1::int`, [idPedido])
@@ -124,17 +124,18 @@ export class ServicoPedido {
         // debitar do saldo o valor do pedido
         // fazer um update do id do pedido alterando o status para 'aprovado'
 
-        const produtosPendentesDoPedido = await this.client.query(
+        const pedidosPendentes = await this.client.query(
             `select * from coin_pedido
              where id = $1::int and status = 'pendente'`,
             [idPedido]
         )
 
-        if (produtosPendentesDoPedido.length === 0) {
-            throw new Error('Não existem produtos no pedido que estao pendentes')
+        if (pedidosPendentes.length === 0) {
+            throw new Error('Pedido não encontrado ou já analisado')
         }
 
         const pedido = await this.get(idPedido)
+        console.log(pedido)
 
         const carteiraRecebida = await this.servicoCarteiraMoedasRecebidas.get(pedido.idUsuario)
         if (carteiraRecebida.saldo < pedido.total) {
