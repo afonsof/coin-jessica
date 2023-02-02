@@ -135,7 +135,6 @@ export class ServicoPedido {
         }
 
         const pedido = await this.get(idPedido)
-        console.log(pedido)
 
         const carteiraRecebida = await this.servicoCarteiraMoedasRecebidas.get(pedido.idUsuario)
         if (carteiraRecebida.saldo < pedido.total) {
@@ -170,14 +169,14 @@ export class ServicoPedido {
     }
 
     async reprovar(idPedido: number): Promise<void> {
-        const produtosDoPedidoPendente = await this.client.query(
+        const pedidos = await this.client.query(
             `select * from coin_pedido
             where id = $1::int and status = 'pendente'`, 
             [idPedido]
         )
 
-        if (produtosDoPedidoPendente.length === 0) {
-            throw new Error('Id pedido não encontrado para análise')
+        if (pedidos.length === 0) {
+            throw new Error('Id pedido não encontrado')
         }
 
         await this.client.query(`update coin_pedido set
