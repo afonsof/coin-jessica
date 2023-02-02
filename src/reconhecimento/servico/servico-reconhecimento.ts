@@ -17,8 +17,10 @@ export class ServicoReconhecimento {
     }
 
     async listar(): Promise<Reconhecimento[]>{
-        const reconhecimentosAprovadoNoBD = await this.client.query(`select * from coin_reconhecimento
-        where status = 'aprovado'`)
+        const reconhecimentosAprovadoNoBD = await this.client.query(
+            `select * from coin_reconhecimento
+            where status = 'aprovado'`
+        )
 
         const reconhecimentos: Reconhecimento[] = []
 
@@ -33,14 +35,14 @@ export class ServicoReconhecimento {
     }
 
     async get(idReconhecimento:number): Promise<Reconhecimento>{
-        const reconhecimentoAprovadoBD = await this.client.query(`select * from coin_reconhecimento
-        where id = $1::int and status = 'aprovado'`,[idReconhecimento])
+        const reconhecimentoAprovado = await this.client.oneOrNone(
+            `select * from coin_reconhecimento
+            where id = $1::int and status = 'aprovado'`,[idReconhecimento]
+        )
 
-        if(reconhecimentoAprovadoBD.length ===0){
+        if(!reconhecimentoAprovado){
             throw new Error('id de Reconhecimento não encontrado ou pendente aprovação')
         }
-
-        const reconhecimentoAprovado = reconhecimentoAprovadoBD[0]
         
         const reconhecimento = new Reconhecimento(
             reconhecimentoAprovado.id, reconhecimentoAprovado.descricao, reconhecimentoAprovado.data, 
@@ -52,8 +54,8 @@ export class ServicoReconhecimento {
 
     async create(
         descricao:string, data: Date, qtdMoedasDoadas: number, status: string|undefined,
-        idDeUsuario:number, idParaUsuario:number
-    ):Promise<void >{
+        idDeUsuario:number, idParaUsuario:number):Promise<void >{
+
         const reconhecimento = new Reconhecimento(
             undefined, descricao, data, qtdMoedasDoadas, status, idDeUsuario, idParaUsuario
         )
@@ -73,12 +75,12 @@ export class ServicoReconhecimento {
     }
     
     async delete(idReconhecimento:number): Promise<void>{
-        const reconhecimentosPendentesOuReprovados = await this.client.query(
+        const reconhecimentoPendente = await this.client.query(
             `select * from coin_reconhecimento
             where id = $1::int and status = 'pendente'`,[idReconhecimento]
         )
 
-        if(reconhecimentosPendentesOuReprovados.length ===0){
+        if(!reconhecimentoPendente){
             throw new Error('id de Reconhecimento não encontrado ou já analisado')
         }
         
@@ -88,19 +90,18 @@ export class ServicoReconhecimento {
 
   
     async aprovar(idReconhecimento:number): Promise<void>{       
-        const ReconhecimentosPendentesOuReprovados = await this.client.query(
+        const ReconhecimentoPendente = await this.client.oneOrNone(
             `select * from coin_reconhecimento
             where id = $1::int and status = 'pendente'`,[idReconhecimento]
         )
 
-        if(ReconhecimentosPendentesOuReprovados.length === 0){
+        if(!ReconhecimentoPendente){
             throw new Error('id de Reconhecimento não encontrado ou já aprovado')
         }
 
         await this.client.query(`update coin_reconhecimento set
         status = 'aprovado'
         where id = $1::int`,[idReconhecimento])
-        
     }
 
 

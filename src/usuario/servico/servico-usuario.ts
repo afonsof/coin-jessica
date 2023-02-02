@@ -20,17 +20,14 @@ export class ServicoUsuario {
     
     //colocar td q precisa para a função funcionar
     async get(idUsuario:number): Promise<Usuario> {                                   
-        const usuariosNoBD = await this.client.query(`select * from coin_usuario
+        const usuario = await this.client.oneOrNone(`select * from coin_usuario
         where id = $1::int`,[idUsuario])
 
-        if(usuariosNoBD.length === 0) {
+        if(!usuario) {
             throw new Error('Usuário não encontrado')
         }
 
-        const usuario = usuariosNoBD[0]
-
         return new Usuario(usuario.id, usuario.nome, usuario.email, usuario.senha)
-
     }
 
     // void pq a função n vai retornar nada, pq create n retorna
@@ -44,10 +41,10 @@ export class ServicoUsuario {
     }
 
     async update(idUsuario: number, nome:string, email:string, senha:string): Promise<void>{
-        const usuarios = await this.client.query(`select * from coin_usuario
+        const usuarioNoBD = await this.client.oneOrNone(`select * from coin_usuario
         where id = $1::int`,[idUsuario])
 
-        if(usuarios.length === 0) {
+        if(!usuarioNoBD) {
             throw new Error('Usuário não encontrado')
         }
         
@@ -63,10 +60,10 @@ export class ServicoUsuario {
     }
 
     async delete(idUsuario:number): Promise<void>{
-        const usuarios = await this.client.query(`select * from coin_usuario
+        const usuario = await this.client.oneOrNone(`select * from coin_usuario
         where id = $1::int`,[idUsuario])
 
-        if(usuarios.length === 0) {
+        if(!usuario) {
             throw new Error('Usuário não encontrado')
         }
 

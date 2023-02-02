@@ -82,29 +82,31 @@ export class ServicoPedido {
     }
 
     async get(idPedido: number): Promise<GetPedido> {
-        const produtosDoPedido = await this.client.query(
-             `select * from coin_produto_pedido where id_pedido = $1::int`, 
-             [idPedido]
+        const produtoDoPedido = await this.client.oneOrNone(
+            `select * from coin_produto_pedido where id_pedido = $1::int`, 
+            [idPedido]
         )   
 
-        if (produtosDoPedido.length === 0) {
+        if (!produtoDoPedido) {
             throw new Error('pedido não encontrado')
         }
 
         let totalPedido = 0
-        produtosDoPedido.forEach(produtoDoPedido => {
+        produtoDoPedido.forEach(produtoDoPedido => {
             totalPedido = totalPedido + produtoDoPedido.valor_unitario * produtoDoPedido.qtd
         })
 
-        const pedidos = await this.client.query(`select * from coin_pedido where id = $1::int`, [idPedido])
-        const pedido = pedidos[0]
+        const pedido = await this.client.oneOrNone(
+            `select * from coin_pedido where id = $1::int`,
+            [idPedido]
+        )
 
         return {
             idPedido: idPedido,
             total: totalPedido,
             idUsuario: pedido.id_usuario,
             status: pedido.status,
-            produtos: await Promise.all(produtosDoPedido.map(async produtoDoPedido => {
+            produtos: await Promise.all(produtoDoPedido.map(async produtoDoPedido => {
                 const produto = await this.servicoProduto.get(produtoDoPedido.id_produto)
                 return {
                     id: produto.id,
@@ -125,7 +127,6 @@ export class ServicoPedido {
         // fazer um update do id do pedido alterando o status para 'aprovado'
 
         const pedido = await this.get(idPedido)
-        console.log(pedido)
 
         if (pedido.status !== 'pendente') {
             throw new Error('Pedido não encontrado ou já analisado')
@@ -165,18 +166,18 @@ export class ServicoPedido {
     }
 
     async reprovar(idPedido: number): Promise<void> {
-        const pedidos = await this.client.query(
+        const pedido = await this.client.oneOrNone(
             `select * from coin_pedido
             where id = $1::int and status = 'pendente'`, 
             [idPedido]
         )
 
-        if (pedidos.length === 0) {
+        if (!pedido) {
             throw new Error('Id pedido não encontrado')
         }
 
-        await this.client.query(`update coin_pedido set
-        status = 'reprovado'
+        await this.client.query(`update coin_pedido 
+        set status = 'reprovado'
         where id = $1::int`, [idPedido])
     }
 
@@ -201,7 +202,8 @@ export class ServicoPedido {
         const dataAtual = new Date()
 
         const res = await this.client.query(
-            `insert into coin_pedido (data, id_usuario, status) values ($1::date, $2::int, $3::text) RETURNING id`,
+            `insert into coin_pedido (data, id_usuario, status) values 
+            ($1::date, $2::int, $3::text) RETURNING id`,
             [dataAtual, idUsuario, 'pendente']
         )
 

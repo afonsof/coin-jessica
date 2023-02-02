@@ -20,16 +20,14 @@ export class ServicoCarteiraMoedasRecebidas {
 
         const usuario = await this.servicoUsuario.get(idUsuario)
 
-        const carteiraRecebidaUsuarioNoBD = await this.client.query(
-         `select * from coin_carteira_moedas_recebidas 
-         where id_usuario = $1::int`,[idUsuario]
+        const carteiraMoedaRecebida = await this.client.oneOrNone(
+            `select * from coin_carteira_moedas_recebidas 
+            where id_usuario = $1::int`,[idUsuario]
         )
 
-        if(carteiraRecebidaUsuarioNoBD.length ===0){
+        if(!carteiraMoedaRecebida){
             throw new Error('Usuário não encontrado ou usuário sem carteira')
         }
-
-        const carteiraMoedaRecebida = carteiraRecebidaUsuarioNoBD[0]
 
         const carteiraMoedasRecebidas = {
             nome:usuario.nome, 
@@ -40,35 +38,38 @@ export class ServicoCarteiraMoedasRecebidas {
     }
 
     async creditar(valorParaCreditar: number, idUsuario: number): Promise<void>{
-        const saldosCarteirasRecebidas: any[] = await this.client.query(`select saldo from coin_carteira_moedas_recebidas
-        where id_usuario = $1::int`, [idUsuario])
+        const saldoCarteiraRecebida = await this.client.oneOrNone(
+            `select saldo from coin_carteira_moedas_recebidas
+            where id_usuario = $1::int`, [idUsuario]
+        )
         
-        if(saldosCarteirasRecebidas.length === 0){
+        if(!saldoCarteiraRecebida){
             throw new Error('Carteira de moedas recebidas não encontrada')
         }
 
-        const saldoAtual = saldosCarteirasRecebidas[0].saldo
-
-        await this.client.query(`update coin_carteira_moedas_recebidas set 
-        saldo = $1::int
-        where id_usuario = $2::int`,[saldoAtual + valorParaCreditar, idUsuario])
+        await this.client.query(`update coin_carteira_moedas_recebidas 
+        set saldo = $1::int
+        where id_usuario = $2::int`,
+        [saldoCarteiraRecebida.saldo + valorParaCreditar, idUsuario])
     }
 
     async debitar(valorParaDebitar: number, idUsuario: number): Promise<void> {
-        const saldosCarteirasRecebidas: any[] = await this.client.query(`select saldo from coin_carteira_moedas_recebidas
-        where id_usuario = $1::int`, [idUsuario])
+        const saldoCarteiraRecebida = await this.client.oneOrNone(
+            `select saldo from coin_carteira_moedas_recebidas
+            where id_usuario = $1::int`, [idUsuario]
+        )
 
-        if(saldosCarteirasRecebidas.length === 0){
+        if(!saldoCarteiraRecebida){
             throw new Error('Carteira de moedas recebidas não encontrada')
         }
-        const saldoAtual = saldosCarteirasRecebidas[0].saldo
 
-        if((saldoAtual-valorParaDebitar) < 0) {
+        if((saldoCarteiraRecebida.saldo - valorParaDebitar) < 0) {
             throw new Error('Usuário não tem saldo suficiente')
         }
 
-        await this.client.query(`update coin_carteira_moedas_recebidas set 
-        saldo = $1::int
-        where id_usuario = $2::int`,[saldoAtual - valorParaDebitar, idUsuario])
+        await this.client.query(`update coin_carteira_moedas_recebidas 
+        set saldo = $1::int
+        where id_usuario = $2::int`,
+        [saldoCarteiraRecebida.saldo - valorParaDebitar, idUsuario])
     }
 }

@@ -20,14 +20,14 @@ export class ServicoEmpresa {
     }
 
     async get(idEmpresa:number): Promise<Empresa>{
-        const empresasDoBD = await this.client.query(`select * from coin_empresa
-        where id = $1::int`, [idEmpresa])
+        const empresaDoBD = await this.client.oneOrNone(
+            `select * from coin_empresa
+            where id = $1::int`, [idEmpresa]
+        )
 
-        if(empresasDoBD.length === 0){
+        if(!empresaDoBD){
             throw new Error('Empresa não encontrada')
         }
-
-        const empresaDoBD = empresasDoBD[0]
 
         const empresa = new Empresa(empresaDoBD.id, empresaDoBD.nome,  empresaDoBD.responsavel)
 
@@ -35,10 +35,10 @@ export class ServicoEmpresa {
     }
 
     async update(idEmpresa:number, nome: string,  responsavel:string): Promise<void>{
-        const empresasDoBD = await this.client.query(`select * from coin_empresa
+        const empresaDoBD = await this.client.oneOrNone(`select * from coin_empresa
         where id = $1::int`, [idEmpresa])
 
-        if(empresasDoBD.length === 0){
+        if(!empresaDoBD){
             throw new Error('Empresa não encontrada')
         }
         const empresa = new Empresa(idEmpresa,nome, responsavel)

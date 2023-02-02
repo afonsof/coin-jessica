@@ -20,8 +20,10 @@ export class ServicoProduto {
     }
 
     async get(idProduto: number): Promise<Produto>{
-        const produto = await this.client.oneOrNone(`select * from coin_produto
-        where id = $1::int`,[idProduto])
+        const produto = await this.client.oneOrNone(
+            `select * from coin_produto
+            where id = $1::int`,[idProduto]
+        )
 
         if(!produto){
             throw new Error ('Id produto não encontrado')
@@ -42,10 +44,10 @@ export class ServicoProduto {
     }
 
     async update(idProduto:number, nome:string, valor:number, estoque:number): Promise<void>{
-        const produtos = await this.client.query(`select * from coin_produto
+        const produtoNoBD = await this.client.oneOrNone(`select * from coin_produto
         where id = $1::int`,[idProduto])
 
-        if(produtos.length === 0){
+        if(!produtoNoBD){
             throw new Error ('Id produto não encontrado')
         }
         const produto = new Produto(idProduto, nome, valor, estoque)
@@ -66,34 +68,33 @@ export class ServicoProduto {
 
     async atualizarEstoque(idProduto:number, qtdParaDebitar:number): Promise<void>{
 
-        const produtos: any[] = await this.client.query(
+        const produto = await this.client.oneOrNone(
             `select * from coin_produto
             where id = $1::int`, [idProduto]
         )
 
-        if(produtos.length === 0){
+        if(!produto){
             throw new Error('Id de produto não encontrado')
         }
-        const estoqueAtual = produtos[0].estoque
+        const estoqueAtual = produto.estoque
 
         await this.client.query(`update coin_produto set
         estoque = $1::int
         where id = $2::int`, [estoqueAtual - qtdParaDebitar, idProduto])
-
     }
 
     async conferirQtdEstoque( idProduto:number, qtdPedido:number): Promise<void>{
 
-        const produtos: any[] = await this.client.query(
+        const produto = await this.client.oneOrNone(
             `select * from coin_produto
             where id = $1::int`, [idProduto]
         )
 
-        if(produtos.length === 0){
+        if(!produto){
             throw new Error('Id de produto não encontrado')
         }
 
-        const estoqueAtual = produtos[0].estoque
+        const estoqueAtual = produto.estoque
 
         if(qtdPedido > estoqueAtual){
             throw new Error('Quantidade pedida maior que estoque disponível')
