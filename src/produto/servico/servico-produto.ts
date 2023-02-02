@@ -20,17 +20,13 @@ export class ServicoProduto {
     }
 
     async get(idProduto: number): Promise<Produto>{
-        const produtosNoBD = await this.client.query(`select * from coin_produto
+        const produto = await this.client.oneOrNone(`select * from coin_produto
         where id = $1::int`,[idProduto])
 
-        if(produtosNoBD.length === 0){
+        if(!produto){
             throw new Error ('Id produto não encontrado')
         }
-
-        const produto = produtosNoBD[0]
-         
         return new Produto(produto.id, produto.nome, produto.valor, produto.estoque)
-
     }
 
 
@@ -65,7 +61,6 @@ export class ServicoProduto {
     }
 
     async delete(idProduto:number): Promise<void>{
-
         await this.client.query(`delete from coin_produto where id = $1::int`,[idProduto])
     }
 

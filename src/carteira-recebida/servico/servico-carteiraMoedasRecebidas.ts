@@ -42,7 +42,7 @@ export class ServicoCarteiraMoedasRecebidas {
     async creditar(valorParaCreditar: number, idUsuario: number): Promise<void>{
         const saldosCarteirasRecebidas: any[] = await this.client.query(`select saldo from coin_carteira_moedas_recebidas
         where id_usuario = $1::int`, [idUsuario])
-
+        
         if(saldosCarteirasRecebidas.length === 0){
             throw new Error('Carteira de moedas recebidas não encontrada')
         }
@@ -56,7 +56,7 @@ export class ServicoCarteiraMoedasRecebidas {
 
     async debitar(valorParaDebitar: number, idUsuario: number): Promise<void> {
         const saldosCarteirasRecebidas: any[] = await this.client.query(`select saldo from coin_carteira_moedas_recebidas
-         where id_usuario = $1::int`, [idUsuario])
+        where id_usuario = $1::int`, [idUsuario])
 
         if(saldosCarteirasRecebidas.length === 0){
             throw new Error('Carteira de moedas recebidas não encontrada')

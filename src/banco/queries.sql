@@ -15,7 +15,7 @@ create table coin_produto(
 	id serial not null,
 	nome text not null,
 	valor int not null,
-	estoque numeric not null
+	estoque int not null
 );
 
 create table coin_pedido(

@@ -44,7 +44,8 @@ export class ServicoCarteiraMoedasDoadas{
     async debitar(valorParaDebitar: number, idUsuario: number): Promise<void> {
 
         const saldosCarteirasDoadas: any[] = await this.client.query(`select saldo from coin_carteira_moedas_doadas
-         where id_usuario = $1::int`, [idUsuario])
+        where id_usuario = $1::int`, [idUsuario])
+
 
         if(saldosCarteirasDoadas.length === 0){
             throw new Error('Carteira de moedas doadas não encontrada')
@@ -63,7 +64,7 @@ export class ServicoCarteiraMoedasDoadas{
 
     async creditar(valorParaCreditar: number, idUsuario: number): Promise<void> {
         const saldosCarteirasDoadas: any[] = await this.client.query(`select saldo from coin_carteira_moedas_doadas
-         where id_usuario = $1::int`, [idUsuario])
+        where id_usuario = $1::int`, [idUsuario])
 
         if(saldosCarteirasDoadas.length === 0){
             throw new Error('Carteira de moedas doadas não encontrada')
