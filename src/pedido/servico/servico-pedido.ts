@@ -124,17 +124,11 @@ export class ServicoPedido {
         // debitar do saldo o valor do pedido
         // fazer um update do id do pedido alterando o status para 'aprovado'
 
-        const pedidosPendentes = await this.client.query(
-            `select * from coin_pedido
-             where id = $1::int and status = 'pendente'`,
-            [idPedido]
-        )
+        const pedido = await this.get(idPedido)
 
-        if (pedidosPendentes.length === 0) {
+        if (pedido.status !== 'pendente') {
             throw new Error('Pedido não encontrado ou já analisado')
         }
-
-        const pedido = await this.get(idPedido)
 
         const carteiraRecebida = await this.servicoCarteiraMoedasRecebidas.get(pedido.idUsuario)
         if (carteiraRecebida.saldo < pedido.total) {
