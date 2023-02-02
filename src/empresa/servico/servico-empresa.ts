@@ -35,6 +35,12 @@ export class ServicoEmpresa {
     }
 
     async update(idEmpresa:number, nome: string,  responsavel:string): Promise<void>{
+        const empresasDoBD = await this.client.query(`select * from coin_empresa
+        where id = $1::int`, [idEmpresa])
+
+        if(empresasDoBD.length === 0){
+            throw new Error('Empresa não encontrada')
+        }
         const empresa = new Empresa(idEmpresa,nome, responsavel)
 
         await this.client.query(`update  coin_empresa set
