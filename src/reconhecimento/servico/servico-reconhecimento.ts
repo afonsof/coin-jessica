@@ -87,7 +87,7 @@ export class ServicoReconhecimento {
   
     async aprovar(idReconhecimento:number): Promise<void>{       
         const ReconhecimentosPendentesOuReprovados = await this.client.query(`select * from coin_reconhecimento
-        where id = $1::int and status = 'pendente' or status = 'reprovado'`,[idReconhecimento])
+        where id = $1::int and status = 'pendente'`,[idReconhecimento])
 
         if(ReconhecimentosPendentesOuReprovados.length === 0){
             throw new Error('id de Reconhecimento não encontrado ou já aprovado')
@@ -96,6 +96,7 @@ export class ServicoReconhecimento {
         await this.client.query(`update coin_reconhecimento set
         status = 'aprovado'
         where id = $1::int`,[idReconhecimento])
+        
     }
 
 

@@ -46,6 +46,12 @@ export class ServicoProduto {
     }
 
     async update(idProduto:number, nome:string, valor:number, estoque:number): Promise<void>{
+        const produtos = await this.client.query(`select * from coin_produto
+        where id = $1::int`,[idProduto])
+
+        if(produtos.length === 0){
+            throw new Error ('Id produto não encontrado')
+        }
         const produto = new Produto(idProduto, nome, valor, estoque)
 
         await this.client.query(

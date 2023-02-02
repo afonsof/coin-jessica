@@ -5,6 +5,12 @@ create table coin_usuario(
 	senha varchar(50) not null
 );
 
+create table coin_empresa(
+	id serial not null,
+	nome text not null,
+	responsavel text not null
+);
+
 create table coin_produto(
 	id serial not null,
 	nome text not null,
@@ -15,15 +21,15 @@ create table coin_produto(
 create table coin_pedido(
 	id serial not null,
 	data date not null,
-	id_usuario int not null
+	id_usuario int not null,
+	status text not null
 );
 
 create table coin_produto_pedido (
 	id_pedido int not null,
 	id_produto int not null,
 	qtd int not null,
-	valor_unitario int not null,
-	status text not null
+	valor_unitario int not null
 );
 
 create table coin_reconhecimento(
