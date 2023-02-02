@@ -104,7 +104,7 @@ export class ServicoPedido {
             total: totalPedido,
             idUsuario: pedido.id_usuario,
             status: pedido.status,
-            produtos: await bluebird.each(produtosDoPedido, async produtoDoPedido => {
+            produtos: await Promise.all(produtosDoPedido.map(async produtoDoPedido => {
                 const produto = await this.servicoProduto.get(produtoDoPedido.id_produto)
                 return {
                     id: produto.id,
@@ -113,7 +113,7 @@ export class ServicoPedido {
                     qtd: produtoDoPedido.qtd,
                     total: (produtoDoPedido.valor_unitario * produtoDoPedido.qtd) 
                 }
-            })
+            }))
         }
     }
 
@@ -125,6 +125,7 @@ export class ServicoPedido {
         // fazer um update do id do pedido alterando o status para 'aprovado'
 
         const pedido = await this.get(idPedido)
+        console.log(pedido)
 
         if (pedido.status !== 'pendente') {
             throw new Error('Pedido não encontrado ou já analisado')
@@ -137,6 +138,7 @@ export class ServicoPedido {
         }
 
         await Promise.all(pedido.produtos.map(async produtoDoPedido => {
+            console.log(produtoDoPedido)
             const produto = await this.servicoProduto.get(produtoDoPedido.id)
             if (produtoDoPedido.qtd > produto.estoque) {
                 throw new Error(
