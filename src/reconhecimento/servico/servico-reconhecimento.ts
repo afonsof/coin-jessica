@@ -59,7 +59,7 @@ export class ServicoReconhecimento {
         const reconhecimento = new Reconhecimento(
             undefined, descricao, data, qtdMoedasDoadas, status, idDeUsuario, idParaUsuario
         )
-
+        console.log(reconhecimento)
         let valorDoado = reconhecimento.qtdMoedasDoadas 
 
         await this.client.query(`insert into coin_reconhecimento (descricao,data,

@@ -82,31 +82,27 @@ export class ServicoPedido {
     }
 
     async get(idPedido: number): Promise<GetPedido> {
-        const produtoDoPedido = await this.client.oneOrNone(
-            `select * from coin_produto_pedido where id_pedido = $1::int`, 
-            [idPedido]
-        )   
-
-        if (!produtoDoPedido) {
+        const pedido = await this.client.oneOrNone(`select * from coin_pedido where id = $1::int`, [idPedido])
+        if (!pedido) {
             throw new Error('pedido não encontrado')
         }
 
+        const produtosDoPedido = await this.client.query(
+             `select * from coin_produto_pedido where id_pedido = $1::int`, 
+             [idPedido]
+        )   
+
         let totalPedido = 0
-        produtoDoPedido.forEach(produtoDoPedido => {
+        produtosDoPedido.forEach(produtoDoPedido => {
             totalPedido = totalPedido + produtoDoPedido.valor_unitario * produtoDoPedido.qtd
         })
-
-        const pedido = await this.client.oneOrNone(
-            `select * from coin_pedido where id = $1::int`,
-            [idPedido]
-        )
 
         return {
             idPedido: idPedido,
             total: totalPedido,
             idUsuario: pedido.id_usuario,
             status: pedido.status,
-            produtos: await Promise.all(produtoDoPedido.map(async produtoDoPedido => {
+            produtos: await Promise.all(produtosDoPedido.map(async produtoDoPedido => {
                 const produto = await this.servicoProduto.get(produtoDoPedido.id_produto)
                 return {
                     id: produto.id,

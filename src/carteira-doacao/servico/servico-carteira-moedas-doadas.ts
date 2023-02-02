@@ -45,7 +45,7 @@ export class ServicoCarteiraMoedasDoadas{
             `select saldo from coin_carteira_moedas_doadas
             where id_usuario = $1::int`, [idUsuario]
         )
-
+        console.log(saldoCarteiraDoada)
         if(!saldoCarteiraDoada){
             throw new Error('Carteira de moedas doadas não encontrada')
         }
@@ -56,7 +56,7 @@ export class ServicoCarteiraMoedasDoadas{
 
         await this.client.query(`update coin_carteira_moedas_doadas set 
         saldo = $1::int
-        where id_usuario = $2::int`,[saldoCarteiraDoada - valorParaDebitar, idUsuario])
+        where id_usuario = $2::int`,[saldoCarteiraDoada.saldo - valorParaDebitar, idUsuario])
     }
 
     async creditar(valorParaCreditar: number, idUsuario: number): Promise<void> {
