@@ -3,7 +3,11 @@ insert into coin_usuario(nome, email,senha) values
 	('ana','ana@gmail.com', '2222111111111'),
 	('bruno', 'bruno@hotmail.com', 'bb411111111114');
 
-
+insert into coin_empresa(nome, responsavel) values
+	('americanas', 'bia'),
+	('casas Bahia','carla'),
+	('Pernambucanas','bruno');
+	
 insert into coin_produto (nome, valor, estoque) values
 	('Caneta',5,15 ),
 	('Lapis', 4, 20),
