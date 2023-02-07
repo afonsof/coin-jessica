@@ -8,7 +8,7 @@ export class ServicoUsuario {
         this.client = client
     }
     async listar(): Promise<Usuario[]> {
-        const usuariosNoBD = await this.client.query(`select * from coin_usuario`)
+        const usuariosNoBD = await this.client.query(`select * from coin_usuario order by nome`)
 
         const usuarios: Usuario[] = []
 

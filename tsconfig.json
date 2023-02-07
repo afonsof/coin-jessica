@@ -21,6 +21,7 @@
     "preserveConstEnums": true,
     "suppressImplicitAnyIndexErrors": true,
     "isolatedModules": true,
+    "importHelpers": true,
 
     "lib": [
       "es2019",

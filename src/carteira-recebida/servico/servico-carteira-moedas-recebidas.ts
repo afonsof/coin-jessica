@@ -26,7 +26,7 @@ export class ServicoCarteiraMoedasRecebidas {
         )
 
         if(!carteiraMoedaRecebida){
-            throw new Error('Usuário não encontrado ou usuário sem carteira')
+            throw new Error('Usuário sem carteira')
         }
 
         const carteiraMoedasRecebidas = {

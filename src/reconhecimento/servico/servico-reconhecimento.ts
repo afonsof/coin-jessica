@@ -1,6 +1,6 @@
 import { IDatabase } from "pg-promise";
 import { ServicoCarteiraMoedasDoadas } from "../../carteira-doacao/servico/servico-carteira-moedas-doadas";
-import { ServicoCarteiraMoedasRecebidas } from "../../carteira-recebida/servico/servico-carteiraMoedasRecebidas";
+import { ServicoCarteiraMoedasRecebidas } from "../../carteira-recebida/servico/servico-carteira-moedas-recebidas";
 import { Reconhecimento } from "../dominio/reconhecimento";
 
 
