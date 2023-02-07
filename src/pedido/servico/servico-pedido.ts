@@ -1,5 +1,5 @@
 import { IDatabase } from "pg-promise"
-import { ServicoCarteiraMoedasRecebidas } from "../../carteira-recebida/servico/servico-carteiraMoedasRecebidas"
+import { ServicoCarteiraMoedasRecebidas } from "../../carteira-recebida/servico/servico-carteira-moedas-recebidas"
 import { ServicoProduto } from "../../produto/servico/servico-produto"
 import { Usuario } from "../../usuario/dominio/usuario"
 import { ServicoUsuario } from "../../usuario/servico/servico-usuario"
@@ -64,7 +64,7 @@ export class ServicoPedido {
     }
 
     async listar(): Promise<ListarPedido[]> {
-        const pedidosNoBD = await this.client.query(`select * from coin_pedido cp`)
+        const pedidosNoBD = await this.client.query(`select * from coin_pedido cp order by data, id_usuario`)
 
         const pedidos: ListarPedido[] = []
         
