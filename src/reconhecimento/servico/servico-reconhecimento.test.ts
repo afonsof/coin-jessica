@@ -178,13 +178,11 @@ describe('ServicoReconhecimento', ()=>{
             )
 
             await client.query(`insert into coin_carteira_moedas_doadas
-            (id_usuario, saldo) values (${usuarios[0].id},200),
-                                       (${usuarios[1].id},200)`
+            (id_usuario, saldo) values (${usuarios[0].id},200)`
             )
 
             await client.query(`insert into coin_carteira_moedas_recebidas
-            (id_usuario, saldo) values (${usuarios[0].id},200),
-                                       (${usuarios[1].id},200)`
+            (id_usuario, saldo) values (${usuarios[1].id},200)`
             )
             const reconhecimento = await client.one(`insert into coin_reconhecimento 
                 (descricao, data, qtd_moedas_doadas, status, id_de_usuario, id_para_usuario) 
@@ -199,8 +197,8 @@ describe('ServicoReconhecimento', ()=>{
             const carteiraMoedasRecebidasDb = await client.one(`select * from coin_carteira_moedas_recebidas where id_usuario = ${usuarios[1].id}`)
 
             expect(reconhecimentoDb.status).toEqual('aprovado')
-            expect(carteiraMoedasDoadasDb.saldo).toEqual(190)
-            expect(carteiraMoedasRecebidasDb.saldo).toEqual(210)
+            expect(carteiraMoedasDoadasDb.saldo).toEqual(200)
+            expect(carteiraMoedasRecebidasDb.saldo).toEqual(200)
         })
 
         it('deve disparar um erro caso o reconhecimento não seja encontrado ou já aprovado', async()=>{
@@ -224,13 +222,11 @@ describe('ServicoReconhecimento', ()=>{
             )
 
             await client.query(`insert into coin_carteira_moedas_doadas
-            (id_usuario, saldo) values (${usuarios[0].id},200),
-                                       (${usuarios[1].id},200)`
+            (id_usuario, saldo) values (${usuarios[0].id},200)`
             )
 
             await client.query(`insert into coin_carteira_moedas_recebidas
-            (id_usuario, saldo) values (${usuarios[0].id},200),
-                                       (${usuarios[1].id},200)`
+            (id_usuario, saldo) values (${usuarios[1].id},200)`
             )
 
             const reconhecimento = await client.one(`insert into coin_reconhecimento 
@@ -246,8 +242,8 @@ describe('ServicoReconhecimento', ()=>{
             const saldoCarteiraRecebidaDB = await client.one(`select * from coin_carteira_moedas_recebidas where id_usuario = ${usuarios[1].id}`)
             
             expect(reconhecimentoDb.status).toEqual('reprovado')
-            expect(saldoCarteiraDoadaDB.saldo).toEqual(200)
-            expect(saldoCarteiraRecebidaDB.saldo).toEqual(200)
+            expect(saldoCarteiraDoadaDB.saldo).toEqual(210)
+            expect(saldoCarteiraRecebidaDB.saldo).toEqual(190)
         })
 
         it('deve disparar um erro caso o reconhecimento não seja encontrado ou já reprovado', async()=>{

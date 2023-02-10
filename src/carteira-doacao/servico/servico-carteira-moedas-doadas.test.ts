@@ -62,7 +62,7 @@ describe('ServicoCarteiraMoedasDoadas', () => {
 
             await client.one(`insert into coin_reconhecimento 
                 (descricao, data, qtd_moedas_doadas, status, id_de_usuario, id_para_usuario) 
-                values ('Obrigada pela ajuda',$1::date, 10, 'aprovado',
+                values ('Obrigada pela ajuda',$1::date, 10, 'pendente',
                 ${usuarios[0].id},${usuarios[1].id}) RETURNING id`, [dayjs('2023-01-05').toDate()]
             )
 
@@ -89,7 +89,7 @@ describe('ServicoCarteiraMoedasDoadas', () => {
 
             await client.one(`insert into coin_reconhecimento 
                 (descricao, data, qtd_moedas_doadas, status, id_de_usuario, id_para_usuario) 
-                values ('Obrigada pela ajuda',$1::date, 10, 'aprovado',
+                values ('Obrigada pela ajuda',$1::date, 10, 'pendente',
                 ${usuarios[0].id},${usuarios[1].id}) RETURNING id`, [dayjs('2023-01-05').toDate()]
             )
 
@@ -112,7 +112,7 @@ describe('ServicoCarteiraMoedasDoadas', () => {
 
             await client.one(`insert into coin_reconhecimento 
                 (descricao, data, qtd_moedas_doadas, status, id_de_usuario, id_para_usuario) 
-                values ('Obrigada pela ajuda',$1::date, 10, 'aprovado',
+                values ('Obrigada pela ajuda',$1::date, 10, 'pendente',
                 ${usuarios[0].id},${usuarios[1].id}) RETURNING id`, [dayjs('2023-01-05').toDate()]
             )
 
@@ -170,7 +170,7 @@ describe('ServicoCarteiraMoedasDoadas', () => {
 
             const reconhecimento = await client.one(`insert into coin_reconhecimento 
                 (descricao, data, qtd_moedas_doadas, status, id_de_usuario, id_para_usuario) 
-                values ('Obrigada pela ajuda',$1::date, 10, 'aprovado',
+                values ('Obrigada pela ajuda',$1::date, 10, 'pendente',
                 ${usuarios[0].id},${usuarios[1].id}) RETURNING id`, [dayjs('2023-01-05').toDate()]
             )
 

@@ -79,9 +79,6 @@ describe('ServicoCarteiraMoedasRecebidas', ()=>{
             )
 
             expect(carteiraDoadasBD.saldo).toEqual(210)
-
-        
-
         })
 
         it('deve disparar um erro caso não encontre carteira de moedas recebidas', async () => {
@@ -93,7 +90,7 @@ describe('ServicoCarteiraMoedasRecebidas', ()=>{
             
             const reconhecimento = await client.one(`insert into coin_reconhecimento 
                 (descricao, data, qtd_moedas_doadas, status, id_de_usuario, id_para_usuario) 
-                values ('Obrigada pela ajuda',$1::date, 10, 'aprovado',
+                values ('Obrigada pela ajuda',$1::date, 10, 'pendente',
                 ${usuarios[0].id},${usuarios[1].id}) RETURNING id`, [dayjs('2023-01-05').toDate()]
             )
 
@@ -149,7 +146,7 @@ describe('ServicoCarteiraMoedasRecebidas', ()=>{
             
             await client.one(`insert into coin_reconhecimento 
                 (descricao, data, qtd_moedas_doadas, status, id_de_usuario, id_para_usuario) 
-                values ('Obrigada pela ajuda',$1::date, 10, 'aprovado',
+                values ('Obrigada pela ajuda',$1::date, 10, 'pendente',
                 ${usuarios[0].id},${usuarios[1].id}) RETURNING id`, [dayjs('2023-01-05').toDate()]
             )
 
