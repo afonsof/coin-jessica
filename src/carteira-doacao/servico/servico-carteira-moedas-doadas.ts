@@ -69,7 +69,7 @@ export class ServicoCarteiraMoedasDoadas{
             throw new Error('Carteira de moedas doadas não encontrada')
         }
 
-        await this.client.one(`update coin_carteira_moedas_doadas set 
+        await this.client.query(`update coin_carteira_moedas_doadas set 
         saldo = $1::int
         where id_usuario = $2::int`,[saldoCarteiraDoada.saldo + valorParaCreditar, idUsuario])
     }

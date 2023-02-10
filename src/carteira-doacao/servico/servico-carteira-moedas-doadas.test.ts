@@ -70,7 +70,8 @@ describe('ServicoCarteiraMoedasDoadas', () => {
 
             await servico.debitar(valorParaDebitar, usuarios[0].id)
 
-            const carteiraDoadasBD = await client.one(`select * from coin_carteira_moedas_doadas where id_usuario = ${usuarios[0].id}`) 
+            const carteiraDoadasBD = await client.one(`select * from coin_carteira_moedas_doadas 
+            where id_usuario = ${usuarios[0].id}`) 
 
             expect(carteiraDoadasBD.saldo).toEqual(190)
 
@@ -146,19 +147,19 @@ describe('ServicoCarteiraMoedasDoadas', () => {
 
             await client.one(`insert into coin_reconhecimento 
                 (descricao, data, qtd_moedas_doadas, status, id_de_usuario, id_para_usuario) 
-                values ('Obrigada pela ajuda',$1::date, 10, 'aprovado',
+                values ('Obrigada pela ajuda',$1::date, 10, 'pendente',
                 ${usuarios[0].id},${usuarios[1].id}) RETURNING id`, [dayjs('2023-01-05').toDate()]
             )
 
             const valorParaCreditar = 10
 
-            await servico.creditar(valorParaCreditar, usuarios[1].id)
+            await servico.creditar(valorParaCreditar, usuarios[0].id)
 
             const carteiraRecebidasBD = await client.one(`select * from coin_carteira_moedas_doadas
-            where id_usuario = ${usuarios[1].id}`
+            where id_usuario = ${usuarios[0].id}`
             )
 
-            expect(carteiraRecebidasBD.saldo).toEqual(200)
+            expect(carteiraRecebidasBD.saldo).toEqual(210)
         })
 
         it('deve disparar um erro caso não encontre carteira', async () => {
