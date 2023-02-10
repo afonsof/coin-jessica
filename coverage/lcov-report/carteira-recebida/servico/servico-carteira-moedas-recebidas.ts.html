@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">55% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>11/20</span>
+                <span class='fraction'>20/20</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">0% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>0/4</span>
+                <span class='fraction'>4/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">75% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>3/4</span>
+                <span class='fraction'>4/4</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">55% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>11/20</span>
+                <span class='fraction'>20/20</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line medium'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -157,24 +157,15 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -183,7 +174,16 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -193,17 +193,17 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">3x</span>
 <span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-yes">1x</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-yes">1x</span>
@@ -229,25 +229,25 @@ export class ServicoCarteiraMoedasRecebidas {
         this.client = client
         this.servicoUsuario = new ServicoUsuario(client)
     }
-    async <span class="fstat-no" title="function not covered" >get(</span>idUsuario:number): Promise&lt;GetCarteiraMoedasRecebidas&gt;{
+    async get(idUsuario:number): Promise&lt;GetCarteiraMoedasRecebidas&gt;{
 &nbsp;
-        const usuario = <span class="cstat-no" title="statement not covered" >await this.servicoUsuario.get(idUsuario)</span>
+        const usuario = await this.servicoUsuario.get(idUsuario)
 &nbsp;
-        const carteiraMoedaRecebida = <span class="cstat-no" title="statement not covered" >await this.client.oneOrNone(</span>
+        const carteiraMoedaRecebida = await this.client.oneOrNone(
             `select * from coin_carteira_moedas_recebidas 
             where id_usuario = $1::int`,[idUsuario]
         )
 &nbsp;
-<span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if(!carteiraMoedaRecebida){</span>
-<span class="cstat-no" title="statement not covered" >            throw new Error('Usuário sem carteira')</span>
+        if(!carteiraMoedaRecebida){
+            throw new Error('Usuário sem carteira')
         }
 &nbsp;
-        const carteiraMoedasRecebidas = <span class="cstat-no" title="statement not covered" >{</span>
+        const carteiraMoedasRecebidas = {
             nome:usuario.nome, 
             saldo:carteiraMoedaRecebida.saldo,
             idUsuario:idUsuario
         }        
-<span class="cstat-no" title="statement not covered" >        return carteiraMoedasRecebidas</span>
+        return carteiraMoedasRecebidas
     }
 &nbsp;
     async creditar(valorParaCreditar: number, idUsuario: number): Promise&lt;void&gt;{
@@ -256,8 +256,8 @@ export class ServicoCarteiraMoedasRecebidas {
             where id_usuario = $1::int`, [idUsuario]
         )
         
-        <span class="missing-if-branch" title="if path not taken" >I</span>if(!saldoCarteiraRecebida){
-<span class="cstat-no" title="statement not covered" >            throw new Error('Carteira de moedas recebidas não encontrada')</span>
+        if(!saldoCarteiraRecebida){
+            throw new Error('Carteira de moedas recebidas não encontrada')
         }
 &nbsp;
         await this.client.query(`update coin_carteira_moedas_recebidas 
@@ -272,12 +272,12 @@ export class ServicoCarteiraMoedasRecebidas {
             where id_usuario = $1::int`, [idUsuario]
         )
 &nbsp;
-        <span class="missing-if-branch" title="if path not taken" >I</span>if(!saldoCarteiraRecebida){
-<span class="cstat-no" title="statement not covered" >            throw new Error('Carteira de moedas recebidas não encontrada')</span>
+        if(!saldoCarteiraRecebida){
+            throw new Error('Carteira de moedas recebidas não encontrada')
         }
 &nbsp;
-        <span class="missing-if-branch" title="if path not taken" >I</span>if((saldoCarteiraRecebida.saldo - valorParaDebitar) &lt; 0) {
-<span class="cstat-no" title="statement not covered" >            throw new Error('Usuário não tem saldo suficiente')</span>
+        if((saldoCarteiraRecebida.saldo - valorParaDebitar) &lt; 0) {
+            throw new Error('Usuário não tem saldo suficiente')
         }
 &nbsp;
         await this.client.query(`update coin_carteira_moedas_recebidas 
@@ -292,7 +292,7 @@ export class ServicoCarteiraMoedasRecebidas {
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-02-09T18:46:19.760Z
+                at 2023-02-10T15:52:48.944Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
