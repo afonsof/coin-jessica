@@ -4,7 +4,6 @@ import { ServicoCarteiraMoedasRecebidas } from "../../carteira-recebida/servico/
 import { Reconhecimento } from "../dominio/reconhecimento";
 
 
-
 export class ServicoReconhecimento {
     client: IDatabase<any>
     servicoCarteiraMoedaDoada: ServicoCarteiraMoedasDoadas
@@ -53,20 +52,19 @@ export class ServicoReconhecimento {
     }
 
     async create(
-        descricao:string, data: Date, qtdMoedasDoadas: number, status: string|undefined,
-        idDeUsuario:number, idParaUsuario:number):Promise<void >{
+        descricao:string, data: Date, qtdMoedasDoadas: number, idDeUsuario:number, idParaUsuario:number):Promise<void >{
 
         const reconhecimento = new Reconhecimento(
-            undefined, descricao, data, qtdMoedasDoadas, status, idDeUsuario, idParaUsuario
+            undefined, descricao, data, qtdMoedasDoadas, 'pendente', idDeUsuario, idParaUsuario
         )
-        console.log(reconhecimento)
+        
         let valorDoado = reconhecimento.qtdMoedasDoadas 
 
         await this.client.query(`insert into coin_reconhecimento (descricao,data,
             qtd_moedas_doadas, status, id_de_usuario, id_para_usuario) values 
             ($1::text, $2::Date, $3::int, $4::text, $5::int, $6::int)`,
             [reconhecimento.descricao, reconhecimento.data, reconhecimento.qtdMoedasDoadas,
-            'pendente',reconhecimento.idDeUsuario, reconhecimento.idParaUsuario]
+            reconhecimento.status,reconhecimento.idDeUsuario, reconhecimento.idParaUsuario]
         )
         
         await this.servicoCarteiraMoedaDoada.debitar(valorDoado, idDeUsuario)
@@ -75,7 +73,7 @@ export class ServicoReconhecimento {
     }
     
     async delete(idReconhecimento:number): Promise<void>{
-        const reconhecimentoPendente = await this.client.query(
+        const reconhecimentoPendente = await this.client.oneOrNone(
             `select * from coin_reconhecimento
             where id = $1::int and status = 'pendente'`,[idReconhecimento]
         )
@@ -88,7 +86,6 @@ export class ServicoReconhecimento {
         where id = $1::int`,[idReconhecimento])
     }
 
-  
     async aprovar(idReconhecimento:number): Promise<void>{       
         const ReconhecimentoPendente = await this.client.oneOrNone(
             `select * from coin_reconhecimento
@@ -103,7 +100,6 @@ export class ServicoReconhecimento {
         status = 'aprovado'
         where id = $1::int`,[idReconhecimento])
     }
-
 
     async reprovar(id:number): Promise<void>{         
         const reconhecimento = await this.client.oneOrNone(

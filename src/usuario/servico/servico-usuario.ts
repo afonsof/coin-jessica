@@ -2,7 +2,7 @@ import { IDatabase } from "pg-promise"
 import { Usuario } from "../dominio/usuario"
 
 export class ServicoUsuario {
-    client: IDatabase<any>
+    client: IDatabase<any> 
 
     constructor(client: IDatabase<any>) {
         this.client = client

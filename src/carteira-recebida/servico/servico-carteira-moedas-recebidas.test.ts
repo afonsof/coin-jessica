@@ -1,6 +1,8 @@
 import { ServicoCarteiraMoedasRecebidas } from "./servico-carteira-moedas-recebidas"
 
 import pgPromise from 'pg-promise'
+import dayjs from "dayjs";
+
 const pgp = pgPromise()
 
 const client = pgp({
@@ -43,6 +45,157 @@ describe('ServicoCarteiraMoedasRecebidas', ()=>{
             } 
             catch (e) {
                 expect(e).toEqual(new Error('Usuário sem carteira'))
+            }
+        })
+    })
+    describe('creditar', () => {
+        it('deve creditar um valor na carteira do usuario ao receber um valor no reconhecimento', async () => {
+
+            const usuarios = await client.query(`insert into coin_usuario(nome, email,senha)
+            values ('joao1', 'joao@gmail.com', '123111111'),
+                   ('joao2', 'joao@gmail.com', '123111111') RETURNING id`
+            )
+
+            await client.query(`insert into coin_carteira_moedas_doadas
+            (id_usuario, saldo) values (${usuarios[0].id},200),
+                                       (${usuarios[1].id},200)`
+            )
+            
+            await client.query(`insert into coin_carteira_moedas_recebidas
+            (id_usuario, saldo) values (${usuarios[0].id},200),
+                                       (${usuarios[1].id},200)`
+            )
+            
+            const reconhecimento = await client.one(`insert into coin_reconhecimento 
+                (descricao, data, qtd_moedas_doadas, status, id_de_usuario, id_para_usuario) 
+                values ('Obrigada pela ajuda',$1::date, 10, 'aprovado',
+                ${usuarios[0].id},${usuarios[1].id}) RETURNING id`, [dayjs('2023-01-05').toDate()]
+            )
+            const valorParaCreditar = reconhecimento.qtd_moedas_doadas
+           
+            await servico.creditar(valorParaCreditar, usuarios[1].id)
+
+            const res = servico.get(usuarios[1].id)
+
+            expect(res).toEqual({
+                nome: 'joao2',
+                saldo: 210,
+                idUsuario: usuarios[1].id,
+            })
+
+        })
+
+        it('deve disparar um erro caso não encontre carteira de moedas recebidas', async () => {
+            const usuarios = await client.query(`insert into coin_usuario(nome, email,senha)
+            values ('joao1', 'joao@gmail.com', '123111111'),
+                   ('joao2', 'joao@gmail.com', '123111111') RETURNING id`
+            )
+
+            
+            const reconhecimento = await client.one(`insert into coin_reconhecimento 
+                (descricao, data, qtd_moedas_doadas, status, id_de_usuario, id_para_usuario) 
+                values ('Obrigada pela ajuda',$1::date, 10, 'aprovado',
+                ${usuarios[0].id},${usuarios[1].id}) RETURNING id`, [dayjs('2023-01-05').toDate()]
+            )
+
+            const valorParaCreditar = reconhecimento.qtd_moedas_doadas
+
+            expect.assertions(1);
+            try {
+                await servico.creditar(valorParaCreditar, usuarios[1].id)
+            }
+            catch (e) {
+                expect(e).toEqual(new Error('Carteira de moedas recebidas não encontrada'))
+            }
+        })
+    })
+
+    describe('debitar', () => {
+        it('deve debitar um valor na carteira do usuario ao doar um valor no reconhecimento', async () => {
+
+            const usuarios = await client.query(`insert into coin_usuario(nome, email,senha)
+            values ('joao1', 'joao@gmail.com', '123111111'),
+                   ('joao2', 'joao@gmail.com', '123111111') RETURNING id`
+            )
+
+            await client.query(`insert into coin_carteira_moedas_doadas
+            (id_usuario, saldo) values (${usuarios[0].id},200),
+                                       (${usuarios[1].id},200)`
+            )
+            
+            await client.query(`insert into coin_carteira_moedas_recebidas
+            (id_usuario, saldo) values (${usuarios[0].id},200),
+                                       (${usuarios[1].id},200)`
+            )
+            
+            const reconhecimento = await client.one(`insert into coin_reconhecimento 
+                (descricao, data, qtd_moedas_doadas, status, id_de_usuario, id_para_usuario) 
+                values ('Obrigada pela ajuda',$1::date, 10, 'aprovado',
+                ${usuarios[0].id},${usuarios[1].id}) RETURNING id`, [dayjs('2023-01-05').toDate()]
+            )
+            const valorParaDebitar = reconhecimento.qtd_moedas_doadas
+           
+            await servico.debitar(valorParaDebitar, usuarios[1].id)
+
+            const res = servico.get(usuarios[1].id)
+
+            expect(res).toEqual({
+                nome: 'joao2',
+                saldo: 190,
+                idUsuario: usuarios[1].id,
+            })
+
+        })
+
+        it('deve disparar um erro caso não encontre carteira de moedas recebidas', async () => {
+            const usuarios = await client.query(`insert into coin_usuario(nome, email,senha)
+            values ('joao1', 'joao@gmail.com', '123111111'),
+                   ('joao2', 'joao@gmail.com', '123111111') RETURNING id`
+            )
+        
+            
+            const reconhecimento = await client.one(`insert into coin_reconhecimento 
+                (descricao, data, qtd_moedas_doadas, status, id_de_usuario, id_para_usuario) 
+                values ('Obrigada pela ajuda',$1::date, 10, 'aprovado',
+                ${usuarios[0].id},${usuarios[1].id}) RETURNING id`, [dayjs('2023-01-05').toDate()]
+            )
+
+            const valorParaDebitar = reconhecimento.qtd_moedas_doadas
+
+            expect.assertions(1);
+            try {
+                await servico.debitar(valorParaDebitar, usuarios[1].id)
+            }
+            catch (e) {
+                expect(e).toEqual(new Error('Carteira de moedas recebidas não encontrada'))
+            }
+        })
+
+        it('deve disparar um erro caso saldo carteira de moedas recebidas seja menor q que o valor a debitar', async () => {
+            const usuarios = await client.query(`insert into coin_usuario(nome, email,senha)
+            values ('joao1', 'joao@gmail.com', '123111111'),
+                   ('joao2', 'joao@gmail.com', '123111111') RETURNING id`
+            )
+            
+            await client.query(`insert into coin_carteira_moedas_recebidas
+            (id_usuario, saldo) values (${usuarios[0].id},5),
+                                       (${usuarios[1].id},5)`
+            )
+            
+            const reconhecimento = await client.one(`insert into coin_reconhecimento 
+                (descricao, data, qtd_moedas_doadas, status, id_de_usuario, id_para_usuario) 
+                values ('Obrigada pela ajuda',$1::date, 10, 'aprovado',
+                ${usuarios[0].id},${usuarios[1].id}) RETURNING id`, [dayjs('2023-01-05').toDate()]
+            )
+
+            const valorParaDebitar = reconhecimento.qtd_moedas_doadas
+
+            expect.assertions(1);
+            try {
+                await servico.debitar(valorParaDebitar, usuarios[1].id)
+            }
+            catch (e) {
+                expect(e).toEqual(new Error('Usuário não tem saldo suficiente'))
             }
         })
     })

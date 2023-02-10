@@ -53,6 +53,16 @@ describe('ServicoEmpresa', ()=>{
             where id = ${res.id}`)
             expect(res2).toBeNull()
         })
+
+        it('deve disparar um erro caso o id empresa não seja encontrado', async()=>{
+            expect.assertions(1);
+            try {
+                await servico.delete(999999)
+            } 
+            catch (e) {
+                expect(e).toEqual(new Error('Empresa não encontrada'))
+            }
+        })
     })
 
     describe('list', ()=>{
@@ -81,6 +91,50 @@ describe('ServicoEmpresa', ()=>{
                 responsavel: 'vinicio',
             }])
 
+        })
+    })
+
+    describe('update', ()=>{
+        it('deve alterar uma empresa existente no banco', async ()=>{
+
+            const empresa = await client.one(`insert into coin_empresa(nome, responsavel) values
+            ('americana', 'luis') RETURNING id`)
+            
+            await servico.update(empresa.id, 'americanas','bianca')
+
+            const empresaNoBD = await client.one(`select * from coin_empresa where id = ${empresa.id}`)
+            
+            expect(empresaNoBD.nome).toEqual('americanas')
+            expect(empresaNoBD.responsavel).toEqual('bianca')
+
+        })
+
+        it('deve disparar um erro caso a empresa não seja encontrada', async()=>{
+            
+            expect.assertions(1);
+            try {
+                await servico.update(9999999, 'americanas','bianca')
+            } 
+            catch (e) {
+                expect(e).toEqual(new Error('Empresa não encontrada'))
+            }
+        })
+    })
+
+    describe('create', ()=>{
+        it('deve criar uma nova empresa no banco', async ()=>{
+
+            await client.query(`delete from coin_empresa`)
+
+            await servico.create('americanas','bianca')
+
+            const empresaNoBD = await client.query(`select * from coin_empresa`)
+
+            expect(empresaNoBD).toEqual([{
+                id: empresaNoBD[0].id,
+                nome: 'americanas',
+                responsavel: 'bianca',
+            }])
         })
     })
 })

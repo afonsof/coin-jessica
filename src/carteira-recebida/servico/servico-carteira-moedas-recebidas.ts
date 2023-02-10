@@ -6,7 +6,7 @@ interface GetCarteiraMoedasRecebidas {
     saldo: number
     idUsuario: number
 }
-
+ 
 export class ServicoCarteiraMoedasRecebidas {
     
     client: IDatabase<any>

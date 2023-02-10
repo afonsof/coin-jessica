@@ -45,7 +45,7 @@ export class ServicoCarteiraMoedasDoadas{
             `select saldo from coin_carteira_moedas_doadas
             where id_usuario = $1::int`, [idUsuario]
         )
-        console.log(saldoCarteiraDoada)
+
         if(!saldoCarteiraDoada){
             throw new Error('Carteira de moedas doadas não encontrada')
         }

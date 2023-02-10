@@ -1,6 +1,8 @@
 import { ServicoUsuario } from "./servico-usuario"
 
 import pgPromise from 'pg-promise'
+import { create } from "domain"
+import cli from "nodemon/lib/cli"
 const pgp = pgPromise()
 
 const client = pgp({
@@ -32,7 +34,7 @@ describe('ServicoUsuario', ()=>{
         it('deve disparar um erro caso o usuario não seja encontrado', async()=>{
             expect.assertions(1);
             try {
-                await servico.get(999999)
+                await servico.delete(999999)
             } 
             catch (e) {
                 expect(e).toEqual(new Error('Usuário não encontrado'))
@@ -49,6 +51,16 @@ describe('ServicoUsuario', ()=>{
 
             const res2 = await client.oneOrNone(`select * from coin_usuario where id=${res.id}`)
             expect(res2).toBeNull()
+        })
+
+        it('deve disparar um erro caso o id usuario não seja encontrado', async()=>{
+            expect.assertions(1);
+            try {
+                await servico.get(999999)
+            } 
+            catch (e) {
+                expect(e).toEqual(new Error('Usuário não encontrado'))
+            }
         })
     })
 
@@ -83,5 +95,50 @@ describe('ServicoUsuario', ()=>{
         })
     })
 
+    describe('create', ()=>{
+        it('deve criar um novo usuario no banco', async ()=>{
+
+            await client.query(`delete from coin_usuario`)
+
+            await servico.create('tadeu1', 'tadeu@gmail.com', '123111111')
+
+            const usuarioNoBD = await client.query(`select * from coin_usuario`)
+
+            expect(usuarioNoBD).toEqual([{
+                id: usuarioNoBD[0].id,
+                nome: 'tadeu1',
+                email: 'tadeu@gmail.com',
+                senha: '123111111'
+            }])
+        })
+    })
+
+    describe('update', ()=>{
+        it('deve alterar um usuario existente no banco', async ()=>{
+
+            const usuario = await client.one(`insert into coin_usuario(nome, email,senha) values
+            ('tadeu', 'tadeu@gmail.com', '123111111') RETURNING id`)
+            
+            await servico.update(usuario.id, 'tadeu1', 'tadeu@gmail.com', '123111111')
+
+            const usuarioNoBD = await client.one(`select * from coin_usuario where id = ${usuario.id}`)
+
+            expect(usuarioNoBD.nome).toEqual('tadeu1')
+            expect(usuarioNoBD.email).toEqual('tadeu@gmail.com')
+            expect(usuarioNoBD.senha).toEqual('123111111')
+        })
+
+        it('deve disparar um erro caso o usuario não seja encontrado', async()=>{
+            
+            expect.assertions(1);
+            try {
+                await servico.update(9999999, 'tadeu1', 'tadeu@gmail.com', '123111111')
+            } 
+            catch (e) {
+                expect(e).toEqual(new Error('Usuário não encontrado'))
+            }
+        })
+    })
+ 
 })
 
