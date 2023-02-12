@@ -11,7 +11,7 @@ const client = pgp({
     user: 'example',
     password: 'example',
     database: 'teste'
-}) 
+})
 
 const servico = new ServicoReconhecimento(client)
 
@@ -143,13 +143,17 @@ describe('ServicoReconhecimento', ()=>{
                                        (${usuarios[1].id},200)`
             )
             
-            await servico.create('Obrigada pela ajuda', dayjs('2023-01-05').toDate(), 10, usuarios[0].id,usuarios[1].id)
+            await servico.create('Obrigada pela ajuda', dayjs('2023-01-05').toDate(), 10, 
+            usuarios[0].id,usuarios[1].id)
 
-            const reconhecimentoBD = await client.one(`select * from coin_reconhecimento where id_de_usuario = ${usuarios[0].id}`)
+            const reconhecimentoBD = await client.one(`select * from coin_reconhecimento 
+            where id_de_usuario = ${usuarios[0].id}`)
 
-            const carteiraMoedasDoadasBD = await client.one(`select * from coin_carteira_moedas_doadas where id_usuario = ${usuarios[0].id}`)
+            const carteiraMoedasDoadasBD = await client.one(`select * from coin_carteira_moedas_doadas 
+            where id_usuario = ${usuarios[0].id}`)
 
-            const carteiraMoedasRecebidasBD = await client.one(`select * from coin_carteira_moedas_recebidas where id_usuario = ${usuarios[1].id}`)
+            const carteiraMoedasRecebidasBD = await client.one(`select * from 
+            coin_carteira_moedas_recebidas where id_usuario = ${usuarios[1].id}`)
 
             expect(reconhecimentoBD.descricao).toEqual('Obrigada pela ajuda')
 

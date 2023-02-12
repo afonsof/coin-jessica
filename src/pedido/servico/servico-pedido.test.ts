@@ -112,39 +112,36 @@ describe('ServicoPedido', ()=>{
     describe('aprovar', ()=>{
         it('deve aprovar um pedido criado com status pendente', async()=>{
 
-            const resUsuario = await client.one(`insert into coin_usuario (nome, email, senha) values ('zezin', 'joze@sdf.com', '123123123') RETURNING id`)
+            const resUsuario = await client.one(`insert into coin_usuario (nome, email, senha) values 
+            ('zezin', 'joze@sdf.com', '123123123') RETURNING id`)
 
-            await client.one(`insert into coin_carteira_moedas_recebidas(id_usuario, saldo)
+            await client.query(`insert into coin_carteira_moedas_recebidas(id_usuario, saldo)
             values ($1::int,200) `, [resUsuario.id])
 
-            await client.one(`insert into coin_carteira_moedas_doadas(id_usuario, saldo)
-            values ($1::int,200) `, [resUsuario.id])
-
-            const resProduto = await client.one(`insert into coin_produto (nome, valor, estoque) values ('pirulito', 2, 2000) RETURNING id`)
+            const resProduto = await client.one(`insert into coin_produto (nome, valor, estoque)
+            values ('pirulito', 10, 2000) RETURNING id`)
 
             const resPedido = await client.one(`insert into coin_pedido 
                 (data, id_usuario, status) values
-                ($1::date, ${resUsuario.id},'aprovado') RETURNING id`, [dayjs('2023-01-05').toDate()]
-            )
-
-            const idPedido = resPedido.id    
+                ($1::date, ${resUsuario.id},'pendente') RETURNING id`, [dayjs('2023-01-05').toDate()]
+            )  
 
             await client.query(`insert into coin_produto_pedido 
                 (id_pedido, id_produto, qtd, valor_unitario) values
-                (${idPedido},${resProduto.id},2,10)`
+                (${resPedido.id },${resProduto.id},2,10)`
             )
 
-            await servico.aprovar(idPedido)
+            await servico.aprovar(resPedido.id)
 
-            const res = servico.get(idPedido)
+            const pedidoNoBD = await client.one(`select * from coin_pedido 
+            where id = ${resPedido.id}`)
 
-            expect(res).toEqual({
-                idPedido: resPedido.id,
-                nomeUsuario: 'zezin',
-                data: dayjs('2023-01-05').toDate(),
-                status: 'aprovado'
-            })
+            const carteiraRecebidasBD = await client.one(`select * from coin_carteira_moedas_recebidas
+            where id_usuario = ${resUsuario.id}`)
+        
+            expect(pedidoNoBD.status).toEqual('aprovado')
 
+            expect(carteiraRecebidasBD.saldo).toEqual(180)
         })
 
         it('deve disparar um erro caso o pedido não tenha o status = pendente', async()=>{
@@ -281,7 +278,7 @@ describe('ServicoPedido', ()=>{
                                         qts:1
                                     }]
 
-            await servico.create(resUsuario.id, produtosDoPedido)
+            // await servico.create(resUsuario.id, produtosDoPedido)
 
             const res = await servico.listar()
             

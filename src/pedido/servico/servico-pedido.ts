@@ -113,7 +113,7 @@ export class ServicoPedido {
                 }
             }))
         }
-    }
+    } 
 
     async aprovar(idPedido: number): Promise<void> {
         // ok ver se o idPedido do pedido encontra-se pendente
