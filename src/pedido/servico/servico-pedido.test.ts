@@ -75,9 +75,11 @@ describe('ServicoPedido', ()=>{
         it('deve listar os pedidos existentes', async ()=>{
             await client.query(`delete from coin_pedido`)
 
-            const resUsuario = await client.one(`insert into coin_usuario (nome, email, senha) values ('zezin', 'joze@sdf.com', '123123123') RETURNING id`)
+            const resUsuario = await client.one(`insert into coin_usuario (nome, email, senha)
+            values ('zezin', 'joze@sdf.com', '123123123') RETURNING id`)
 
-            const resProduto = await client.one(`insert into coin_produto (nome, valor, estoque) values ('pirulito', 2, 2000) RETURNING id`)
+            const resProduto = await client.one(`insert into coin_produto (nome, valor, estoque)
+            values ('pirulito', 2, 2000) RETURNING id`)
 
             const resPedido = await client.query(`insert into coin_pedido 
                 (data, id_usuario, status) values
@@ -171,16 +173,18 @@ describe('ServicoPedido', ()=>{
         })
 
         it('deve disparar um erro caso o usuario não tenha saldo suficiente para o pedido', async()=>{
-            const resUsuario = await client.one(`insert into coin_usuario (nome, email, senha) values ('zezin', 'joze@sdf.com', '123123123') RETURNING id`)
+            const resUsuario = await client.one(`insert into coin_usuario (nome, email, senha) values
+            ('zezin', 'joze@sdf.com', '123123123') RETURNING id`)
 
-            await client.one(`insert into coin_carteira_moedas_recebidas(id_usuario, saldo)
+            await client.query(`insert into coin_carteira_moedas_recebidas(id_usuario, saldo)
             values ($1::int,0) `, [resUsuario.id])
 
-            const resProduto = await client.one(`insert into coin_produto (nome, valor, estoque) values ('pirulito', 2, 2000) RETURNING id`)
+            const resProduto = await client.one(`insert into coin_produto (nome, valor, estoque) 
+            values ('pirulito', 2, 2000) RETURNING id`)
 
             const resPedido = await client.one(`insert into coin_pedido 
                 (data, id_usuario, status) values
-                ($1::date, ${resUsuario.id},'aprovado') RETURNING id`, [dayjs('2023-01-05').toDate()]
+                ($1::date, ${resUsuario.id},'pendente') RETURNING id`, [dayjs('2023-01-05').toDate()]
             )
 
             const idPedido = resPedido.id    
@@ -200,15 +204,57 @@ describe('ServicoPedido', ()=>{
         })
     })
 
+    it('deve disparar um erro caso o produto não tenha estoque suficiente', async()=>{
+
+        await client.query(`delete from coin_produto_pedido`)
+
+        const resUsuario = await client.one(`insert into coin_usuario (nome, email, senha) values
+        ('zezin', 'joze@sdf.com', '123123123') RETURNING id`)
+
+        await client.query(`insert into coin_carteira_moedas_recebidas(id_usuario, saldo)
+        values ($1::int,200) `, [resUsuario.id])
+
+        const resProduto = await client.one(`insert into coin_produto (nome, valor, estoque) 
+        values ('pirulito', 2, 0) RETURNING id`)
+
+        const resPedido = await client.one(`insert into coin_pedido 
+            (data, id_usuario, status) values
+            ($1::date, ${resUsuario.id},'pendente') RETURNING id`, [dayjs('2023-01-05').toDate()]
+        )
+
+        const idPedido = resPedido.id    
+
+        await client.query(`insert into coin_produto_pedido 
+            (id_pedido, id_produto, qtd, valor_unitario) values
+            (${idPedido},${resProduto.id},2,10)`
+        )
+
+        const produtoDoPedidoNoBD = await client.one(`select * from coin_produto_pedido
+        where id_pedido = ${idPedido}`)
+
+        expect.assertions(1);
+        try {
+            await servico.aprovar(idPedido)
+        } 
+        catch (e) {
+            expect(e).toEqual(new Error(`Foi requisitado ${produtoDoPedidoNoBD.qtd} unidades
+            do produto ${resProduto.nome}, mas só tem ${resProduto.estoque} em estoque`))
+        }
+    })
+})
+
+
     describe('reprovar', ()=>{
         it('deve reprovar um pedido ciado com status pendente', async()=>{
 
-            const resUsuario = await client.one(`insert into coin_usuario (nome, email, senha) values ('zezin', 'joze@sdf.com', '123123123') RETURNING id`)
+            const resUsuario = await client.one(`insert into coin_usuario (nome, email, senha)
+            values ('zezin', 'joze@sdf.com', '123123123') RETURNING id`)
 
             await client.one(`insert into coin_carteira_moedas_recebidas(id_usuario, saldo)
             values ($1::int,200) `, [resUsuario.id])
 
-            const resProduto = await client.one(`insert into coin_produto (nome, valor, estoque) values ('pirulito', 2, 2000) RETURNING id`)
+            const resProduto = await client.one(`insert into coin_produto (nome, valor, estoque)
+            alues ('pirulito', 2, 2000) RETURNING id`)
 
             const resPedido = await client.one(`insert into coin_pedido 
                 (data, id_usuario, status) values
