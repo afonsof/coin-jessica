@@ -18,15 +18,13 @@ const servico = new ServicoProduto(client)
 describe('ServicoProduto', ()=> {
     describe('get', ()=> {
         it('deve returnar um unico produto, caso ele esteja no banco', async ()=> {
-            // inicializacao
 
             const res = await client.one(`insert into coin_produto (nome, valor, estoque)
-             values ('batatinha', 10, 100) RETURNING id`)
+            values ('batatinha', 10, 100) RETURNING id`)
 
-            // exercicio
+
             const produto = await servico.get(res.id)
 
-            // verificacao
             expect(produto).toEqual({
                 id: res.id,
                 nome: 'batatinha',
@@ -36,18 +34,12 @@ describe('ServicoProduto', ()=> {
         })
 
         it('deve disparar um erro caso o produto nao seja encontrado', async ()=> {
-            // inicializacao: é o serviço que foi declarado à cima, fora do describe
-
-            // exercicio e verificacao:
-
-            // expect.assertions(1) é usado para caso não entrar no erro, 
-            // vai avisar q era esperado dar 1 erro
+     
             expect.assertions(1);  
             try {
                 await servico.get(999999)
             } 
             catch (e) {
-                //o erro 'Id produto não encontrado', tem q ser igual ao erro esperado no get serviço produto
                 expect(e).toEqual(new Error('Id produto não encontrado'))
             }
         })
@@ -55,15 +47,12 @@ describe('ServicoProduto', ()=> {
 
     describe('delete', ()=> {
         it('deve deletar caso o produto exista', async ()=> {
-            // inicializacao
 
             const res = await client.one(`insert into coin_produto (nome, valor, estoque)
-                values ('batatinha', 10, 100) RETURNING id`)
+            values ('batatinha', 10, 100) RETURNING id`)
 
-            // exercicio
             await servico.delete(res.id)
 
-            // verificacao
             const res2 = await client.oneOrNone(`select * from coin_produto where id=${res.id}`)
             expect(res2).toBeNull()
         })
@@ -84,9 +73,9 @@ describe('ServicoProduto', ()=> {
             await client.query(`delete from coin_produto`)
 
             const res = await client.query(`insert into coin_produto (nome, valor, estoque)
-             values ('batatinha1', 10, 100),
-                    ('batatinha2', 20, 100),
-                    ('batatinha3', 30, 100) RETURNING id`
+                values ('batatinha1', 10, 100),
+                       ('batatinha2', 20, 100),
+                       ('batatinha3', 30, 100) RETURNING id`
             )
 
             const produtos = await servico.listar()
