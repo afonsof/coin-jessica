@@ -52,8 +52,7 @@ describe('ServicoCarteiraMoedasDoadas', () => {
         it('deve debitar um valor na carteira do usuario ao doar um valor no reconhecimento', async () => {
 
             const usuarios = await client.query(`insert into coin_usuario(nome, email,senha)
-            values ('joao1', 'joao@gmail.com', '123111111'),
-                   ('joao2', 'joao@gmail.com', '123111111') RETURNING id`
+            values ('joao1', 'joao@gmail.com', '123111111') RETURNING id`
             )
 
             await client.query(`insert into coin_carteira_moedas_doadas
