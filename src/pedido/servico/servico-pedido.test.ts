@@ -321,7 +321,12 @@ describe('ServicoPedido', ()=>{
                                         qtd:1
                                     }]
 
-            const dataAtual = new Date()
+            const dataAtual = dayjs()
+                .set('hour', 0)
+                .set('minute', 0)
+                .set('second', 0)
+                .set('millisecond', 0)
+                .toDate()
             await servico.create(resUsuario.id, produtosDoPedido)
             
             const pedidosNoBD = await client.query(`select * from coin_pedido`)
