@@ -108,9 +108,8 @@ describe('ServicoCarteiraMoedasDoadas', () => {
                 expect(e).toEqual(new Error('Carteira de moedas doadas não encontrada'))
             }
         })
-
-
     })
+
     describe('creditar', () => {
         it('deve creditar um valor na carteira do usuario ao receber um valor no reconhecimento', async () => {
 
