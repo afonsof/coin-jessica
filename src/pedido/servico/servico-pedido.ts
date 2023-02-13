@@ -139,9 +139,8 @@ export class ServicoPedido {
             const produto = await this.servicoProduto.get(produtoDoPedido.id)
             if (produtoDoPedido.qtd > produto.estoque) {
                 throw new Error(
-                    `Foi requisitado ${produtoDoPedido.qtd} unidades
-                     do produto ${produto.nome},
-                     mas só tem ${produto.estoque} em estoque`
+                    `Foi requisitado ${produtoDoPedido.qtd} unidades do ` +
+                    `produto ${produto.nome}, mas só tem ${produto.estoque} em estoque`
                 )
             }
         }))

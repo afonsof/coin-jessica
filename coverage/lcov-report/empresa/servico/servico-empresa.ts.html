@@ -23,30 +23,30 @@
         <div class='clearfix'>
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">70.83% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Statements</span>
-                <span class='fraction'>17/24</span>
+                <span class='fraction'>24/24</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">66.66% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Branches</span>
-                <span class='fraction'>2/3</span>
+                <span class='fraction'>3/3</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">71.42% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Functions</span>
-                <span class='fraction'>5/7</span>
+                <span class='fraction'>7/7</span>
             </div>
         
             
             <div class='fl pad1y space-right2'>
-                <span class="strong">70.83% </span>
+                <span class="strong">100% </span>
                 <span class="quiet">Lines</span>
-                <span class='fraction'>17/24</span>
+                <span class='fraction'>24/24</span>
             </div>
         
             
@@ -61,7 +61,7 @@
             </div>
         </template>
     </div>
-    <div class='status-line medium'></div>
+    <div class='status-line high'></div>
     <pre><table class="coverage">
 <tr><td class="line-count quiet"><a name='L1'></a><a href='#L1'>1</a>
 <a name='L2'></a><a href='#L2'>2</a>
@@ -170,24 +170,24 @@
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">2x</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
-<span class="cline-any cline-no">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
+<span class="cline-any cline-neutral">&nbsp;</span>
+<span class="cline-any cline-yes">1x</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
 <span class="cline-any cline-neutral">&nbsp;</span>
@@ -239,25 +239,25 @@ export class ServicoEmpresa {
         return empresa
     }
 &nbsp;
-    async <span class="fstat-no" title="function not covered" >update(</span>idEmpresa:number, nome: string,  responsavel:string): Promise&lt;void&gt;{
-        const empresaDoBD = <span class="cstat-no" title="statement not covered" >await this.client.oneOrNone(`select * from coin_empresa</span>
+    async update(idEmpresa:number, nome: string,  responsavel:string): Promise&lt;void&gt;{
+        const empresaDoBD = await this.client.oneOrNone(`select * from coin_empresa
         where id = $1::int`, [idEmpresa])
 &nbsp;
-<span class="cstat-no" title="statement not covered" >        <span class="missing-if-branch" title="if path not taken" >I</span>if(!empresaDoBD){</span>
-<span class="cstat-no" title="statement not covered" >            throw new Error('Empresa não encontrada')</span>
+        if(!empresaDoBD){
+            throw new Error('Empresa não encontrada')
         }
-        const empresa = <span class="cstat-no" title="statement not covered" >new Empresa(idEmpresa,nome, responsavel)</span>
+        const empresa = new Empresa(idEmpresa,nome, responsavel)
 &nbsp;
-<span class="cstat-no" title="statement not covered" >        await this.client.query(`update  coin_empresa set</span>
+        await this.client.query(`update  coin_empresa set
         nome = $2::text,
         responsavel = $3::text
         where id = $1::int`,[empresa.id, empresa.nome, empresa.responsavel])
     }
 &nbsp;
-    async <span class="fstat-no" title="function not covered" >create(</span>nome: string,  responsavel:string): Promise&lt;void&gt;{
-        const empresa = <span class="cstat-no" title="statement not covered" >new Empresa(undefined, nome, responsavel)</span>
+    async create(nome: string,  responsavel:string): Promise&lt;void&gt;{
+        const empresa = new Empresa(undefined, nome, responsavel)
 &nbsp;
-<span class="cstat-no" title="statement not covered" >        await this.client.query(`insert into coin_empresa (nome, responsavel) values</span>
+        await this.client.query(`insert into coin_empresa (nome, responsavel) values
             ($1::text, $2:: text)`,
             [empresa.nome, empresa.responsavel]
         )
@@ -273,14 +273,14 @@ export class ServicoEmpresa {
         await this.client.query(`delete from coin_empresa where id = $1::int`,[idEmpresa])
     } 
 }
-&nbsp;</pre></td></tr></table></pre>
+ </pre></td></tr></table></pre>
 
                 <div class='push'></div><!-- for sticky footer -->
             </div><!-- /wrapper -->
             <div class='footer quiet pad2 space-top1 center small'>
                 Code coverage generated by
                 <a href="https://istanbul.js.org/" target="_blank" rel="noopener noreferrer">istanbul</a>
-                at 2023-02-07T22:06:42.339Z
+                at 2023-02-12T22:50:18.708Z
             </div>
         <script src="../../prettify.js"></script>
         <script>
