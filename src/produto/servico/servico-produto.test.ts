@@ -107,14 +107,13 @@ describe('ServicoProduto', ()=> {
 
             await servico.create('batatinha', 10, 100)
 
-            const produto = await servico.listar()
+            const produtoNoBD = await client.one(`select * from coin_produto`)
 
-            expect(produto).toEqual([{
-                id: produto[0].id,
-                nome: 'batatinha',
-                valor: 10,
-                estoque: 100,
-            }])
+            expect(produtoNoBD.nome).toEqual('batatinha')
+
+            expect(produtoNoBD.valor).toEqual(10)
+
+            expect(produtoNoBD.estoque).toEqual(100)
         })
     })
 
