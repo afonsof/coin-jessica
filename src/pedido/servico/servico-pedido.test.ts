@@ -331,7 +331,7 @@ describe('ServicoPedido', ()=>{
             expect(pedidosNoBD[0].id_usuario).toEqual(resUsuario.id)
             expect(pedidosNoBD[0].status).toEqual('pendente')
             //data não está passando
-            // expect(pedidosNoBD[0].data).toEqual(dataAtual)
+            expect(pedidosNoBD[0].data).toEqual(dataAtual)
 
             expect(produtosPedidosNoBD[0].id_pedido).toEqual(pedidosNoBD[0].id)
 
