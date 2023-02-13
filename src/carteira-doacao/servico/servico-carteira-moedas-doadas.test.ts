@@ -114,17 +114,11 @@ describe('ServicoCarteiraMoedasDoadas', () => {
         it('deve creditar um valor na carteira do usuario ao receber um valor no reconhecimento', async () => {
 
             const usuarios = await client.query(`insert into coin_usuario(nome, email,senha)
-            values ('joao1', 'joao@gmail.com', '123111111'),
-                   ('joao2', 'joao@gmail.com', '123111111') RETURNING id`
-            )
+            values ('joao1', 'joao@gmail.com', '123111111') RETURNING id`)
 
             await client.query(`insert into coin_carteira_moedas_doadas
             (id_usuario, saldo) values (${usuarios[0].id},200)`
-            )
-            
-            await client.query(`insert into coin_carteira_moedas_recebidas
-            (id_usuario, saldo) values (${usuarios[1].id},200)`
-            )
+            )   
          
             const valorParaCreditar = 10
 
