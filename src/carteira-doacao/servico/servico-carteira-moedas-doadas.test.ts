@@ -94,8 +94,7 @@ describe('ServicoCarteiraMoedasDoadas', () => {
 
         it('deve disparar um erro caso não encontre carteira de moedas doadas', async () => {
             const usuarios = await client.query(`insert into coin_usuario(nome, email,senha)
-            values ('joao1', 'joao@gmail.com', '123111111'),
-                   ('joao2', 'joao@gmail.com', '123111111') RETURNING id`
+            values ('joao1', 'joao@gmail.com', '123111111') RETURNING id`
             )
 
             const valorParaDebitar = 10
