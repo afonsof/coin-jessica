@@ -107,7 +107,6 @@ describe('ServicoPedido', ()=>{
                 data: dayjs('2023-01-06').toDate(),
                 status: 'aprovado'
             }])
-
         })
     })
 
