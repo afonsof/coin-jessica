@@ -2,13 +2,13 @@ import { IDatabase } from "pg-promise"
 import { Usuario } from "../dominio/usuario"
 
 export class ServicoUsuario {
-    client: IDatabase<any>
+    client: IDatabase<any> 
 
     constructor(client: IDatabase<any>) {
         this.client = client
     }
     async listar(): Promise<Usuario[]> {
-        const usuariosNoBD = await this.client.query(`select * from coin_usuario`)
+        const usuariosNoBD = await this.client.query(`select * from coin_usuario order by nome`)
 
         const usuarios: Usuario[] = []
 

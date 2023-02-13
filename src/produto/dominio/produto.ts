@@ -17,8 +17,5 @@ export class Produto {
         if(!valor) {
             throw new Error('Produto precisa ter valor')
         }
-        if(!estoque) {
-            throw new Error('Produto precisa ter estoque')
-        }
     }
 }

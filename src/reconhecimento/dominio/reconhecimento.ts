@@ -3,11 +3,11 @@ export class Reconhecimento {
     descricao: string
     data: Date
     qtdMoedasDoadas: number
-    status?: string
+    status: string
     idDeUsuario: number
     idParaUsuario: number
 
-    constructor(idReconhecimento: number|undefined, descricao: string, data: Date, qtdMoedasDoadas: number, status: string|undefined, idDeUsuario: number, idParaUsuario: number){
+    constructor(idReconhecimento: number|undefined, descricao: string, data: Date, qtdMoedasDoadas: number, status: string, idDeUsuario: number, idParaUsuario: number){
         this.id = idReconhecimento
         this.descricao = descricao
         this.data = data

@@ -59,7 +59,13 @@ export class ServicoEmpresa {
     }
 
     async delete(idEmpresa:number): Promise<void>{
-        
+        const empresa = await this.client.oneOrNone(`select * from coin_empresa
+        where id = $1::int`,[idEmpresa])
+
+        if(!empresa) {
+            throw new Error('Empresa não encontrada')
+        }
         await this.client.query(`delete from coin_empresa where id = $1::int`,[idEmpresa])
     } 
 }
+ 
