@@ -54,7 +54,7 @@ describe('ProdutoDoPedido', () => {
             try {
                 const produtosDoPedido = new ProdutoDoPedido(1234, 0, 10)
             } catch (error) {
-                expect(error).toEqual(new Error('Produto do pedido precisa que a quantidade do produto seja maio que zero'))
+                expect(error).toEqual(new Error('Produto do pedido precisa que a quantidade do produto seja maior que zero'))
             }
         })
 
@@ -72,33 +72,19 @@ describe('ProdutoDoPedido', () => {
 describe('Pedido', () => {
     describe('constructor', () => {
         it('deve construir com sucesso caso todos os parametros sejam validos', () => {
-            const produtosDoPedido = [{
-                idProduto: 1,
-                qtd: 2
-            }, {
-                idProduto: 2,
-                qtd: 1
-            }]
-            const pedido = new Pedido(123, dayjs('2023-01-05').toDate(), 2, 'pendente', produtosDoPedido)
+            const pedido = new Pedido(123, dayjs('2023-01-05').toDate(), 2, 'pendente')
             expect(pedido).toEqual({
+                id: 123,
                 data: dayjs('2023-01-05').toDate(),
                 idUsuario: 2,
                 status: 'pendente',
-                produtos: [{
-                    idProduto: 1,
-                    qtd: 2
-                }, {
-                    idProduto: 2,
-                    qtd: 1
-                }
-                ]
             })
         })
 
         it('deve disparar um erro, caso o idUsuario seja invalido', () => {
             expect.assertions(1)
             try {
-                const pedido = new Pedido(123, dayjs('2023-01-05').toDate(), undefined, 'pendente', produtosDoPedido)
+                const pedido = new Pedido(123, dayjs('2023-01-05').toDate(), undefined, 'pendente')
             } catch (error) {
                 expect(error).toEqual(new Error('Pedido precisa de um usuário'))
             }
@@ -107,7 +93,7 @@ describe('Pedido', () => {
         it('deve disparar um erro, caso o status não seja string', () => {
             expect.assertions(1)
             try {
-                const pedido = new Pedido(123, dayjs('2023-01-05').toDate(), 4, 123 as any, produtosDoPedido)
+                const pedido = new Pedido(123, dayjs('2023-01-05').toDate(), 4, 123 as any)
             } catch (error) {
                 expect(error).toEqual(new Error('O status precisa ser uma string'))
             }

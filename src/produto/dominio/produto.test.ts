@@ -24,7 +24,7 @@ describe('Produto', () => {
         it('deve disparar um erro, caso produto não tenha valor', () => {
             expect.assertions(1)
             try {
-                const produto = new Produto(124, 'lapis', 5, undefined)
+                const produto = new Produto(124, 'lapis', undefined, 0)
             } catch (error) {
                 expect(error).toEqual(new Error('Produto precisa ter valor'))
             }

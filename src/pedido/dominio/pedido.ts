@@ -17,14 +17,14 @@ export class ProdutoDoPedido {
         if(typeof idProduto !== "number"){
             throw new Error('O idProduto precisa ser uma number')
         }
-        if(!qtd){
+        if(qtd === undefined){
             throw new Error('Produto do pedido precisa de quantidade do produto')
         }
         if(typeof qtd !== "number"){
             throw new Error('A qtd precisa ser um number')
         }
         if(qtd <= 0){
-            throw new Error('Produto do pedido precisa que a quantidade do produto seja maio que zero')
+            throw new Error('Produto do pedido precisa que a quantidade do produto seja maior que zero')
         }
         if(typeof valorUnitario !== "number"){
             throw new Error('O valor unitatio precisa ser um number')

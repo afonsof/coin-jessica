@@ -22,7 +22,7 @@ export class Reconhecimento {
         if(typeof descricao !== "string"){
             throw new Error('A descrição precisa ser uma string')
         }
-        if(!qtdMoedasDoadas){
+        if(qtdMoedasDoadas === undefined){
             throw new Error('A quantidade de moedas a serem doadas precisa ser declarada')
         }
         if(typeof qtdMoedasDoadas !== "number") {
