@@ -13,7 +13,7 @@ describe('CarteiraMoedasDoadas', ()=> {
         it('deve disparar um erro, caso o id seja invalido', ()=> {
             expect.assertions(1)
             try {
-            const carteira = new CarteiraMoedasDoadas(undefined, 1000)
+                const carteira = new CarteiraMoedasDoadas(undefined, 1000)
             } catch(error) {
                 expect(error).toEqual(new Error('O usuário precisa ter Id'))
             }
@@ -37,7 +37,7 @@ describe('CarteiraMoedasDoadas', ()=> {
             }
         })
 
-        it('deve disparar um erro caso o saldo seja menor que zero', ()=> {
+        it('deve disparar um erro caso o saldo não seja um número', ()=> {
             expect.assertions(1)
             try {
             const carteira = new CarteiraMoedasDoadas(123, 'abc' as any)

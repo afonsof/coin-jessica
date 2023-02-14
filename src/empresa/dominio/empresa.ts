@@ -14,5 +14,8 @@ export class Empresa {
         if(!responsavel){
             throw new Error('Empresa precisa ter nome do responsável')
         }
+        if(typeof responsavel !== "string"){
+            throw new Error('O responsável precisa ser uma string')
+        }
     }
 }
