@@ -6,8 +6,7 @@ export const createReconhecimento = (site:Express, client)=>{
         try{
             const servico = new ServicoReconhecimento(client)
             await servico.create(req.body.descricao, req.body.data,
-                req.body.qtdMoedasDoadas, req.body.status, 
-                req.body.idDeUsuario, req.body.idParaUsuario
+                req.body.qtdMoedasDoadas, req.body.idDeUsuario, req.body.idParaUsuario
             )
             
             res.send()
