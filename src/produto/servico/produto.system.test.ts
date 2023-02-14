@@ -36,7 +36,7 @@ describe('Produto', ()=> {
     })
 
     describe('create', ()=> {
-        it('deve returnar um unico produto, caso ele esteja no banco', async ()=> {
+        it('deve criar um produto no banco', async ()=> {
             const { site, server } = createServer()
 
             await client.query(`delete from coin_produto`)
