@@ -1,5 +1,5 @@
-import {Express} from "express";
-import { ServicoPedido } from "../servico/servico-pedido";
+import {Express} from 'express'
+import { ServicoPedido } from '../servico/servico-pedido'
 
 export const getPedido = (site:Express, client) =>{
     site.get('/pedido/:id', async (req, res)=>{

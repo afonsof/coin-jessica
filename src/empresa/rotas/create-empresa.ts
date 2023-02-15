@@ -1,5 +1,5 @@
-import { Express } from "express";
-import { ServicoEmpresa } from "../servico/servico-empresa";
+import { Express } from 'express'
+import { ServicoEmpresa } from '../servico/servico-empresa'
 
 export const createEmpresa = (site:Express, client)=>{
     site.post('/empresa', async (req, res)=>{

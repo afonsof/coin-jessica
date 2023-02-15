@@ -1,4 +1,4 @@
-import { CarteiraMoedasDoadas } from "./carteira-moedas-doadas"
+import { CarteiraMoedasDoadas } from './carteira-moedas-doadas'
 
 describe('CarteiraMoedasDoadas', ()=> {
     describe('constructor', ()=> {
@@ -6,14 +6,14 @@ describe('CarteiraMoedasDoadas', ()=> {
             const carteira = new CarteiraMoedasDoadas(123, 1000)
             expect(carteira).toEqual({
                 idUsuario: 123,
-                saldo: 1000
+                saldo: 1000,
             })
         })
 
         it('deve disparar um erro, caso o id seja invalido', ()=> {
             expect.assertions(1)
             try {
-                const carteira = new CarteiraMoedasDoadas(undefined, 1000)
+                new CarteiraMoedasDoadas(undefined, 1000)
             } catch(error) {
                 expect(error).toEqual(new Error('O usuário precisa ter Id'))
             }
@@ -22,7 +22,7 @@ describe('CarteiraMoedasDoadas', ()=> {
         it('deve disparar um erro, caso o saldo seja invalido', ()=> {
             expect.assertions(1)
             try {
-            const carteira = new CarteiraMoedasDoadas(123, undefined)
+                new CarteiraMoedasDoadas(123, undefined)
             } catch(error) {
                 expect(error).toEqual(new Error('Carteira do usuário precisa ter saldo'))
             }
@@ -31,7 +31,7 @@ describe('CarteiraMoedasDoadas', ()=> {
         it('deve disparar um erro caso o saldo seja menor que zero', ()=> {
             expect.assertions(1)
             try {
-            const carteira = new CarteiraMoedasDoadas(123, -1000)
+                new CarteiraMoedasDoadas(123, -1000)
             } catch(error) {
                 expect(error).toEqual(new Error('Carteira do usuário precisa ter saldo positivo'))
             }
@@ -40,7 +40,7 @@ describe('CarteiraMoedasDoadas', ()=> {
         it('deve disparar um erro caso o saldo não seja um número', ()=> {
             expect.assertions(1)
             try {
-            const carteira = new CarteiraMoedasDoadas(123, 'abc' as any)
+                new CarteiraMoedasDoadas(123, 'abc' as any)
             } catch(error) {
                 expect(error).toEqual(new Error('O saldo da carteira do usuário precisa ser um número'))
             }

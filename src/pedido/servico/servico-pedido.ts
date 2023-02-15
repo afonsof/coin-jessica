@@ -1,10 +1,8 @@
-import { IDatabase } from "pg-promise"
-import { ServicoCarteiraMoedasRecebidas } from "../../carteira-recebida/servico/servico-carteira-moedas-recebidas"
-import { ServicoProduto } from "../../produto/servico/servico-produto"
-import { Usuario } from "../../usuario/dominio/usuario"
-import { ServicoUsuario } from "../../usuario/servico/servico-usuario"
+import { IDatabase } from 'pg-promise'
+import { ServicoCarteiraMoedasRecebidas } from '../../carteira-recebida/servico/servico-carteira-moedas-recebidas'
+import { ServicoProduto } from '../../produto/servico/servico-produto'
+import { ServicoUsuario} from '../../usuario/servico/servico-usuario'
 
-import bluebird from 'bluebird'
 
 
 interface ListarPedido {
@@ -30,21 +28,6 @@ interface GetPedido {
     produtos: GetPedidoProduto[]
 }
 
-interface GetProdutoAprovar {
-    idProduto: number,
-    nome: string,
-    estoque: number,
-    qtd: number,
-    valorUnitario: number,
-}
-
-interface GetPedidoAprovar {
-    idPedido: number,
-    idUsuario: number,
-    saldoCarteira: number,
-    produtos: GetProdutoAprovar[]
-}
-
 interface ProdutosDoPedido {
     idProduto: number,
     qtd: number,
@@ -64,7 +47,7 @@ export class ServicoPedido {
     }
 
     async listar(): Promise<ListarPedido[]> {
-        const pedidosNoBD = await this.client.query(`select * from coin_pedido cp order by data, id_usuario`)
+        const pedidosNoBD = await this.client.query('select * from coin_pedido cp order by data, id_usuario')
 
         const pedidos: ListarPedido[] = []
         
@@ -74,7 +57,7 @@ export class ServicoPedido {
                 idPedido: pedido.id,
                 data: pedido.data,
                 nomeUsuario: usuario.nome,
-                status: pedido.status
+                status: pedido.status,
             })
         }))
 
@@ -82,14 +65,14 @@ export class ServicoPedido {
     }
 
     async get(idPedido: number): Promise<GetPedido> {
-        const pedido = await this.client.oneOrNone(`select * from coin_pedido where id = $1::int`, [idPedido])
+        const pedido = await this.client.oneOrNone('select * from coin_pedido where id = $1::int', [idPedido])
         if (!pedido) {
             throw new Error('pedido não encontrado')
         }
 
         const produtosDoPedido = await this.client.query(
-             `select * from coin_produto_pedido where id_pedido = $1::int`, 
-             [idPedido]
+            'select * from coin_produto_pedido where id_pedido = $1::int', 
+            [idPedido],
         )   
 
         let totalPedido = 0
@@ -109,18 +92,18 @@ export class ServicoPedido {
                     nome: produto.nome,
                     valor: produtoDoPedido.valor_unitario,
                     qtd: produtoDoPedido.qtd,
-                    total: (produtoDoPedido.valor_unitario * produtoDoPedido.qtd) 
+                    total: (produtoDoPedido.valor_unitario * produtoDoPedido.qtd), 
                 }
-            }))
+            })),
         }
     } 
 
     async aprovar(idPedido: number): Promise<void> {
-        // ok ver se o idPedido do pedido encontra-se pendente
-        // ver se o saldo ẽ maior que o valor do o pedido
-        // ver se tem o produto em estoque
-        // debitar do saldo o valor do pedido
-        // fazer um update do id do pedido alterando o status para 'aprovado'
+    // ok ver se o idPedido do pedido encontra-se pendente
+    // ver se o saldo ẽ maior que o valor do o pedido
+    // ver se tem o produto em estoque
+    // debitar do saldo o valor do pedido
+    // fazer um update do id do pedido alterando o status para 'aprovado'
 
         const pedido = await this.get(idPedido)
 
@@ -140,7 +123,7 @@ export class ServicoPedido {
             if (produtoDoPedido.qtd > produto.estoque) {
                 throw new Error(
                     `Foi requisitado ${produtoDoPedido.qtd} unidades do ` +
-                    `produto ${produto.nome}, mas só tem ${produto.estoque} em estoque`
+                    `produto ${produto.nome}, mas só tem ${produto.estoque} em estoque`,
                 )
             }
         }))
@@ -156,7 +139,7 @@ export class ServicoPedido {
             `update coin_pedido set
             status = 'aprovado'
             where id = $1::int`, 
-            [idPedido]
+            [idPedido],
         )
     }
 
@@ -164,7 +147,7 @@ export class ServicoPedido {
         const pedido = await this.client.oneOrNone(
             `select * from coin_pedido
             where id = $1::int and status = 'pendente'`, 
-            [idPedido]
+            [idPedido],
         )
 
         if (!pedido) {
@@ -199,7 +182,7 @@ export class ServicoPedido {
         const res = await this.client.query(
             `insert into coin_pedido (data, id_usuario, status) values 
             ($1::date, $2::int, $3::text) RETURNING id`,
-            [dataAtual, idUsuario, 'pendente']
+            [dataAtual, idUsuario, 'pendente'],
         )
 
         const idPedido = res[0].id
@@ -209,7 +192,7 @@ export class ServicoPedido {
             await this.client.query(
                 `insert into coin_produto_pedido (id_pedido, id_produto, valor_unitario, qtd) values
                 ($1::int, $2::int, $3::int, $4::int)`,
-                [idPedido, produto.idProduto, produtoNoBanco.valor, produto.qtd]
+                [idPedido, produto.idProduto, produtoNoBanco.valor, produto.qtd],
             )
         }))
     }

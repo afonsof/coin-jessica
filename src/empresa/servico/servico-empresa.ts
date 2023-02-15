@@ -1,5 +1,5 @@
-import { IDatabase } from "pg-promise"
-import { Empresa } from "../dominio/empresa" 
+import { IDatabase } from 'pg-promise'
+import { Empresa } from '../dominio/empresa' 
 
 export class ServicoEmpresa {
     client: IDatabase<any>
@@ -9,7 +9,7 @@ export class ServicoEmpresa {
     }
 
     async listar(): Promise<Empresa[]>{
-        const empresasDoBD = await this.client.query(`select * from coin_empresa`)
+        const empresasDoBD = await this.client.query('select * from coin_empresa')
 
         const empresas: Empresa[] = []
 
@@ -22,7 +22,7 @@ export class ServicoEmpresa {
     async get(idEmpresa:number): Promise<Empresa>{
         const empresaDoBD = await this.client.oneOrNone(
             `select * from coin_empresa
-            where id = $1::int`, [idEmpresa]
+            where id = $1::int`, [idEmpresa],
         )
 
         if(!empresaDoBD){
@@ -54,8 +54,7 @@ export class ServicoEmpresa {
 
         await this.client.query(`insert into coin_empresa (nome, responsavel) values
             ($1::text, $2:: text)`,
-            [empresa.nome, empresa.responsavel]
-        )
+        [empresa.nome, empresa.responsavel])
     }
 
     async delete(idEmpresa:number): Promise<void>{
@@ -65,7 +64,7 @@ export class ServicoEmpresa {
         if(!empresa) {
             throw new Error('Empresa não encontrada')
         }
-        await this.client.query(`delete from coin_empresa where id = $1::int`,[idEmpresa])
+        await this.client.query('delete from coin_empresa where id = $1::int',[idEmpresa])
     } 
 }
  

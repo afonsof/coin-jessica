@@ -1,5 +1,5 @@
-import { IDatabase } from "pg-promise";
-import { ServicoUsuario } from "../../usuario/servico/servico-usuario";
+import { IDatabase } from 'pg-promise'
+import { ServicoUsuario } from '../../usuario/servico/servico-usuario'
 
 interface GetCarteiraMoedasRecebidas {
     nome: string
@@ -22,7 +22,7 @@ export class ServicoCarteiraMoedasRecebidas {
 
         const carteiraMoedaRecebida = await this.client.oneOrNone(
             `select * from coin_carteira_moedas_recebidas 
-            where id_usuario = $1::int`,[idUsuario]
+            where id_usuario = $1::int`,[idUsuario],
         )
 
         if(!carteiraMoedaRecebida){
@@ -32,7 +32,7 @@ export class ServicoCarteiraMoedasRecebidas {
         const carteiraMoedasRecebidas = {
             nome:usuario.nome, 
             saldo:carteiraMoedaRecebida.saldo,
-            idUsuario:idUsuario
+            idUsuario:idUsuario,
         }        
         return carteiraMoedasRecebidas
     }
@@ -40,7 +40,7 @@ export class ServicoCarteiraMoedasRecebidas {
     async creditar(valorParaCreditar: number, idUsuario: number): Promise<void>{
         const saldoCarteiraRecebida = await this.client.oneOrNone(
             `select saldo from coin_carteira_moedas_recebidas
-            where id_usuario = $1::int`, [idUsuario]
+            where id_usuario = $1::int`, [idUsuario],
         )
         
         if(!saldoCarteiraRecebida){
@@ -56,7 +56,7 @@ export class ServicoCarteiraMoedasRecebidas {
     async debitar(valorParaDebitar: number, idUsuario: number): Promise<void> {
         const saldoCarteiraRecebida = await this.client.oneOrNone(
             `select saldo from coin_carteira_moedas_recebidas
-            where id_usuario = $1::int`, [idUsuario]
+            where id_usuario = $1::int`, [idUsuario],
         )
 
         if(!saldoCarteiraRecebida){

@@ -1,7 +1,7 @@
-import { ServicoCarteiraMoedasRecebidas } from "./servico-carteira-moedas-recebidas"
+import { ServicoCarteiraMoedasRecebidas } from './servico-carteira-moedas-recebidas'
 
 import pgPromise from 'pg-promise'
-import dayjs from "dayjs";
+
 
 const pgp = pgPromise()
 
@@ -10,7 +10,7 @@ const client = pgp({
     port: 5432,
     user: 'example',
     password: 'example',
-    database: 'teste'
+    database: 'teste',
 })
 
 const servico = new ServicoCarteiraMoedasRecebidas(client)
@@ -39,7 +39,7 @@ describe('ServicoCarteiraMoedasRecebidas', ()=>{
             values ('joao', 'joao@gmail.com', '123111111') RETURNING id`)
             
 
-            expect.assertions(1);  
+            expect.assertions(1)  
             try {
                 await servico.get(usuario.id)
             } 
@@ -52,12 +52,12 @@ describe('ServicoCarteiraMoedasRecebidas', ()=>{
         it('deve creditar um valor na carteira do usuario ao receber um valor no reconhecimento', async () => {
 
             const usuarios = await client.query(`insert into coin_usuario(nome, email,senha)
-            values ('joao1', 'joao@gmail.com', '123111111') RETURNING id`
+            values ('joao1', 'joao@gmail.com', '123111111') RETURNING id`,
             )
 
             
             await client.query(`insert into coin_carteira_moedas_recebidas
-            (id_usuario, saldo) values (${usuarios[0].id},200)`
+            (id_usuario, saldo) values (${usuarios[0].id},200)`,
             )
         
             const valorParaCreditar = 10
@@ -65,7 +65,7 @@ describe('ServicoCarteiraMoedasRecebidas', ()=>{
             await servico.creditar(valorParaCreditar, usuarios[0].id)
 
             const carteiraDoadasBD = await client.one(`select * from coin_carteira_moedas_recebidas
-            where id_usuario = ${usuarios[0].id}`
+            where id_usuario = ${usuarios[0].id}`,
             )
 
             expect(carteiraDoadasBD.saldo).toEqual(210)
@@ -73,12 +73,12 @@ describe('ServicoCarteiraMoedasRecebidas', ()=>{
 
         it('deve disparar um erro caso não encontre carteira de moedas recebidas', async () => {
             const usuarios = await client.query(`insert into coin_usuario(nome, email,senha)
-            values ('joao1', 'joao@gmail.com', '123111111') RETURNING id`
+            values ('joao1', 'joao@gmail.com', '123111111') RETURNING id`,
             )
 
             const valorParaCreditar = 10
 
-            expect.assertions(1);
+            expect.assertions(1)
             try {
                 await servico.creditar(valorParaCreditar, usuarios[0].id)
             }
@@ -92,11 +92,11 @@ describe('ServicoCarteiraMoedasRecebidas', ()=>{
         it('deve debitar um valor na carteira do usuario ao doar um valor no reconhecimento', async () => {
 
             const usuarios = await client.query(`insert into coin_usuario(nome, email,senha)
-            values ('joao1', 'joao@gmail.com', '123111111') RETURNING id`
+            values ('joao1', 'joao@gmail.com', '123111111') RETURNING id`,
             )
             
             await client.query(`insert into coin_carteira_moedas_recebidas
-            (id_usuario, saldo) values (${usuarios[0].id},200)`
+            (id_usuario, saldo) values (${usuarios[0].id},200)`,
             )
             
             const valorParaDebitar = 10
@@ -110,12 +110,12 @@ describe('ServicoCarteiraMoedasRecebidas', ()=>{
 
         it('deve disparar um erro caso não encontre carteira de moedas recebidas', async () => {
             const usuarios = await client.query(`insert into coin_usuario(nome, email,senha)
-            values ('joao1', 'joao@gmail.com', '123111111') RETURNING id`
+            values ('joao1', 'joao@gmail.com', '123111111') RETURNING id`,
             )
 
             const valorParaDebitar = 10
 
-            expect.assertions(1);
+            expect.assertions(1)
             try {
                 await servico.debitar(valorParaDebitar, usuarios[0].id)
             }
@@ -133,7 +133,7 @@ describe('ServicoCarteiraMoedasRecebidas', ()=>{
             
             const valorParaDebitar = 10
 
-            expect.assertions(1);
+            expect.assertions(1)
             try {
                 await servico.debitar(valorParaDebitar, usuarios[0].id)
             }

@@ -1,5 +1,4 @@
 import {Express} from 'express'
-import { Reconhecimento } from '../dominio/reconhecimento'
 import { ServicoReconhecimento } from '../servico/servico-reconhecimento'
 
 export const getReconhecimento = (site:Express, client)=>{

@@ -1,4 +1,4 @@
-import { Usuario } from "./usuario";
+import { Usuario } from './usuario'
 
 describe('Usuario', ()=>{
     describe('constructor',()=>{
@@ -8,14 +8,14 @@ describe('Usuario', ()=>{
                 id: 123,
                 nome: 'ana',
                 email: 'ana@gmail.com',
-                senha: '12345678'
+                senha: '12345678',
             })
         })
 
         it('deve disparar um erro caso o usuario não receba um nome', ()=>{
             expect.assertions(1)
             try{
-                const usuario = new Usuario(1234444, undefined, 'ana@gmail.com', '12345678')
+                new Usuario(1234444, undefined, 'ana@gmail.com', '12345678')
             }catch(error){
                 expect(error).toEqual(new Error('Usuário precisa ter um nome'))
             }
@@ -24,7 +24,7 @@ describe('Usuario', ()=>{
         it('deve disparar um erro caso o nome do usuario não receba uma string', ()=>{
             expect.assertions(1)
             try{
-                const usuario = new Usuario(124444, 123 as any, 'ana@gmail.com', '12345678')
+                new Usuario(124444, 123 as any, 'ana@gmail.com', '12345678')
             }catch(error){
                 expect(error).toEqual(new Error('O nome do usuario precisa ser uma string'))
             }
@@ -33,7 +33,7 @@ describe('Usuario', ()=>{
         it('deve disparar um erro caso a senha seja menor que 8 caracteres', ()=>{
             expect.assertions(1)
             try{
-                const usuario = new Usuario(1255555, 'ana', 'ana@gmail.com', '12345')
+                new Usuario(1255555, 'ana', 'ana@gmail.com', '12345')
             }catch(error){
                 expect(error).toEqual(new Error('Senha do usuário precisa ter no mínimo 8 caracteres'))
             }

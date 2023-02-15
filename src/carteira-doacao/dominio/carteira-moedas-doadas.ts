@@ -15,7 +15,7 @@ export class CarteiraMoedasDoadas {
         if(saldo < 0) {
             throw new Error('Carteira do usuário precisa ter saldo positivo')
         }
-        if(typeof saldo !== "number") {
+        if(typeof saldo !== 'number') {
             throw new Error('O saldo da carteira do usuário precisa ser um número')
         }
     }

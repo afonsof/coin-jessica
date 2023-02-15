@@ -14,7 +14,7 @@ export class Usuario {
         if(!nome) {
             throw new Error('Usuário precisa ter um nome')
         }
-        if(typeof nome !== "string"){
+        if(typeof nome !== 'string'){
             throw new Error('O nome do usuario precisa ser uma string')
         }
         if(senha.length < 8) {

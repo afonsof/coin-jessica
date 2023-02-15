@@ -1,5 +1,5 @@
-import { Express } from "express";
-import { ServicoProduto } from "../servico/servico-produto";
+import { Express } from 'express'
+import { ServicoProduto } from '../servico/servico-produto'
 
 export const updateProduto = (site:Express, client)=>{
     site.put('/produto/:id', async (req, res)=>{

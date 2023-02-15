@@ -1,4 +1,4 @@
-import { Produto } from "./produto";
+import { Produto } from './produto'
 
 describe('Produto', () => {
     describe('contructor', () => {
@@ -8,14 +8,14 @@ describe('Produto', () => {
                 id: 123,
                 nome: 'lapis',
                 valor: 5,
-                estoque: 10
+                estoque: 10,
             })
         })
 
         it('deve disparar um erro, caso não seja passado um nome', () => {
             expect.assertions(1)
             try {
-                const produto = new Produto(125, undefined, 5, 10)
+                new Produto(125, undefined, 5, 10)
             } catch (error) {
                 expect(error).toEqual(new Error('Produto precisa ter um nome'))
             }
@@ -24,7 +24,7 @@ describe('Produto', () => {
         it('deve disparar um erro, caso produto não tenha valor', () => {
             expect.assertions(1)
             try {
-                const produto = new Produto(124, 'lapis', undefined, 0)
+                new Produto(124, 'lapis', undefined, 0)
             } catch (error) {
                 expect(error).toEqual(new Error('Produto precisa ter valor'))
             }
@@ -33,7 +33,7 @@ describe('Produto', () => {
         it('deve disparar um erro, caso o nome passado não seja uma string', () => {
             expect.assertions(1)
             try {
-                const produto = new Produto(122, 123 as any, 5, 10)
+                new Produto(122, 123 as any, 5, 10)
             } catch (error) {
                 expect(error).toEqual(new Error('O nome precisa ser uma string'))
             }
@@ -42,7 +42,7 @@ describe('Produto', () => {
         it('deve disparar um erro, caso o valor passado não seja um numero', () => {
             expect.assertions(1)
             try {
-                const produto = new Produto(121, 'lapis', 'abc' as any, 10)
+                new Produto(121, 'lapis', 'abc' as any, 10)
             } catch (error) {
                 expect(error).toEqual(new Error('O valor precisa ser um numero'))
             }

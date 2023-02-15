@@ -1,5 +1,5 @@
-import { Express } from "express";
-import { ServicoCarteiraMoedasDoadas } from "../servico/servico-carteira-moedas-doadas";
+import { Express } from 'express'
+import { ServicoCarteiraMoedasDoadas } from '../servico/servico-carteira-moedas-doadas'
 
 export const getCarteiraMoedasDoadas = (site:Express, client)=>{
     site.get('/carteira-moedas-doadas/:id', async (req,res)=>{

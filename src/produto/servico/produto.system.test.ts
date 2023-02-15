@@ -1,4 +1,4 @@
-import { ServicoProduto } from "./servico-produto"
+import { ServicoProduto } from './servico-produto'
 import supertest from 'supertest'
 import pgPromise from 'pg-promise'
 import { createServer } from '../../server'
@@ -11,10 +11,10 @@ const client = pgp({
     port: 5432,
     user: 'example',
     password: 'example',
-    database: 'postgres'
+    database: 'postgres',
 })
 
-const servico = new ServicoProduto(client)
+new ServicoProduto(client)
 
 describe('Produto', ()=> {
     describe('get', ()=> {
@@ -39,7 +39,7 @@ describe('Produto', ()=> {
         it('deve returnar um unico produto, caso ele esteja no banco', async ()=> {
             const { site, server } = createServer()
 
-            await client.query(`delete from coin_produto`)
+            await client.query('delete from coin_produto')
 
             await supertest(site).post('/produto').send({
                 nome: 'batatinha',
@@ -47,7 +47,7 @@ describe('Produto', ()=> {
                 estoque: 100,
             })
 
-            const produtoNoBD = await client.one(`select * from coin_produto`)
+            const produtoNoBD = await client.one('select * from coin_produto')
             expect(produtoNoBD.nome).toEqual('batatinha')
 
             expect(produtoNoBD.valor).toEqual(10)
