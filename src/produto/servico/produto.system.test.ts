@@ -39,7 +39,7 @@ describe('Produto', ()=> {
         it('deve criar um produto no banco', async ()=> {
             const { site, server } = createServer()
 
-            await client.query('delete from coin_produto')
+            await client.query(`delete from coin_produto`)
 
             await supertest(site).post('/produto').send({
                 nome: 'batatinha',
@@ -47,7 +47,7 @@ describe('Produto', ()=> {
                 estoque: 100,
             })
 
-            const produtoNoBD = await client.one('select * from coin_produto')
+            const produtoNoBD = await client.one(`select * from coin_produto`)
             expect(produtoNoBD.nome).toEqual('batatinha')
 
             expect(produtoNoBD.valor).toEqual(10)

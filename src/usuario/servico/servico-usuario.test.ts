@@ -65,7 +65,7 @@ describe('ServicoUsuario', ()=>{
 
     describe('list', ()=>{
         it('deve listar os usuarios existentes', async ()=>{
-            await client.query('delete from coin_usuario')
+            await client.query(`delete from coin_usuario`)
 
             const res = await client.query(`insert into coin_usuario(nome, email,senha) values
             ('tadeu1', 'tadeu@gmail.com', '123111111'),
@@ -97,11 +97,11 @@ describe('ServicoUsuario', ()=>{
     describe('create', ()=>{
         it('deve criar um novo usuario no banco', async ()=>{
 
-            await client.query('delete from coin_usuario')
+            await client.query(`delete from coin_usuario`)
 
             await servico.create('tadeu1', 'tadeu@gmail.com', '123111111')
 
-            const usuarioNoBD = await client.query('select * from coin_usuario')
+            const usuarioNoBD = await client.query(`select * from coin_usuario`)
 
             expect(usuarioNoBD).toEqual([{
                 id: usuarioNoBD[0].id,
@@ -123,7 +123,7 @@ describe('ServicoUsuario', ()=>{
             await servico.create('tadeu1', 'tadeu@gmail.com', '123111111')
 
             expect(clientMock.query).toBeCalledWith(
-                'insert into coin_usuario (nome, email, senha) values ($1::text, $2::text, $3::text)', ['tadeu1', 'tadeu@gmail.com', '123111111'],
+                `insert into coin_usuario (nome, email, senha) values ($1::text, $2::text, $3::text)`, ['tadeu1', 'tadeu@gmail.com', '123111111'],
             )
         })
     })

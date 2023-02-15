@@ -47,7 +47,7 @@ describe('Usuario', ()=>{
 
             await client.query(`delete from coin_usuario`)
 
-            await client.query('delete from coin_usuario')
+            await client.query(`delete from coin_usuario`)
 
 
             await supertest(site).post('/usuario').send({

@@ -69,7 +69,7 @@ describe('ServicoProduto', ()=> {
 
     describe('list', ()=>{
         it('deve listar os produtos existentes', async ()=>{
-            await client.query('delete from coin_produto')
+            await client.query(`delete from coin_produto`)
 
             const res = await client.query(`insert into coin_produto (nome, valor, estoque)
                 values ('batatinha1', 10, 100),
@@ -102,11 +102,11 @@ describe('ServicoProduto', ()=> {
     describe('create', ()=>{
         it('deve criar um novo produto no banco', async ()=>{
 
-            await client.query('delete from coin_produto')
+            await client.query(`delete from coin_produto`)
 
             await servico.create('batatinha', 10, 100)
 
-            const produtoNoBD = await client.one('select * from coin_produto')
+            const produtoNoBD = await client.one(`select * from coin_produto`)
 
             expect(produtoNoBD.nome).toEqual('batatinha')
 

@@ -23,9 +23,9 @@ describe('ServicoPedido', ()=>{
         it('deve retornar um unico pedido, caso ele esteja no banco', async ()=>{
             
 
-            const resUsuario = await client.one('insert into coin_usuario (nome, email, senha) values (\'zezin\', \'joze@sdf.com\', \'123123123\') RETURNING id')
+            const resUsuario = await client.one(`insert into coin_usuario (nome, email, senha) values ('zezin', 'joze@sdf.com', '123123123') RETURNING id`)
 
-            const resProduto = await client.one('insert into coin_produto (nome, valor, estoque) values (\'pirulito\', 2, 2000) RETURNING id')
+            const resProduto = await client.one(`insert into coin_produto (nome, valor, estoque) values ('pirulito', 2, 2000) RETURNING id`)
 
             const resPedido = await client.one(`insert into coin_pedido 
                 (data, id_usuario, status) values
@@ -72,7 +72,7 @@ describe('ServicoPedido', ()=>{
 
     describe('list', ()=>{
         it('deve listar os pedidos existentes', async ()=>{
-            await client.query('delete from coin_pedido')
+            await client.query(`delete from coin_pedido`)
 
             const resUsuario = await client.one(`insert into coin_usuario (nome, email, senha)
             values ('zezin', 'joze@sdf.com', '123123123') RETURNING id`)
@@ -145,9 +145,9 @@ describe('ServicoPedido', ()=>{
         })
 
         it('deve disparar um erro caso o pedido não tenha o status = pendente', async()=>{
-            const resUsuario = await client.one('insert into coin_usuario (nome, email, senha) values (\'zezin\', \'joze@sdf.com\', \'123123123\') RETURNING id')
+            const resUsuario = await client.one(`insert into coin_usuario (nome, email, senha) values ('zezin', 'joze@sdf.com', '123123123') RETURNING id`)
 
-            const resProduto = await client.one('insert into coin_produto (nome, valor, estoque) values (\'pirulito\', 2, 2000) RETURNING id')
+            const resProduto = await client.one(`insert into coin_produto (nome, valor, estoque) values ('pirulito', 2, 2000) RETURNING id`)
 
             const resPedido = await client.one(`insert into coin_pedido 
                 (data, id_usuario, status) values
@@ -204,7 +204,7 @@ describe('ServicoPedido', ()=>{
 
     it('deve disparar um erro caso o produto não tenha estoque suficiente', async()=>{
 
-        await client.query('delete from coin_produto_pedido')
+        await client.query(`delete from coin_produto_pedid`)
 
         const resUsuario = await client.one(`insert into coin_usuario (nome, email, senha) 
         values ('zezin', 'joze@sdf.com', '123123123') RETURNING id`)
@@ -278,7 +278,7 @@ describe('ServicoPedido', ()=>{
         })
 
         it('deve disparar um erro caso o pedido não tenha o status = pendente', async()=>{
-            const resUsuario = await client.one('insert into coin_usuario (nome, email, senha) values (\'zezin\', \'joze@sdf.com\', \'123123123\') RETURNING id')
+            const resUsuario = await client.one(`insert into coin_usuario (nome, email, senha) values ('zezin\', 'joze@sdf.com', '123123123') RETURNING id`)
 
             const resPedido = await client.one(`insert into coin_pedido 
                 (data, id_usuario, status) values
@@ -299,9 +299,9 @@ describe('ServicoPedido', ()=>{
     describe('create',()=>{
         it('cria um pedido no banco', async()=>{
 
-            await client.query('delete from coin_pedido')
-            await client.query('delete from coin_produto_pedido')
-            await client.query('delete from coin_produto')
+            await client.query(`delete from coin_pedido`)
+            await client.query(`delete from coin_produto_pedido`)
+            await client.query(`delete from coin_produto`)
 
             const resUsuario = await client.one(`insert into coin_usuario (nome, email, senha)
             values ('zezin', 'joze@sdf.com', '123123123') RETURNING id`)
@@ -326,9 +326,9 @@ describe('ServicoPedido', ()=>{
                 .toDate()
             await servico.create(resUsuario.id, produtosDoPedido)
             
-            const pedidosNoBD = await client.query('select * from coin_pedido')
+            const pedidosNoBD = await client.query(`select * from coin_pedido`)
             
-            const produtosPedidosNoBD = await client.query('select * from coin_produto_pedido order by id_produto')
+            const produtosPedidosNoBD = await client.query(`select * from coin_produto_pedido order by id_produto`)
 
             expect(pedidosNoBD[0].id_usuario).toEqual(resUsuario.id)
             expect(pedidosNoBD[0].status).toEqual('pendente')

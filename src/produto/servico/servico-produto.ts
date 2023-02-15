@@ -9,7 +9,7 @@ export class ServicoProduto {
     }
 
     async listar(): Promise<Produto[]>{
-        const produtosNoBD = await this.client.query('select * from coin_produto')
+        const produtosNoBD = await this.client.query(`select * from coin_produto`)
 
         const produtos: Produto[] = []
 
@@ -71,7 +71,7 @@ export class ServicoProduto {
             throw new Error('Produto não encontrado')
         }
 
-        await this.client.query('delete from coin_produto where id = $1::int',[idProduto])
+        await this.client.query(`delete from coin_produto where id = $1::int`,[idProduto])
     }
 
     async atualizarEstoque(idProduto:number, qtdParaDebitar:number): Promise<void>{

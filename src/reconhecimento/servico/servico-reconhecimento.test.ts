@@ -85,7 +85,7 @@ describe('ServicoReconhecimento', ()=>{
 
     describe('list', ()=>{
         it('deve listar os reconhecimentos existentes', async ()=>{
-            await client.query('delete from coin_reconhecimento')
+            await client.query(`delete from coin_reconhecimento`)
 
             const usuario = await client.query(`insert into coin_usuario(nome, email,senha) 
             values ('joao1', 'joao@gmail.com', '123111111'),
@@ -125,7 +125,7 @@ describe('ServicoReconhecimento', ()=>{
     describe('create', ()=>{
         it('deve criar um reconhecimento', async()=>{
 
-            await client.query('delete from coin_reconhecimento')
+            await client.query(`delete from coin_reconhecimento`)
             
             const usuarios = await client.query(`insert into coin_usuario(nome, email,senha) 
             values ('joao1', 'joao@gmail.com', '123111111'),

@@ -67,7 +67,7 @@ describe('ServicoEmpresa', ()=>{
 
     describe('list', ()=>{
         it('deve listar as empresas do banco', async ()=>{
-            await client.query('delete from coin_empresa')
+            await client.query(`delete from coin_empresa`)
 
             const res = await client.query(`insert into coin_empresa(nome, responsavel) values
             ('americanas', 'bia'),
@@ -124,11 +124,11 @@ describe('ServicoEmpresa', ()=>{
     describe('create', ()=>{
         it('deve criar uma nova empresa no banco', async ()=>{
 
-            await client.query('delete from coin_empresa')
+            await client.query(`delete from coin_empresa`)
 
             await servico.create('americanas','bianca')
 
-            const empresaNoBD = await client.query('select * from coin_empresa')
+            const empresaNoBD = await client.query(`select * from coin_empresa`)
 
             expect(empresaNoBD).toEqual([{
                 id: empresaNoBD[0].id,

@@ -47,7 +47,7 @@ export class ServicoPedido {
     }
 
     async listar(): Promise<ListarPedido[]> {
-        const pedidosNoBD = await this.client.query('select * from coin_pedido cp order by data, id_usuario')
+        const pedidosNoBD = await this.client.query(`select * from coin_pedido cp order by data, id_usuario`)
 
         const pedidos: ListarPedido[] = []
         
@@ -65,13 +65,13 @@ export class ServicoPedido {
     }
 
     async get(idPedido: number): Promise<GetPedido> {
-        const pedido = await this.client.oneOrNone('select * from coin_pedido where id = $1::int', [idPedido])
+        const pedido = await this.client.oneOrNone(`select * from coin_pedido where id = $1::int`, [idPedido])
         if (!pedido) {
             throw new Error('pedido não encontrado')
         }
 
         const produtosDoPedido = await this.client.query(
-            'select * from coin_produto_pedido where id_pedido = $1::int', 
+            `select * from coin_produto_pedido where id_pedido = $1::int`, 
             [idPedido],
         )   
 

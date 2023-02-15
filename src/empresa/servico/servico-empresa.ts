@@ -9,7 +9,7 @@ export class ServicoEmpresa {
     }
 
     async listar(): Promise<Empresa[]>{
-        const empresasDoBD = await this.client.query('select * from coin_empresa')
+        const empresasDoBD = await this.client.query(`select * from coin_empresa`)
 
         const empresas: Empresa[] = []
 
@@ -64,7 +64,7 @@ export class ServicoEmpresa {
         if(!empresa) {
             throw new Error('Empresa não encontrada')
         }
-        await this.client.query('delete from coin_empresa where id = $1::int',[idEmpresa])
+        await this.client.query(`delete from coin_empresa where id = $1::int`,[idEmpresa])
     } 
 }
  
