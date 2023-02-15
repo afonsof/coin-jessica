@@ -1,5 +1,5 @@
-import { IDatabase } from "pg-promise";
-import { ServicoUsuario } from "../../usuario/servico/servico-usuario";
+import { IDatabase } from 'pg-promise'
+import { ServicoUsuario } from '../../usuario/servico/servico-usuario'
 
 interface GetCarteiraMoedasDoadas {
     nome: string
@@ -24,7 +24,7 @@ export class ServicoCarteiraMoedasDoadas{
         const carteiraDoadaDeUsuario = await this.client.oneOrNone(
             `select * from coin_carteira_moedas_doadas cmd 
              where id_usuario =  $1::int`,
-            [idUsuario]
+            [idUsuario],
         )
 
         if(!carteiraDoadaDeUsuario){
@@ -34,7 +34,7 @@ export class ServicoCarteiraMoedasDoadas{
         const carteiraMoedasDoadas = {
             nome:usuario.nome, 
             saldo:carteiraDoadaDeUsuario.saldo,
-            idUsuario:idUsuario
+            idUsuario:idUsuario,
         }
         return carteiraMoedasDoadas
     }
@@ -43,7 +43,7 @@ export class ServicoCarteiraMoedasDoadas{
 
         const saldoCarteiraDoada = await this.client.oneOrNone(
             `select saldo from coin_carteira_moedas_doadas
-            where id_usuario = $1::int`, [idUsuario]
+            where id_usuario = $1::int`, [idUsuario],
         )
 
         if(!saldoCarteiraDoada){
@@ -62,7 +62,7 @@ export class ServicoCarteiraMoedasDoadas{
     async creditar(valorParaCreditar: number, idUsuario: number): Promise<void> {
         const saldoCarteiraDoada = await this.client.oneOrNone(
             `select saldo from coin_carteira_moedas_doadas
-            where id_usuario = $1::int`, [idUsuario]
+            where id_usuario = $1::int`, [idUsuario],
         )
 
         if(!saldoCarteiraDoada){

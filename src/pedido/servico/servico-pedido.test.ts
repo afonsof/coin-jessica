@@ -1,11 +1,10 @@
-import { ServicoPedido } from "./servico-pedido";
-import dayjs from "dayjs";
+import { ServicoPedido } from './servico-pedido'
+import dayjs from 'dayjs'
 
 import utc from 'dayjs/plugin/utc'
 dayjs.extend(utc)
 
 import pgPromise from 'pg-promise'
-import cli from "nodemon/lib/cli";
 const pgp = pgPromise()
 
 const client = pgp({
@@ -13,7 +12,7 @@ const client = pgp({
     port: 5432,
     user: 'example',
     password: 'example',
-    database: 'teste'
+    database: 'teste',
 })
 
 const servico = new ServicoPedido(client)
@@ -24,20 +23,20 @@ describe('ServicoPedido', ()=>{
         it('deve retornar um unico pedido, caso ele esteja no banco', async ()=>{
             
 
-            const resUsuario = await client.one(`insert into coin_usuario (nome, email, senha) values ('zezin', 'joze@sdf.com', '123123123') RETURNING id`)
+            const resUsuario = await client.one('insert into coin_usuario (nome, email, senha) values (\'zezin\', \'joze@sdf.com\', \'123123123\') RETURNING id')
 
-            const resProduto = await client.one(`insert into coin_produto (nome, valor, estoque) values ('pirulito', 2, 2000) RETURNING id`)
+            const resProduto = await client.one('insert into coin_produto (nome, valor, estoque) values (\'pirulito\', 2, 2000) RETURNING id')
 
             const resPedido = await client.one(`insert into coin_pedido 
                 (data, id_usuario, status) values
-                ('2023-01-05', ${resUsuario.id},'pendente') RETURNING id`
+                ('2023-01-05', ${resUsuario.id},'pendente') RETURNING id`,
             )
 
             const idPedido = resPedido.id    
 
             await client.query(`insert into coin_produto_pedido 
                 (id_pedido, id_produto, qtd, valor_unitario) values
-                (${idPedido},${resProduto.id},2,10)`
+                (${idPedido},${resProduto.id},2,10)`,
             )
 
             const pedido = await servico.get(idPedido)
@@ -54,13 +53,13 @@ describe('ServicoPedido', ()=>{
                         valor: 10,
                         qtd: 2,
                         total: 20,
-                    }
-                ]
+                    },
+                ],
             })
         })
 
         it('deve disparar um erro caso o pedido não seja encontrado', async()=>{
-            expect.assertions(1);
+            expect.assertions(1)
             try {
                 await servico.get(999999)
             } 
@@ -73,7 +72,7 @@ describe('ServicoPedido', ()=>{
 
     describe('list', ()=>{
         it('deve listar os pedidos existentes', async ()=>{
-            await client.query(`delete from coin_pedido`)
+            await client.query('delete from coin_pedido')
 
             const resUsuario = await client.one(`insert into coin_usuario (nome, email, senha)
             values ('zezin', 'joze@sdf.com', '123123123') RETURNING id`)
@@ -85,13 +84,13 @@ describe('ServicoPedido', ()=>{
                 (data, id_usuario, status) values
                 ($1::date, ${resUsuario.id},'aprovado'),
                 ($2::date, ${resUsuario.id},'aprovado') RETURNING id`,
-                [dayjs('2023-01-05').toDate(), dayjs('2023-01-06').toDate()]
+            [dayjs('2023-01-05').toDate(), dayjs('2023-01-06').toDate()],
             ) 
 
             await client.query(`insert into coin_produto_pedido 
                 (id_pedido, id_produto, qtd, valor_unitario) values
                 (${resPedido[0].id},${resProduto.id},2,10),
-                (${resPedido[1].id},${resProduto.id},3,10)`
+                (${resPedido[1].id},${resProduto.id},3,10)`,
             )
 
             const pedidos  = await servico.listar()
@@ -100,12 +99,12 @@ describe('ServicoPedido', ()=>{
                 idPedido: resPedido[0].id,
                 nomeUsuario: 'zezin',
                 data: dayjs('2023-01-05').toDate(),
-                status: 'aprovado'
+                status: 'aprovado',
             },{
                 idPedido: resPedido[1].id,
                 nomeUsuario: 'zezin',
                 data: dayjs('2023-01-06').toDate(),
-                status: 'aprovado'
+                status: 'aprovado',
             }])
         })
     })
@@ -124,12 +123,12 @@ describe('ServicoPedido', ()=>{
 
             const resPedido = await client.one(`insert into coin_pedido 
                 (data, id_usuario, status) values
-                ($1::date, ${resUsuario.id},'pendente') RETURNING id`, [dayjs('2023-01-05').toDate()]
+                ($1::date, ${resUsuario.id},'pendente') RETURNING id`, [dayjs('2023-01-05').toDate()],
             )  
 
             await client.query(`insert into coin_produto_pedido 
                 (id_pedido, id_produto, qtd, valor_unitario) values
-                (${resPedido.id },${resProduto.id},2,10)`
+                (${resPedido.id },${resProduto.id},2,10)`,
             )
 
             await servico.aprovar(resPedido.id)
@@ -146,23 +145,23 @@ describe('ServicoPedido', ()=>{
         })
 
         it('deve disparar um erro caso o pedido não tenha o status = pendente', async()=>{
-            const resUsuario = await client.one(`insert into coin_usuario (nome, email, senha) values ('zezin', 'joze@sdf.com', '123123123') RETURNING id`)
+            const resUsuario = await client.one('insert into coin_usuario (nome, email, senha) values (\'zezin\', \'joze@sdf.com\', \'123123123\') RETURNING id')
 
-            const resProduto = await client.one(`insert into coin_produto (nome, valor, estoque) values ('pirulito', 2, 2000) RETURNING id`)
+            const resProduto = await client.one('insert into coin_produto (nome, valor, estoque) values (\'pirulito\', 2, 2000) RETURNING id')
 
             const resPedido = await client.one(`insert into coin_pedido 
                 (data, id_usuario, status) values
-                ($1::date, ${resUsuario.id},'aprovado') RETURNING id`, [dayjs('2023-01-05').toDate()]
+                ($1::date, ${resUsuario.id},'aprovado') RETURNING id`, [dayjs('2023-01-05').toDate()],
             )
 
             const idPedido = resPedido.id    
 
             await client.query(`insert into coin_produto_pedido 
                 (id_pedido, id_produto, qtd, valor_unitario) values
-                (${idPedido},${resProduto.id},2,10)`
+                (${idPedido},${resProduto.id},2,10)`,
             )
 
-            expect.assertions(1);
+            expect.assertions(1)
             try {
                 await servico.aprovar(idPedido)
             } 
@@ -183,17 +182,17 @@ describe('ServicoPedido', ()=>{
 
             const resPedido = await client.one(`insert into coin_pedido 
                 (data, id_usuario, status) values
-                ($1::date, ${resUsuario.id},'pendente') RETURNING id`, [dayjs('2023-01-05').toDate()]
+                ($1::date, ${resUsuario.id},'pendente') RETURNING id`, [dayjs('2023-01-05').toDate()],
             )
 
             const idPedido = resPedido.id    
 
             await client.query(`insert into coin_produto_pedido 
                 (id_pedido, id_produto, qtd, valor_unitario) values
-                (${idPedido},${resProduto.id},2,10)`
+                (${idPedido},${resProduto.id},2,10)`,
             )
 
-            expect.assertions(1);
+            expect.assertions(1)
             try {
                 await servico.aprovar(idPedido)
             } 
@@ -205,7 +204,7 @@ describe('ServicoPedido', ()=>{
 
     it('deve disparar um erro caso o produto não tenha estoque suficiente', async()=>{
 
-        await client.query(`delete from coin_produto_pedido`)
+        await client.query('delete from coin_produto_pedido')
 
         const resUsuario = await client.one(`insert into coin_usuario (nome, email, senha) 
         values ('zezin', 'joze@sdf.com', '123123123') RETURNING id`)
@@ -218,24 +217,24 @@ describe('ServicoPedido', ()=>{
 
         const resPedido = await client.one(`insert into coin_pedido 
             (data, id_usuario, status) values
-            ($1::date, ${resUsuario.id},'pendente') RETURNING id`, [dayjs('2023-01-05').toDate()]
+            ($1::date, ${resUsuario.id},'pendente') RETURNING id`, [dayjs('2023-01-05').toDate()],
         )
 
         await client.query(`insert into coin_produto_pedido 
             (id_pedido, id_produto, qtd, valor_unitario) values
-            (${resPedido.id},${resProduto.id},2,10)`
+            (${resPedido.id},${resProduto.id},2,10)`,
         )
 
-        const produtoDoPedidoNoBD = await client.one(`select * from coin_produto_pedido
+        await client.one(`select * from coin_produto_pedido
         where id_pedido = ${resPedido.id}`)
 
-        expect.assertions(1);
+        expect.assertions(1)
         try {
             await servico.aprovar(resPedido.id)
         } 
         catch (e) {
             expect(e).toEqual(new Error(
-                `Foi requisitado 2 unidades do produto pirulito, mas só tem 0 em estoque`
+                'Foi requisitado 2 unidades do produto pirulito, mas só tem 0 em estoque',
             ))
         }
     })
@@ -256,12 +255,12 @@ describe('ServicoPedido', ()=>{
 
             const resPedido = await client.one(`insert into coin_pedido 
                 (data, id_usuario, status) values
-                ($1::date, ${resUsuario.id},'pendente') RETURNING id`, [dayjs('2023-01-05').toDate()]
+                ($1::date, ${resUsuario.id},'pendente') RETURNING id`, [dayjs('2023-01-05').toDate()],
             )
 
             await client.query(`insert into coin_produto_pedido 
                 (id_pedido, id_produto, qtd, valor_unitario) values
-                (${resPedido.id},${resProduto.id},2,10)`
+                (${resPedido.id},${resProduto.id},2,10)`,
             )
 
             await servico.reprovar(resPedido.id)
@@ -279,16 +278,15 @@ describe('ServicoPedido', ()=>{
         })
 
         it('deve disparar um erro caso o pedido não tenha o status = pendente', async()=>{
-            const resUsuario = await client.one(`insert into coin_usuario (nome, email, senha) values ('zezin', 'joze@sdf.com', '123123123') RETURNING id`)
+            const resUsuario = await client.one('insert into coin_usuario (nome, email, senha) values (\'zezin\', \'joze@sdf.com\', \'123123123\') RETURNING id')
 
             const resPedido = await client.one(`insert into coin_pedido 
                 (data, id_usuario, status) values
-                ($1::date, ${resUsuario.id},'reprovado') RETURNING id`, [dayjs('2023-01-05').toDate()]
-            )
+                ($1::date, ${resUsuario.id},'reprovado') RETURNING id`, [dayjs('2023-01-05').toDate()])
 
             const idPedido = resPedido.id    
 
-            expect.assertions(1);
+            expect.assertions(1)
             try {
                 await servico.reprovar(idPedido)
             } 
@@ -301,24 +299,24 @@ describe('ServicoPedido', ()=>{
     describe('create',()=>{
         it('cria um pedido no banco', async()=>{
 
-            await client.query(`delete from coin_pedido`)
-            await client.query(`delete from coin_produto_pedido`)
-            await client.query(`delete from coin_produto`)
+            await client.query('delete from coin_pedido')
+            await client.query('delete from coin_produto_pedido')
+            await client.query('delete from coin_produto')
 
             const resUsuario = await client.one(`insert into coin_usuario (nome, email, senha)
             values ('zezin', 'joze@sdf.com', '123123123') RETURNING id`)
 
             const resProdutos = await client.query(`insert into coin_produto (nome, valor, estoque) values
                 ('pirulito', 2, 2000),
-                ('batatinha', 10, 100) RETURNING id`
+                ('batatinha', 10, 100) RETURNING id`,
             )
 
             const produtosDoPedido = [{idProduto : resProdutos[0].id,
-                                        qtd: 2
-                                    },{
-                                       idProduto: resProdutos[1].id,
-                                        qtd:1
-                                    }]
+                qtd: 2,
+            },{
+                idProduto: resProdutos[1].id,
+                qtd:1,
+            }]
 
             const dataAtual = dayjs()
                 .set('hour', 0)
@@ -328,9 +326,9 @@ describe('ServicoPedido', ()=>{
                 .toDate()
             await servico.create(resUsuario.id, produtosDoPedido)
             
-            const pedidosNoBD = await client.query(`select * from coin_pedido`)
+            const pedidosNoBD = await client.query('select * from coin_pedido')
             
-            const produtosPedidosNoBD = await client.query(`select * from coin_produto_pedido order by id_produto`)
+            const produtosPedidosNoBD = await client.query('select * from coin_produto_pedido order by id_produto')
 
             expect(pedidosNoBD[0].id_usuario).toEqual(resUsuario.id)
             expect(pedidosNoBD[0].status).toEqual('pendente')

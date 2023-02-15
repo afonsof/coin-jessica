@@ -1,8 +1,7 @@
-import { ServicoProduto } from "./servico-produto"
+import { ServicoProduto } from './servico-produto'
 
 import pgPromise from 'pg-promise'
-import dayjs from "dayjs";
-import cli from "nodemon/lib/cli";
+import dayjs from 'dayjs'
 const pgp = pgPromise()
 
 const client = pgp({
@@ -10,7 +9,7 @@ const client = pgp({
     port: 5432,
     user: 'example',
     password: 'example',
-    database: 'teste'
+    database: 'teste',
 })
 
 const servico = new ServicoProduto(client)
@@ -35,7 +34,7 @@ describe('ServicoProduto', ()=> {
 
         it('deve disparar um erro caso o produto nao seja encontrado', async ()=> {
      
-            expect.assertions(1);  
+            expect.assertions(1)  
             try {
                 await servico.get(999999)
             } 
@@ -58,7 +57,7 @@ describe('ServicoProduto', ()=> {
         })
 
         it('deve disparar um erro caso o id produto não seja encontrado', async()=>{
-            expect.assertions(1);
+            expect.assertions(1)
             try {
                 await servico.delete(999999)
             } 
@@ -70,12 +69,12 @@ describe('ServicoProduto', ()=> {
 
     describe('list', ()=>{
         it('deve listar os produtos existentes', async ()=>{
-            await client.query(`delete from coin_produto`)
+            await client.query('delete from coin_produto')
 
             const res = await client.query(`insert into coin_produto (nome, valor, estoque)
                 values ('batatinha1', 10, 100),
                        ('batatinha2', 20, 100),
-                       ('batatinha3', 30, 100) RETURNING id`
+                       ('batatinha3', 30, 100) RETURNING id`,
             )
 
             const produtos = await servico.listar()
@@ -103,11 +102,11 @@ describe('ServicoProduto', ()=> {
     describe('create', ()=>{
         it('deve criar um novo produto no banco', async ()=>{
 
-            await client.query(`delete from coin_produto`)
+            await client.query('delete from coin_produto')
 
             await servico.create('batatinha', 10, 100)
 
-            const produtoNoBD = await client.one(`select * from coin_produto`)
+            const produtoNoBD = await client.one('select * from coin_produto')
 
             expect(produtoNoBD.nome).toEqual('batatinha')
 
@@ -137,7 +136,7 @@ describe('ServicoProduto', ()=> {
 
         it('deve disparar um erro caso o produto não seja encontrado', async()=>{
             
-            expect.assertions(1);
+            expect.assertions(1)
             try {
                 await servico.update(9999999, 'batatinha1', 10, 1000)
             } 
@@ -157,12 +156,12 @@ describe('ServicoProduto', ()=> {
 
             const resPedido = await client.one(`insert into coin_pedido 
                 (data, id_usuario, status) values
-                ($1::date, ${resUsuario.id},'aprovado') RETURNING id`,[dayjs('2023-01-05').toDate()]
+                ($1::date, ${resUsuario.id},'aprovado') RETURNING id`,[dayjs('2023-01-05').toDate()],
             )
 
             await client.query(`insert into coin_produto_pedido 
                 (id_pedido, id_produto, qtd, valor_unitario) values
-                (${resPedido.id  },${resProduto.id},2,10)`
+                (${resPedido.id  },${resProduto.id},2,10)`,
             )
             const qtdParaDebitar = 2
 
@@ -178,7 +177,7 @@ describe('ServicoProduto', ()=> {
 
         it('deve disparar um erro caso o produto não seja encontrado', async()=>{
             
-            expect.assertions(1);
+            expect.assertions(1)
             try {
                 await servico.atualizarEstoque(9999999, 10)
             } 
@@ -189,7 +188,7 @@ describe('ServicoProduto', ()=> {
     })
 
     describe('conferirQtdEstoque',()=>{
-        it(`deve conferir se tem quantidade do produto pedido no estoque`, async()=>{
+        it('deve conferir se tem quantidade do produto pedido no estoque', async()=>{
             const resUsuario = await client.one(`insert into coin_usuario (nome, email, senha) 
             values ('zezin', 'joze@sdf.com', '123123123') RETURNING id`)
 
@@ -198,12 +197,12 @@ describe('ServicoProduto', ()=> {
 
             const resPedido = await client.one(`insert into coin_pedido 
                 (data, id_usuario, status) values
-                ($1::date, ${resUsuario.id},'aprovado') RETURNING id`,[dayjs('2023-01-05').toDate()]
+                ($1::date, ${resUsuario.id},'aprovado') RETURNING id`,[dayjs('2023-01-05').toDate()],
             )
 
             await client.query(`insert into coin_produto_pedido 
                 (id_pedido, id_produto, qtd, valor_unitario) values
-                (${resPedido.id},${resProduto.id},2,10)`
+                (${resPedido.id},${resProduto.id},2,10)`,
             )
 
             const qtdProdutoPedido = 2
@@ -215,7 +214,7 @@ describe('ServicoProduto', ()=> {
 
         it('deve disparar um erro caso o produto não seja encontrado', async()=>{
             
-            expect.assertions(1);
+            expect.assertions(1)
             try {
                 await servico.conferirQtdEstoque(9999999, 10)
             } 
@@ -234,17 +233,17 @@ describe('ServicoProduto', ()=> {
 
             const resPedido = await client.one(`insert into coin_pedido 
                 (data, id_usuario, status) values
-                ($1::date, ${resUsuario.id},'aprovado') RETURNING id`,[dayjs('2023-01-05').toDate()]
+                ($1::date, ${resUsuario.id},'aprovado') RETURNING id`,[dayjs('2023-01-05').toDate()],
             )
 
             const qtd = 2
 
             await client.query(`insert into coin_produto_pedido 
                 (id_pedido, id_produto, qtd, valor_unitario) values
-                (${resPedido.id},${resProduto.id},${qtd},10)`
+                (${resPedido.id},${resProduto.id},${qtd},10)`,
             )
 
-            expect.assertions(1);
+            expect.assertions(1)
             try {
                 await servico.conferirQtdEstoque(resProduto.id, qtd)
             } 

@@ -1,5 +1,5 @@
-import { Express } from "express";
-import { ServicoReconhecimento } from "../servico/servico-reconhecimento";
+import { Express } from 'express'
+import { ServicoReconhecimento } from '../servico/servico-reconhecimento'
 
 export const listarReconhecimentos = (site:Express, client)=>{
     site.get('/reconhecimento', async (req, res)=>{

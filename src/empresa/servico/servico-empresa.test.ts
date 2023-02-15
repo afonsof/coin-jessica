@@ -1,4 +1,4 @@
-import { ServicoEmpresa } from "./servico-empresa";
+import { ServicoEmpresa } from './servico-empresa'
 
 import pgPromise from 'pg-promise'
 const pgp = pgPromise()
@@ -8,7 +8,7 @@ const client = pgp({
     port: 5432,
     user: 'example',
     password: 'example',
-    database: 'teste'
+    database: 'teste',
 })
 
 const servico = new ServicoEmpresa(client)
@@ -31,7 +31,7 @@ describe('ServicoEmpresa', ()=>{
 
         it('deve disparar um erro caso a empresa não seja encontrada', async ()=>{
            
-            expect.assertions(1);  
+            expect.assertions(1)  
             try {
                 await servico.get(999999)
             } 
@@ -55,7 +55,7 @@ describe('ServicoEmpresa', ()=>{
         })
 
         it('deve disparar um erro caso o id empresa não seja encontrado', async()=>{
-            expect.assertions(1);
+            expect.assertions(1)
             try {
                 await servico.delete(999999)
             } 
@@ -67,12 +67,12 @@ describe('ServicoEmpresa', ()=>{
 
     describe('list', ()=>{
         it('deve listar as empresas do banco', async ()=>{
-            await client.query(`delete from coin_empresa`)
+            await client.query('delete from coin_empresa')
 
             const res = await client.query(`insert into coin_empresa(nome, responsavel) values
             ('americanas', 'bia'),
             ('Ponto Frio', 'Carol') ,
-            ('Casas Bahia', 'vinicio') RETURNING id`
+            ('Casas Bahia', 'vinicio') RETURNING id`,
             )
 
             const empresas = await servico.listar()
@@ -111,7 +111,7 @@ describe('ServicoEmpresa', ()=>{
 
         it('deve disparar um erro caso a empresa não seja encontrada', async()=>{
             
-            expect.assertions(1);
+            expect.assertions(1)
             try {
                 await servico.update(9999999, 'americanas','bianca')
             } 
@@ -124,11 +124,11 @@ describe('ServicoEmpresa', ()=>{
     describe('create', ()=>{
         it('deve criar uma nova empresa no banco', async ()=>{
 
-            await client.query(`delete from coin_empresa`)
+            await client.query('delete from coin_empresa')
 
             await servico.create('americanas','bianca')
 
-            const empresaNoBD = await client.query(`select * from coin_empresa`)
+            const empresaNoBD = await client.query('select * from coin_empresa')
 
             expect(empresaNoBD).toEqual([{
                 id: empresaNoBD[0].id,

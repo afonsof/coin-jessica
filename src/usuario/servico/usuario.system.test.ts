@@ -1,7 +1,9 @@
-import { ServicoUsuario } from "./servico-usuario";
+
+import { ServicoUsuario } from './servico-usuario'
 import supertest from 'supertest'
 import pgPromise from 'pg-promise'
-import { createServer } from "../../server";
+import { createServer } from '../../server'
+
 
 
 const pgp = pgPromise()
@@ -11,10 +13,12 @@ const client = pgp({
     port: 5432,
     user: 'example',
     password: 'example',
+
     database: 'postgres'
 })
 
 const servico = new ServicoUsuario(client)
+
 
 describe('Usuario', ()=>{
     describe('get', ()=>{
@@ -30,8 +34,9 @@ describe('Usuario', ()=>{
                 id: usuario.id,
                 nome: 'tadeu',
                 email: 'tadeu@gmail.com',
-                senha: '123111111'
+                senha: '123111111',
             })
+           
             server.close()
         })
     })
@@ -42,13 +47,20 @@ describe('Usuario', ()=>{
 
             await client.query(`delete from coin_usuario`)
 
+            await client.query('delete from coin_usuario')
+
+
             await supertest(site).post('/usuario').send({
                 nome: 'tadeu',
                 email: 'tadeu@gmail.com',
+
                 senha: '123111111'
             })
 
             const usuarioNoBD = await client.one(`select * from coin_usuario`)
+
+
+
             expect(usuarioNoBD.nome).toEqual('tadeu')
 
             expect(usuarioNoBD.email).toEqual('tadeu@gmail.com')
@@ -69,7 +81,8 @@ describe('Usuario', ()=>{
             await supertest(site).put(`/usuario/${usuario.id}`).send({
                 nome: 'tadeu1',
                 email: 'tadeu@gmail.com',
-                senha: '123111111'
+                senha: '123111111',
+
             })
 
             const usuarioNoBD = await client.one(`select * from coin_usuario where id = ${usuario.id}`)
@@ -101,6 +114,7 @@ describe('Usuario', ()=>{
         it('deve retornar todos os usuario cadastrados no banco', async ()=>{
             const {site, server} = createServer()
 
+
             await client.query(`delete from coin_usuario`)
 
             const usuarios = await client.query(`insert into coin_usuario(nome, email,senha) values
@@ -114,17 +128,20 @@ describe('Usuario', ()=>{
                 id: usuarios[0].id,
                 nome: 'tadeu1',
                 email: 'tadeu@gmail.com',
-                senha: '123111111'
+                senha: '123111111',
+
             },{
                 id: usuarios[1].id,
                 nome: 'tadeu2',
                 email: 'tadeu@gmail.com',
-                senha: '123111111'
+                senha: '123111111',
+
             },{
                 id: usuarios[2].id,
                 nome: 'tadeu3',
                 email: 'tadeu@gmail.com',
-                senha: '123111111' 
+                senha: '123111111', 
+
             }])
 
             server.close()

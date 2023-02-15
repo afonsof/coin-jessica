@@ -45,7 +45,7 @@ export function createServer() {
         port: 5432,
         user: 'example',
         password: 'example',
-        database: 'postgres'
+        database: 'postgres',
     })
 
     // aqui vão todas as todas as rotas

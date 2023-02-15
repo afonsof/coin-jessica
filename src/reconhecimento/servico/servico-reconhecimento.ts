@@ -1,7 +1,7 @@
-import { IDatabase } from "pg-promise";
-import { ServicoCarteiraMoedasDoadas } from "../../carteira-doacao/servico/servico-carteira-moedas-doadas";
-import { ServicoCarteiraMoedasRecebidas } from "../../carteira-recebida/servico/servico-carteira-moedas-recebidas";
-import { Reconhecimento } from "../dominio/reconhecimento";
+import { IDatabase } from 'pg-promise'
+import { ServicoCarteiraMoedasDoadas } from '../../carteira-doacao/servico/servico-carteira-moedas-doadas'
+import { ServicoCarteiraMoedasRecebidas } from '../../carteira-recebida/servico/servico-carteira-moedas-recebidas'
+import { Reconhecimento } from '../dominio/reconhecimento'
 
 
 export class ServicoReconhecimento {
@@ -18,7 +18,7 @@ export class ServicoReconhecimento {
     async listar(): Promise<Reconhecimento[]>{
         const reconhecimentosAprovadoNoBD = await this.client.query(
             `select * from coin_reconhecimento
-            where status = 'aprovado'`
+            where status = 'aprovado'`,
         )
 
         const reconhecimentos: Reconhecimento[] = []
@@ -27,7 +27,7 @@ export class ServicoReconhecimento {
             reconhecimentos.push(new Reconhecimento(
                 reconhecimento.id, reconhecimento.descricao, reconhecimento.data, 
                 reconhecimento.qtd_moedas_doadas, reconhecimento.status, 
-                reconhecimento.id_de_usuario, reconhecimento.id_para_usuario)
+                reconhecimento.id_de_usuario, reconhecimento.id_para_usuario),
             )
         })
         return reconhecimentos
@@ -36,7 +36,7 @@ export class ServicoReconhecimento {
     async get(idReconhecimento:number): Promise<Reconhecimento>{
         const reconhecimentoAprovado = await this.client.oneOrNone(
             `select * from coin_reconhecimento
-            where id = $1::int and status = 'aprovado'`,[idReconhecimento]
+            where id = $1::int and status = 'aprovado'`,[idReconhecimento],
         )
 
         if(!reconhecimentoAprovado){
@@ -46,7 +46,7 @@ export class ServicoReconhecimento {
         const reconhecimento = new Reconhecimento(
             reconhecimentoAprovado.id, reconhecimentoAprovado.descricao, reconhecimentoAprovado.data, 
             reconhecimentoAprovado.qtd_moedas_doadas, reconhecimentoAprovado.status, 
-            reconhecimentoAprovado.id_de_usuario, reconhecimentoAprovado.id_para_usuario
+            reconhecimentoAprovado.id_de_usuario, reconhecimentoAprovado.id_para_usuario,
         )
         return reconhecimento
     }
@@ -55,16 +55,16 @@ export class ServicoReconhecimento {
         descricao:string, data: Date, qtdMoedasDoadas: number, idDeUsuario:number, idParaUsuario:number):Promise<void >{
 
         const reconhecimento = new Reconhecimento(
-            undefined, descricao, data, qtdMoedasDoadas, 'pendente', idDeUsuario, idParaUsuario
+            undefined, descricao, data, qtdMoedasDoadas, 'pendente', idDeUsuario, idParaUsuario,
         )
         
-        let valorDoado = reconhecimento.qtdMoedasDoadas 
+        const valorDoado = reconhecimento.qtdMoedasDoadas 
 
         await this.client.query(`insert into coin_reconhecimento (descricao,data,
             qtd_moedas_doadas, status, id_de_usuario, id_para_usuario) values 
             ($1::text, $2::Date, $3::int, $4::text, $5::int, $6::int)`,
-            [reconhecimento.descricao, reconhecimento.data, reconhecimento.qtdMoedasDoadas,
-            reconhecimento.status,reconhecimento.idDeUsuario, reconhecimento.idParaUsuario]
+        [reconhecimento.descricao, reconhecimento.data, reconhecimento.qtdMoedasDoadas,
+            reconhecimento.status,reconhecimento.idDeUsuario, reconhecimento.idParaUsuario],
         )
         
         await this.servicoCarteiraMoedaDoada.debitar(valorDoado, idDeUsuario)
@@ -75,7 +75,7 @@ export class ServicoReconhecimento {
     async delete(idReconhecimento:number): Promise<void>{
         const reconhecimentoPendente = await this.client.oneOrNone(
             `select * from coin_reconhecimento
-            where id = $1::int and status = 'pendente'`,[idReconhecimento]
+            where id = $1::int and status = 'pendente'`,[idReconhecimento],
         )
 
         if(!reconhecimentoPendente){
@@ -89,7 +89,7 @@ export class ServicoReconhecimento {
     async aprovar(idReconhecimento:number): Promise<void>{       
         const ReconhecimentoPendente = await this.client.oneOrNone(
             `select * from coin_reconhecimento
-            where id = $1::int and status = 'pendente'`,[idReconhecimento]
+            where id = $1::int and status = 'pendente'`,[idReconhecimento],
         )
 
         if(!ReconhecimentoPendente){
@@ -104,7 +104,7 @@ export class ServicoReconhecimento {
     async reprovar(id:number): Promise<void>{         
         const reconhecimento = await this.client.oneOrNone(
             `select * from coin_reconhecimento
-            where id = $1::int and status = 'pendente'`,[id]
+            where id = $1::int and status = 'pendente'`,[id],
         )
         if(!reconhecimento){
             throw new Error('id de Reconhecimento não encontrado ou já reprovado')

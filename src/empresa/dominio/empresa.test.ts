@@ -1,4 +1,4 @@
-import { Empresa } from "./empresa";
+import { Empresa } from './empresa'
 
 describe('Empresa', ()=>{
     describe('constructor', ()=>{
@@ -7,14 +7,14 @@ describe('Empresa', ()=>{
             expect(empresa).toEqual({
                 id: 123,
                 nome: 'casa de maquinas ltda',
-                responsavel: 'ana'
+                responsavel: 'ana',
             })
         })
 
         it('deve disparar um erro, caso não seja passado um nome da empresa', ()=>{
             expect.assertions(1)
             try{
-                const empresa = new Empresa(1111, undefined, 'ana')
+                new Empresa(1111, undefined, 'ana')
             } catch(error){
                 expect(error).toEqual(new Error('Empresa precisa ter um nome'))
             }
@@ -23,7 +23,7 @@ describe('Empresa', ()=>{
         it('deve disparar um erro, caso não seja passado um responsavel', ()=>{
             expect.assertions(1)
             try{
-                const empresa = new Empresa(5001, 'casa da musica ltda', undefined)
+                new Empresa(5001, 'casa da musica ltda', undefined)
             }catch(error){
                 expect(error).toEqual(new Error('Empresa precisa ter nome do responsável'))
             }
@@ -32,7 +32,7 @@ describe('Empresa', ()=>{
         it('deve disparar um erro caso o responsavel não seja uma string', ()=>{
             expect.assertions(1)
             try{
-                const empresa = new Empresa(1245, 'casa da musica ltda', 123 as any,)
+                new Empresa(1245, 'casa da musica ltda', 123 as any)
             }catch(error){
                 expect(error).toEqual(new Error('O responsável precisa ser uma string'))
             }

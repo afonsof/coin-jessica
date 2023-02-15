@@ -1,5 +1,5 @@
-import {IDatabase} from "pg-promise"
-import { Produto } from "../dominio/produto"
+import {IDatabase} from 'pg-promise'
+import { Produto } from '../dominio/produto'
 
 export class ServicoProduto {
     client: IDatabase<any>
@@ -9,7 +9,7 @@ export class ServicoProduto {
     }
 
     async listar(): Promise<Produto[]>{
-        const produtosNoBD = await this.client.query(`select * from coin_produto`)
+        const produtosNoBD = await this.client.query('select * from coin_produto')
 
         const produtos: Produto[] = []
 
@@ -22,7 +22,7 @@ export class ServicoProduto {
     async get(idProduto: number): Promise<Produto>{
         const produto = await this.client.oneOrNone(
             `select * from coin_produto
-            where id = $1::int`,[idProduto]
+            where id = $1::int`,[idProduto],
         )
 
         if(!produto){
@@ -38,7 +38,7 @@ export class ServicoProduto {
         await this.client.query(
             `insert into coin_produto (nome, valor, estoque)
             values ($1::text, $2::int, $3::int)`, 
-            [produto.nome, produto.valor, produto.estoque]
+            [produto.nome, produto.valor, produto.estoque],
         )
 
     }
@@ -58,7 +58,7 @@ export class ServicoProduto {
             valor = $3::int,
             estoque = $4::int
             where id = $1::int`, 
-            [produto.id, produto.nome, produto.valor, produto.estoque]
+            [produto.id, produto.nome, produto.valor, produto.estoque],
         )
     }
 
@@ -71,14 +71,14 @@ export class ServicoProduto {
             throw new Error('Produto não encontrado')
         }
 
-        await this.client.query(`delete from coin_produto where id = $1::int`,[idProduto])
+        await this.client.query('delete from coin_produto where id = $1::int',[idProduto])
     }
 
     async atualizarEstoque(idProduto:number, qtdParaDebitar:number): Promise<void>{
 
         const produto = await this.client.oneOrNone(
             `select * from coin_produto
-            where id = $1::int`, [idProduto]
+            where id = $1::int`, [idProduto],
         )
 
         if(!produto){
@@ -95,7 +95,7 @@ export class ServicoProduto {
 
         const produto = await this.client.oneOrNone(
             `select * from coin_produto
-            where id = $1::int`, [idProduto]
+            where id = $1::int`, [idProduto],
         )
 
         if(!produto){

@@ -1,5 +1,5 @@
-import { Express } from "express";
-import { ServicoEmpresa } from "../servico/servico-empresa";
+import { Express } from 'express'
+import { ServicoEmpresa } from '../servico/servico-empresa'
 
 export const deleteEmpresa = (site:Express, client)=>{
     site.delete('/empresa/:id', async (req, res)=>{

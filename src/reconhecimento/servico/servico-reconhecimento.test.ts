@@ -1,8 +1,7 @@
-import { ServicoReconhecimento } from "./servico-reconhecimento";
+import { ServicoReconhecimento } from './servico-reconhecimento'
 
 import pgPromise from 'pg-promise'
-import dayjs from "dayjs";
-import cli from "nodemon/lib/cli";
+import dayjs from 'dayjs'
 const pgp = pgPromise()
 
 const client = pgp({
@@ -10,7 +9,7 @@ const client = pgp({
     port: 5432,
     user: 'example',
     password: 'example',
-    database: 'teste'
+    database: 'teste',
 })
 
 const servico = new ServicoReconhecimento(client)
@@ -21,13 +20,13 @@ describe('ServicoReconhecimento', ()=>{
 
             const usuario = await client.query(`insert into coin_usuario(nome, email,senha) 
             values ('joao1', 'joao@gmail.com', '123111111'),
-                   ('joao2', 'joao@gmail.com', '123111111') RETURNING id`
+                   ('joao2', 'joao@gmail.com', '123111111') RETURNING id`,
             )
 
             const res = await client.one(`insert into coin_reconhecimento 
                 (descricao, data, qtd_moedas_doadas, status, id_de_usuario, id_para_usuario) 
                 values ('Obrigada pela ajuda',$1::date, 10, 'aprovado',
-                ${usuario[0].id},${usuario[1].id}) RETURNING id`, [dayjs('2023-01-05').toDate()]
+                ${usuario[0].id},${usuario[1].id}) RETURNING id`, [dayjs('2023-01-05').toDate()],
             )
 
             const reconhecimento = await servico.get(res.id)
@@ -58,13 +57,13 @@ describe('ServicoReconhecimento', ()=>{
 
             const usuario = await client.query(`insert into coin_usuario(nome, email,senha) 
             values ('joao1', 'joao@gmail.com', '123111111'),
-                   ('joao2', 'joao@gmail.com', '123111111') RETURNING id`
+                   ('joao2', 'joao@gmail.com', '123111111') RETURNING id`,
             )
 
             const res = await client.one(`insert into coin_reconhecimento 
                 (descricao, data, qtd_moedas_doadas, status, id_de_usuario, id_para_usuario) 
                 values ('Obrigada pela ajuda','2023-01-05', 10, 'pendente',
-                ${usuario[0].id},${usuario[1].id}) RETURNING id`
+                ${usuario[0].id},${usuario[1].id}) RETURNING id`,
             )
 
             await servico.delete(res.id)
@@ -74,7 +73,7 @@ describe('ServicoReconhecimento', ()=>{
         })
 
         it('deve disparar um erro caso o reconhecimento não seja encontrado', async()=>{
-            expect.assertions(1);
+            expect.assertions(1)
             try {
                 await servico.delete(999999)
             } 
@@ -86,11 +85,11 @@ describe('ServicoReconhecimento', ()=>{
 
     describe('list', ()=>{
         it('deve listar os reconhecimentos existentes', async ()=>{
-            await client.query(`delete from coin_reconhecimento`)
+            await client.query('delete from coin_reconhecimento')
 
             const usuario = await client.query(`insert into coin_usuario(nome, email,senha) 
             values ('joao1', 'joao@gmail.com', '123111111'),
-                   ('joao2', 'joao@gmail.com', '123111111') RETURNING id`
+                   ('joao2', 'joao@gmail.com', '123111111') RETURNING id`,
             )
 
             const res = await client.query(`insert into coin_reconhecimento 
@@ -98,7 +97,7 @@ describe('ServicoReconhecimento', ()=>{
                 values
                   ('Obrigada pela ajuda',$1::date, 10, 'aprovado', ${usuario[0].id},${usuario[1].id}), 
                   ('Obrigada pela ajuda',$1::date, 15, 'aprovado', ${usuario[1].id},${usuario[0].id}) RETURNING id`,
-                [dayjs('2023-01-05').toDate()]
+            [dayjs('2023-01-05').toDate()],
             )
 
             const reconhecimentos = await servico.listar() 
@@ -126,25 +125,25 @@ describe('ServicoReconhecimento', ()=>{
     describe('create', ()=>{
         it('deve criar um reconhecimento', async()=>{
 
-            await client.query(`delete from coin_reconhecimento`)
+            await client.query('delete from coin_reconhecimento')
             
             const usuarios = await client.query(`insert into coin_usuario(nome, email,senha) 
             values ('joao1', 'joao@gmail.com', '123111111'),
-                   ('joao2', 'joao@gmail.com', '123111111') RETURNING id`
+                   ('joao2', 'joao@gmail.com', '123111111') RETURNING id`,
             )
 
             await client.query(`insert into coin_carteira_moedas_doadas
             (id_usuario, saldo) values (${usuarios[0].id},200),
-                                       (${usuarios[1].id},200)`
+                                       (${usuarios[1].id},200)`,
             )
 
             await client.query(`insert into coin_carteira_moedas_recebidas
             (id_usuario, saldo) values (${usuarios[0].id},200),
-                                       (${usuarios[1].id},200)`
+                                       (${usuarios[1].id},200)`,
             )
             
             await servico.create('Obrigada pela ajuda', dayjs('2023-01-05').toDate(), 10, 
-            usuarios[0].id,usuarios[1].id)
+                usuarios[0].id,usuarios[1].id)
 
             const reconhecimentoBD = await client.one(`select * from coin_reconhecimento 
             where id_de_usuario = ${usuarios[0].id}`)
@@ -178,20 +177,20 @@ describe('ServicoReconhecimento', ()=>{
         it('deve aprovar um reconhecimento criado', async()=>{
             const usuarios = await client.query(`insert into coin_usuario(nome, email,senha) 
             values ('joao1', 'joao@gmail.com', '123111111'),
-                   ('joao2', 'joao@gmail.com', '123111111') RETURNING id`
+                   ('joao2', 'joao@gmail.com', '123111111') RETURNING id`,
             )
 
             await client.query(`insert into coin_carteira_moedas_doadas
-            (id_usuario, saldo) values (${usuarios[0].id},200)`
+            (id_usuario, saldo) values (${usuarios[0].id},200)`,
             )
 
             await client.query(`insert into coin_carteira_moedas_recebidas
-            (id_usuario, saldo) values (${usuarios[1].id},200)`
+            (id_usuario, saldo) values (${usuarios[1].id},200)`,
             )
             const reconhecimento = await client.one(`insert into coin_reconhecimento 
                 (descricao, data, qtd_moedas_doadas, status, id_de_usuario, id_para_usuario) 
                 values ('Obrigada pela ajuda', $1::date, 10, 'pendente',
-                ${usuarios[0].id},${usuarios[1].id})  RETURNING id`, [dayjs('2023-01-05').toDate()]
+                ${usuarios[0].id},${usuarios[1].id})  RETURNING id`, [dayjs('2023-01-05').toDate()],
             )
 
             await servico.aprovar(reconhecimento.id)
@@ -206,7 +205,7 @@ describe('ServicoReconhecimento', ()=>{
         })
 
         it('deve disparar um erro caso o reconhecimento não seja encontrado ou já aprovado', async()=>{
-            expect.assertions(1);
+            expect.assertions(1)
             try {
                 await servico.aprovar(999999)
             } 
@@ -222,21 +221,21 @@ describe('ServicoReconhecimento', ()=>{
         it('deve reprovar um reconhecimento criado que seja pendente', async()=>{
             const usuarios = await client.query(`insert into coin_usuario(nome, email,senha) 
             values ('joao1', 'joao@gmail.com', '123111111'),
-                   ('joao2', 'joao@gmail.com', '123111111') RETURNING id`
+                   ('joao2', 'joao@gmail.com', '123111111') RETURNING id`,
             )
 
             await client.query(`insert into coin_carteira_moedas_doadas
-            (id_usuario, saldo) values (${usuarios[0].id},200)`
+            (id_usuario, saldo) values (${usuarios[0].id},200)`,
             )
 
             await client.query(`insert into coin_carteira_moedas_recebidas
-            (id_usuario, saldo) values (${usuarios[1].id},200)`
+            (id_usuario, saldo) values (${usuarios[1].id},200)`,
             )
 
             const reconhecimento = await client.one(`insert into coin_reconhecimento 
                 (descricao, data, qtd_moedas_doadas, status, id_de_usuario, id_para_usuario) 
                 values ('Obrigada pela ajuda', $1::date, 10, 'pendente',
-                ${usuarios[0].id},${usuarios[1].id})  RETURNING id`, [dayjs('2023-01-05').toDate()]
+                ${usuarios[0].id},${usuarios[1].id})  RETURNING id`, [dayjs('2023-01-05').toDate()],
             )
 
             await servico.reprovar(reconhecimento.id)   
@@ -251,7 +250,7 @@ describe('ServicoReconhecimento', ()=>{
         })
 
         it('deve disparar um erro caso o reconhecimento não seja encontrado ou já reprovado', async()=>{
-            expect.assertions(1);
+            expect.assertions(1)
             try {
                 await servico.reprovar(999999)
             } 

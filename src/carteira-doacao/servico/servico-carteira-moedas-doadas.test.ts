@@ -1,8 +1,6 @@
-import { ServicoCarteiraMoedasDoadas } from "./servico-carteira-moedas-doadas"
+import { ServicoCarteiraMoedasDoadas } from './servico-carteira-moedas-doadas'
 
 import pgPromise from 'pg-promise'
-import dayjs from "dayjs";
-import cli from "nodemon/lib/cli";
 const pgp = pgPromise()
 
 const client = pgp({
@@ -10,9 +8,9 @@ const client = pgp({
     port: 5432,
     user: 'example',
     password: 'example',
-    database: 'teste'
+    database: 'teste',
 })
- 
+
 const servico = new ServicoCarteiraMoedasDoadas(client)
 
 describe('ServicoCarteiraMoedasDoadas', () => {
@@ -38,7 +36,7 @@ describe('ServicoCarteiraMoedasDoadas', () => {
             const usuario = await client.one(`insert into coin_usuario(nome, email,senha)
             values ('joao', 'joao@gmail.com', '123111111') RETURNING id`)
 
-            expect.assertions(1);
+            expect.assertions(1)
             try {
                 await servico.get(usuario.id)
             }
@@ -52,12 +50,11 @@ describe('ServicoCarteiraMoedasDoadas', () => {
         it('deve debitar um valor na carteira do usuario ao doar um valor no reconhecimento', async () => {
 
             const usuarios = await client.query(`insert into coin_usuario(nome, email,senha)
-            values ('joao1', 'joao@gmail.com', '123111111') RETURNING id`
+            values ('joao1', 'joao@gmail.com', '123111111') RETURNING id`,
             )
 
             await client.query(`insert into coin_carteira_moedas_doadas
-            (id_usuario, saldo) values (${usuarios[0].id},200)`
-            )
+            (id_usuario, saldo) values (${usuarios[0].id},200)`)
 
             const valorParaDebitar = 10
 
@@ -67,21 +64,20 @@ describe('ServicoCarteiraMoedasDoadas', () => {
             where id_usuario = ${usuarios[0].id}`) 
 
             expect(carteiraDoadasBD.saldo).toEqual(190)
-
         })
 
         it('deve disparar um erro caso usuario não tenha saldo suficiente', async () => {
             const usuarios = await client.query(`insert into coin_usuario(nome, email,senha)
-            values ('joao1', 'joao@gmail.com', '123111111') RETURNING id`
+            values ('joao1', 'joao@gmail.com', '123111111') RETURNING id`,
             )
 
             await client.query(`insert into coin_carteira_moedas_doadas
-            (id_usuario, saldo) values (${usuarios[0].id},0)`
+            (id_usuario, saldo) values (${usuarios[0].id},0)`,
             )
 
             const valorParaDebitar = 10
 
-            expect.assertions(1);
+            expect.assertions(1)
             try {
                 await servico.debitar(valorParaDebitar,usuarios[0].id)
             }
@@ -92,12 +88,12 @@ describe('ServicoCarteiraMoedasDoadas', () => {
 
         it('deve disparar um erro caso não encontre carteira de moedas doadas', async () => {
             const usuarios = await client.query(`insert into coin_usuario(nome, email,senha)
-            values ('joao1', 'joao@gmail.com', '123111111') RETURNING id`
+            values ('joao1', 'joao@gmail.com', '123111111') RETURNING id`,
             )
 
             const valorParaDebitar = 10
 
-            expect.assertions(1);
+            expect.assertions(1)
             try {
                 await servico.debitar(valorParaDebitar,usuarios[0].id)
             }
@@ -114,7 +110,7 @@ describe('ServicoCarteiraMoedasDoadas', () => {
             values ('joao1', 'joao@gmail.com', '123111111') RETURNING id`)
 
             await client.query(`insert into coin_carteira_moedas_doadas
-            (id_usuario, saldo) values (${usuarios[0].id},200)`
+            (id_usuario, saldo) values (${usuarios[0].id},200)`,
             )   
          
             const valorParaCreditar = 10
@@ -122,7 +118,7 @@ describe('ServicoCarteiraMoedasDoadas', () => {
             await servico.creditar(valorParaCreditar, usuarios[0].id)
 
             const carteiraRecebidasBD = await client.one(`select * from coin_carteira_moedas_doadas
-            where id_usuario = ${usuarios[0].id}`
+            where id_usuario = ${usuarios[0].id}`,
             )
 
             expect(carteiraRecebidasBD.saldo).toEqual(210)
@@ -130,10 +126,10 @@ describe('ServicoCarteiraMoedasDoadas', () => {
 
         it('deve disparar um erro caso não encontre carteira', async () => {
             const usuarios = await client.query(`insert into coin_usuario(nome, email,senha)
-            values ('joao1', 'joao@gmail.com', '123111111') RETURNING id`
+            values ('joao1', 'joao@gmail.com', '123111111') RETURNING id`,
             )
 
-            expect.assertions(1);
+            expect.assertions(1)
             try {
                 await servico.creditar(10, usuarios[0].id)
             }

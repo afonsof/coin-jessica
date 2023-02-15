@@ -1,5 +1,5 @@
-import { IDatabase } from "pg-promise"
-import { Usuario } from "../dominio/usuario"
+import { IDatabase} from 'pg-promise'
+import { Usuario} from '../dominio/usuario'
 
 export class ServicoUsuario {
     client: IDatabase<any> 
@@ -8,7 +8,7 @@ export class ServicoUsuario {
         this.client = client
     }
     async listar(): Promise<Usuario[]> {
-        const usuariosNoBD = await this.client.query(`select * from coin_usuario order by nome`)
+        const usuariosNoBD = await this.client.query('select * from coin_usuario order by nome')
 
         const usuarios: Usuario[] = []
 
@@ -34,9 +34,8 @@ export class ServicoUsuario {
     async create(nome:string, email:string, senha:string): Promise<void> { 
         const usuario = new Usuario(undefined, nome, email, senha)
 
-        await this.client.query(`insert into coin_usuario (nome, 
-            email, senha) values ($1::text, $2::text, $3::text)`,
-            [usuario.nome, usuario.email, usuario.senha]
+        await this.client.query('insert into coin_usuario (nome, email, senha) values ($1::text, $2::text, $3::text)',
+            [usuario.nome, usuario.email, usuario.senha],
         ) 
     }
 
@@ -55,7 +54,7 @@ export class ServicoUsuario {
             email = $3::text,
             senha = $4::text 
             where id = $1::int`,
-            [usuario.id, usuario.nome,usuario.email, usuario.senha]
+        [usuario.id, usuario.nome,usuario.email, usuario.senha],
         )
     }
 
