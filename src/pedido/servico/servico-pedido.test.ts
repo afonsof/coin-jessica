@@ -204,7 +204,7 @@ describe('ServicoPedido', ()=>{
 
     it('deve disparar um erro caso o produto não tenha estoque suficiente', async()=>{
 
-        await client.query(`delete from coin_produto_pedid`)
+        await client.query(`delete from coin_produto_pedido`)
 
         const resUsuario = await client.one(`insert into coin_usuario (nome, email, senha) 
         values ('zezin', 'joze@sdf.com', '123123123') RETURNING id`)
