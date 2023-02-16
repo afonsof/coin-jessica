@@ -1,10 +1,6 @@
-
-import { ServicoUsuario } from './servico-usuario'
 import supertest from 'supertest'
 import pgPromise from 'pg-promise'
 import { createServer } from '../../server'
-
-
 
 const pgp = pgPromise()
 
@@ -14,10 +10,8 @@ const client = pgp({
     user: 'example',
     password: 'example',
 
-    database: 'postgres'
+    database: 'postgres',
 })
-
-const servico = new ServicoUsuario(client)
 
 
 describe('Usuario', ()=>{
@@ -54,7 +48,7 @@ describe('Usuario', ()=>{
                 nome: 'tadeu',
                 email: 'tadeu@gmail.com',
 
-                senha: '123111111'
+                senha: '123111111',
             })
 
             const usuarioNoBD = await client.one(`select * from coin_usuario`)

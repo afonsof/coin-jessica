@@ -5,7 +5,8 @@ export const getUsuarios = (site: Express, client) =>{
     site.get('/usuario/:id', async (req, res)=>{
         try{
             const servico = new ServicoUsuario(client)
-            const usuario = await servico.get(Number(req.params.id)) // converteu o params para number, pq td q vem do params vem como string e definimos em servico que id é number
+            // converteu o params para number, pq td q vem do params vem como string e definimos em servico que id é number
+            const usuario = await servico.get(Number(req.params.id)) 
 
             
             res.send(usuario)

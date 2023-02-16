@@ -1,41 +1,39 @@
 module.exports = {
     'env': {
         'browser': true,
-        'es2021': true
+        'es2021': true,
     },
     'extends': [
         'eslint:recommended',
-        'plugin:@typescript-eslint/recommended'
+        'plugin:@typescript-eslint/recommended',
     ],
     'overrides': [
     ],
     'parser': '@typescript-eslint/parser',
     'parserOptions': {
         'ecmaVersion': 'latest',
-        'sourceType': 'module'
+        'sourceType': 'module',
     },
     'plugins': [
-        '@typescript-eslint'
+        '@typescript-eslint',
     ],
     'rules': {
         'indent': [
             'error',
-            4
+            4,
         ],
         'linebreak-style': [
             'error',
-            'unix'
-        ],
-        'quotes': [
-            'error',
-            'single'
+            'unix',
         ],
         'semi': [
             'error',
-            'never'
+            'never',
         ],
         '@typescript-eslint/no-explicit-any': 'off',
         'one-var': ['error', 'never'],
-        "comma-dangle": ["error", "always-multiline"],
-    }
+        'comma-dangle' : ['error', 'always-multiline'],
+        'quotes': ['error', 'single', { 'allowTemplateLiterals': true }],
+        'max-len': ['error', { code: 150 }],
+    },
 }

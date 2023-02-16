@@ -23,7 +23,8 @@ describe('ServicoPedido', ()=>{
         it('deve retornar um unico pedido, caso ele esteja no banco', async ()=>{
             
 
-            const resUsuario = await client.one(`insert into coin_usuario (nome, email, senha) values ('zezin', 'joze@sdf.com', '123123123') RETURNING id`)
+            const resUsuario = await client.one(`insert into coin_usuario (nome, email, senha) values 
+            ('zezin', 'joze@sdf.com', '123123123') RETURNING id`)
 
             const resProduto = await client.one(`insert into coin_produto (nome, valor, estoque) values ('pirulito', 2, 2000) RETURNING id`)
 
@@ -145,7 +146,8 @@ describe('ServicoPedido', ()=>{
         })
 
         it('deve disparar um erro caso o pedido não tenha o status = pendente', async()=>{
-            const resUsuario = await client.one(`insert into coin_usuario (nome, email, senha) values ('zezin', 'joze@sdf.com', '123123123') RETURNING id`)
+            const resUsuario = await client.one(`insert into coin_usuario (nome, email, senha) values 
+            ('zezin', 'joze@sdf.com', '123123123') RETURNING id`)
 
             const resProduto = await client.one(`insert into coin_produto (nome, valor, estoque) values ('pirulito', 2, 2000) RETURNING id`)
 
@@ -278,7 +280,8 @@ describe('ServicoPedido', ()=>{
         })
 
         it('deve disparar um erro caso o pedido não tenha o status = pendente', async()=>{
-            const resUsuario = await client.one(`insert into coin_usuario (nome, email, senha) values ('zezin\', 'joze@sdf.com', '123123123') RETURNING id`)
+            const resUsuario = await client.one(`insert into coin_usuario (nome, email, senha) 
+            values ('zezin', 'joze@sdf.com', '123123123') RETURNING id`)
 
             const resPedido = await client.one(`insert into coin_pedido 
                 (data, id_usuario, status) values
@@ -348,5 +351,7 @@ describe('ServicoPedido', ()=>{
     })
 
 })
+
+
 
 

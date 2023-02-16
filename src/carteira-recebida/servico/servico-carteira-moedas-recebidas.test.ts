@@ -103,7 +103,8 @@ describe('ServicoCarteiraMoedasRecebidas', ()=>{
            
             await servico.debitar(valorParaDebitar, usuarios[0].id)
 
-            const carteiraDoadasBD = await client.one(`select * from coin_carteira_moedas_recebidas where id_usuario = ${usuarios[0].id}`) 
+            const carteiraDoadasBD = await client.one(`select * from coin_carteira_moedas_recebidas
+            where id_usuario = ${usuarios[0].id}`) 
 
             expect(carteiraDoadasBD.saldo).toEqual(190)
         })
